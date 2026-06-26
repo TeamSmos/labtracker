@@ -5,195 +5,170 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Team Smos — Lab Tracker</title>
 <style>
-  :root {
-    --red: #E53935; --red-light: #FFEBEE;
-    --orange: #F57C00; --orange-light: #FFF3E0;
-    --green: #2E7D32; --green-light: #E8F5E9;
-    --gray: #607D8B; --gray-light: #ECEFF1;
-    --blue: #1565C0; --blue-light: #E3F2FD;
-    --bg: #F5F7FA; --white: #FFFFFF;
-    --border: #DDE3EA; --text: #1A2332; --text-secondary: #5A6A7A;
-    --primary: #1565C0; --primary-dark: #0D47A1;
-    --radius: 10px; --shadow: 0 2px 8px rgba(0,0,0,0.08);
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; }
-
-  /* LOGIN */
-  .login-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #1565C0 0%, #0D47A1 100%); padding: 20px; }
-  .login-card { background: white; border-radius: 16px; padding: 36px 32px; width: 100%; max-width: 380px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
-  .login-logo { text-align: center; margin-bottom: 28px; }
-  .login-logo-icon { font-size: 40px; margin-bottom: 8px; }
-  .login-logo h1 { font-size: 22px; font-weight: 700; color: var(--primary); }
-  .login-logo p { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
-  .login-error { background: var(--red-light); color: var(--red); padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 14px; display: none; }
-
-  /* HEADER */
-  .header { background: var(--primary); color: white; padding: 0 20px; height: 56px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
-  .header-left { display: flex; align-items: center; gap: 12px; }
-  .logo { font-size: 17px; font-weight: 700; }
-  .logo span { opacity: 0.7; font-weight: 400; font-size: 12px; margin-left: 4px; }
-  .header-right { display: flex; align-items: center; gap: 8px; }
-  .header-user { font-size: 13px; opacity: 0.9; }
-  .btn-header { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; }
-  .btn-header:hover { background: rgba(255,255,255,0.25); }
-  .btn-new { background: white; color: var(--primary); border: none; padding: 7px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; }
-  .btn-new:hover { background: #E3F2FD; }
-
-  /* TABS */
-  .tabs { background: white; border-bottom: 1px solid var(--border); display: flex; padding: 0 20px; position: sticky; top: 56px; z-index: 99; overflow-x: auto; }
-  .tab { padding: 13px 18px; font-size: 13px; font-weight: 500; color: var(--text-secondary); cursor: pointer; border-bottom: 2px solid transparent; display: flex; align-items: center; gap: 6px; white-space: nowrap; }
-  .tab:hover { color: var(--primary); }
-  .tab.active { color: var(--primary); border-bottom-color: var(--primary); }
-  .tab-badge { border-radius: 10px; padding: 1px 7px; font-size: 11px; font-weight: 600; color: white; }
-  .badge-red { background: var(--red); }
-  .badge-orange { background: var(--orange); }
-  .badge-gray { background: var(--gray); }
-  .badge-blue { background: var(--blue); }
-
-  /* CONTENT */
-  .content { padding: 16px 20px; max-width: 1100px; margin: 0 auto; }
-
-  /* SEARCH */
-  .search-bar { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 9px 14px; display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
-  .search-bar input { border: none; outline: none; flex: 1; font-size: 14px; color: var(--text); background: transparent; }
-
-  /* CARDS */
-  .request-card { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 10px; border-left: 4px solid var(--border); transition: box-shadow 0.15s; }
-  .request-card:hover { box-shadow: var(--shadow); }
-  .request-card.over-tat { border-left-color: var(--red); background: var(--red-light); }
-  .request-card.approaching { border-left-color: var(--orange); background: var(--orange-light); }
-  .request-card.on-track { border-left-color: var(--green); }
-  .request-card.completed { border-left-color: var(--gray); background: var(--gray-light); }
-  .card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; gap: 10px; }
-  .card-id { font-weight: 700; font-size: 13px; color: var(--text-secondary); }
-  .card-patient { font-size: 15px; font-weight: 600; color: var(--text); margin-top: 2px; }
-  .status-badge { padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; white-space: nowrap; }
-  .badge-over { background: var(--red); color: white; }
-  .badge-approach { background: var(--orange); color: white; }
-  .badge-ontrack { background: var(--green); color: white; }
-  .badge-done { background: var(--gray); color: white; }
-  .card-info { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; }
-  .ci { display: flex; flex-direction: column; gap: 2px; }
-  .ci-label { font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; }
-  .ci-value { font-size: 13px; color: var(--text); font-weight: 500; }
-  .ci-value.blue { color: var(--blue); font-weight: 600; }
-  .ci-value.red { color: var(--red); font-weight: 700; }
-  .ci-value.orange { color: var(--orange); font-weight: 700; }
-  .ci-value.green { color: var(--green); font-weight: 700; }
-  .card-actions { display: flex; gap: 8px; margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(0,0,0,0.06); flex-wrap: wrap; }
-  .btn-complete { background: var(--green); color: white; border: none; padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; }
-  .btn-complete:hover { background: #1B5E20; }
-  .btn-reopen { background: var(--orange); color: white; border: none; padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; }
-  .btn-reopen:hover { background: #E65100; }
-
-  /* GROUP */
-  .group-header { font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin: 14px 0 8px; padding-left: 2px; }
-
-  /* MODAL */
-  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 200; align-items: center; justify-content: center; padding: 16px; }
-  .modal-overlay.open { display: flex; }
-  .modal { background: white; border-radius: 14px; width: 100%; max-width: 560px; max-height: 92vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
-  .modal-sm { max-width: 400px; }
-  .modal-lg { max-width: 700px; }
-  .modal-header { padding: 18px 22px 14px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: white; z-index: 1; border-radius: 14px 14px 0 0; }
-  .modal-title { font-size: 16px; font-weight: 700; }
-  .modal-close { background: none; border: none; font-size: 22px; cursor: pointer; color: var(--text-secondary); padding: 2px 6px; border-radius: 6px; }
-  .modal-close:hover { background: var(--gray-light); }
-  .modal-body { padding: 18px 22px; }
-  .modal-footer { padding: 14px 22px; border-top: 1px solid var(--border); display: flex; gap: 10px; justify-content: flex-end; }
-
-  /* FORM */
-  .form-group { margin-bottom: 13px; }
-  .form-label { display: block; font-size: 11px; font-weight: 600; color: var(--text-secondary); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.4px; }
-  .req { color: var(--red); }
-  .form-input, .form-select { width: 100%; padding: 9px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; color: var(--text); background: white; outline: none; transition: border 0.15s; }
-  .form-input:focus, .form-select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(21,101,192,0.1); }
-  .form-input[readonly] { background: var(--bg); color: var(--text-secondary); }
-  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .section-div { font-size: 11px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.8px; margin: 16px 0 10px; padding-bottom: 5px; border-bottom: 2px solid var(--blue-light); }
-
-  /* TEST CHECKBOXES */
-  .test-grid { display: flex; flex-direction: column; gap: 7px; max-height: 260px; overflow-y: auto; }
-  .test-item { display: flex; align-items: center; justify-content: space-between; padding: 9px 12px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; transition: all 0.12s; }
-  .test-item:hover { border-color: var(--primary); background: var(--blue-light); }
-  .test-item.selected { border-color: var(--primary); background: var(--blue-light); }
-  .test-left { display: flex; align-items: center; gap: 10px; }
-  .test-left input[type=checkbox] { width: 15px; height: 15px; accent-color: var(--primary); cursor: pointer; }
-  .test-name-lbl { font-weight: 600; font-size: 13px; }
-  .test-cat { font-size: 11px; color: var(--text-secondary); }
-  .test-tat-lbl { font-size: 12px; color: var(--primary); font-weight: 600; }
-
-  /* BUTTONS */
-  .btn-primary { background: var(--primary); color: white; border: none; padding: 9px 22px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
-  .btn-primary:hover { background: var(--primary-dark); }
-  .btn-secondary { background: white; color: var(--text); border: 1px solid var(--border); padding: 9px 18px; border-radius: 8px; font-size: 14px; cursor: pointer; }
-  .btn-secondary:hover { background: var(--bg); }
-  .btn-danger { background: var(--red); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; }
-  .btn-danger:hover { background: #B71C1C; }
-  .btn-sm { padding: 5px 12px; font-size: 12px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; }
-  .btn-edit { background: var(--blue-light); color: var(--blue); }
-
-  /* USER TABLE */
-  .user-table { width: 100%; border-collapse: collapse; }
-  .user-table th { background: var(--bg); padding: 10px 12px; text-align: left; font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--border); }
-  .user-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: middle; }
-  .user-table tr:last-child td { border-bottom: none; }
-  .role-badge { padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
-  .role-admin { background: var(--blue-light); color: var(--blue); }
-  .role-staff { background: var(--green-light); color: var(--green); }
-
-  /* EMPTY */
-  .empty { text-align: center; padding: 50px 20px; color: var(--text-secondary); }
-  .empty-icon { font-size: 44px; margin-bottom: 10px; }
-  .empty h3 { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
-
-  /* LOADING */
-  .loading { text-align: center; padding: 40px; color: var(--text-secondary); font-size: 14px; }
-
-  /* CONFIG */
-  .config-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
-  .config-card { background: white; border-radius: 14px; padding: 32px; width: 100%; max-width: 480px; box-shadow: var(--shadow); }
-  .config-note { background: var(--blue-light); border-radius: 8px; padding: 12px 14px; font-size: 13px; color: var(--blue); margin-top: 14px; line-height: 1.6; }
-
-  /* TOAST */
-  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #1A2332; color: white; padding: 11px 22px; border-radius: 8px; font-size: 14px; font-weight: 500; z-index: 999; display: none; white-space: nowrap; }
-  .toast.show { display: block; animation: fadeUp 0.3s ease; }
-  @keyframes fadeUp { from { opacity:0; transform:translateX(-50%) translateY(8px); } to { opacity:1; transform:translateX(-50%) translateY(0); } }
-
-  @media(max-width:600px) {
-    .form-row { grid-template-columns: 1fr; }
-    .card-info { grid-template-columns: 1fr 1fr; }
-    .header-user { display: none; }
-  }
+:root{
+  --red:#E53935;--red-light:#FFEBEE;--orange:#F57C00;--orange-light:#FFF3E0;
+  --green:#2E7D32;--green-light:#E8F5E9;--gray:#607D8B;--gray-light:#ECEFF1;
+  --blue:#1565C0;--blue-light:#E3F2FD;--bg:#F5F7FA;
+  --border:#DDE3EA;--text:#1A2332;--muted:#5A6A7A;
+  --primary:#1565C0;--primary-dark:#0D47A1;--radius:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:14px;}
+/* LOGIN */
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1565C0,#0D47A1);padding:20px;}
+.login-card{background:#fff;border-radius:16px;padding:36px 32px;width:100%;max-width:380px;box-shadow:0 20px 60px rgba(0,0,0,.2);}
+.login-logo{text-align:center;margin-bottom:28px;}
+.login-logo-icon{font-size:44px;margin-bottom:8px;}
+.login-logo h1{font-size:22px;font-weight:700;color:var(--primary);}
+.login-logo p{font-size:13px;color:var(--muted);margin-top:4px;}
+.login-error{background:var(--red-light);color:var(--red);padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:14px;display:none;}
+/* HEADER */
+.header{background:var(--primary);color:#fff;padding:0 16px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.15);}
+.logo{font-size:17px;font-weight:700;letter-spacing:-.2px;}
+.logo span{opacity:.65;font-weight:400;font-size:12px;margin-left:6px;}
+.header-right{display:flex;align-items:center;gap:7px;}
+.header-user{font-size:12px;background:rgba(255,255,255,.15);padding:5px 10px;border-radius:6px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.btn-hdr{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);padding:6px 11px;border-radius:6px;font-size:12px;cursor:pointer;white-space:nowrap;}
+.btn-hdr:hover{background:rgba(255,255,255,.25);}
+.btn-signout{background:rgba(220,50,50,.35);color:#fff;border:1px solid rgba(255,100,100,.4);padding:6px 11px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:600;}
+.btn-signout:hover{background:rgba(220,50,50,.55);}
+/* TABS */
+.tabs{background:#fff;border-bottom:1px solid var(--border);display:flex;padding:0 16px;position:sticky;top:56px;z-index:99;overflow-x:auto;}
+.tab{padding:13px 16px;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;display:flex;align-items:center;gap:6px;white-space:nowrap;transition:color .15s;}
+.tab:hover{color:var(--primary);}
+.tab.active{color:var(--primary);border-bottom-color:var(--primary);}
+.tbadge{border-radius:10px;padding:1px 7px;font-size:11px;font-weight:700;color:#fff;}
+.tbadge.red{background:var(--red);}.tbadge.orange{background:var(--orange);}.tbadge.gray{background:var(--gray);}
+/* CONTENT */
+.content{padding:14px 16px;max-width:1100px;margin:0 auto;}
+/* TOOLBAR */
+.toolbar{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.btn-new{background:var(--primary);color:#fff;border:none;padding:9px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;}
+.btn-new:hover{background:var(--primary-dark);}
+.search-bar{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:9px 14px;display:flex;align-items:center;gap:8px;flex:1;}
+.search-bar input{border:none;outline:none;flex:1;font-size:14px;color:var(--text);background:transparent;}
+/* CARDS */
+.request-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px;border-left:4px solid var(--border);transition:box-shadow .15s;}
+.request-card:hover{box-shadow:0 2px 12px rgba(0,0,0,.08);}
+.request-card.over-tat{border-left-color:var(--red);background:var(--red-light);}
+.request-card.approaching{border-left-color:var(--orange);background:var(--orange-light);}
+.request-card.on-track{border-left-color:var(--green);}
+.request-card.completed{border-left-color:var(--gray);background:var(--gray-light);}
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;gap:10px;}
+.card-id{font-weight:700;font-size:12px;color:var(--muted);}
+.card-patient{font-size:15px;font-weight:600;color:var(--text);margin-top:2px;}
+.card-top-right{display:flex;align-items:center;gap:7px;flex-shrink:0;}
+.sbadge{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap;}
+.sbadge.over{background:var(--red);color:#fff;}.sbadge.approach{background:var(--orange);color:#fff;}
+.sbadge.ontrack{background:var(--green);color:#fff;}.sbadge.done{background:var(--gray);color:#fff;}
+.btn-edit-card{background:var(--blue-light);color:var(--blue);border:1px solid var(--blue);padding:4px 10px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;}
+.btn-edit-card:hover{background:var(--blue);color:#fff;}
+.card-info{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;}
+.ci{display:flex;flex-direction:column;gap:2px;}
+.ci-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+.ci-val{font-size:13px;color:var(--text);font-weight:500;}
+.ci-val.blue{color:var(--blue);font-weight:600;}.ci-val.red{color:var(--red);font-weight:700;}
+.ci-val.orange{color:var(--orange);font-weight:700;}.ci-val.green{color:var(--green);font-weight:700;}
+.card-actions{display:flex;gap:8px;margin-top:12px;padding-top:10px;border-top:1px solid rgba(0,0,0,.06);flex-wrap:wrap;}
+.btn-complete{background:var(--green);color:#fff;border:none;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;}
+.btn-complete:hover{background:#1B5E20;}
+.btn-reopen{background:var(--orange);color:#fff;border:none;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;}
+.btn-reopen:hover{background:#E65100;}
+.group-header{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin:14px 0 8px;padding-left:2px;}
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:center;justify-content:center;padding:16px;}
+.modal-overlay.open{display:flex;}
+.modal{background:#fff;border-radius:14px;width:100%;max-width:560px;max-height:92vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2);}
+.modal-sm{max-width:400px;}.modal-lg{max-width:720px;}
+.modal-header{padding:18px 22px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#fff;z-index:1;border-radius:14px 14px 0 0;}
+.modal-title{font-size:16px;font-weight:700;}
+.modal-close{background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted);padding:2px 6px;border-radius:6px;}
+.modal-close:hover{background:var(--gray-light);}
+.modal-body{padding:18px 22px;}
+.modal-footer{padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;}
+/* FORM */
+.form-group{margin-bottom:13px;}
+.form-label{display:block;font-size:11px;font-weight:600;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px;}
+.req{color:var(--red);}
+.form-input,.form-select{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;color:var(--text);background:#fff;outline:none;transition:border .15s;}
+.form-input:focus,.form-select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(21,101,192,.1);}
+.form-input[readonly]{background:var(--bg);color:var(--muted);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.section-div{font-size:11px;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:.8px;margin:16px 0 10px;padding-bottom:5px;border-bottom:2px solid var(--blue-light);}
+/* TEST SEARCH */
+.test-search-wrap{position:relative;margin-bottom:8px;}
+.test-search-input{width:100%;padding:9px 12px 9px 36px;border:1px solid var(--border);border-radius:8px;font-size:14px;color:var(--text);outline:none;transition:border .15s;}
+.test-search-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(21,101,192,.1);}
+.tsi{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:15px;pointer-events:none;}
+.test-dropdown{border:1px solid var(--border);border-radius:8px;max-height:200px;overflow-y:auto;display:none;background:#fff;margin-bottom:8px;}
+.test-dropdown.open{display:block;}
+.test-drop-item{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;cursor:pointer;border-bottom:1px solid var(--border);}
+.test-drop-item:last-child{border-bottom:none;}
+.test-drop-item:hover,.test-drop-item.sel{background:var(--blue-light);}
+.tn{font-weight:600;font-size:13px;}.tc{font-size:11px;color:var(--muted);}.tt{font-size:12px;color:var(--blue);font-weight:600;}
+.selected-tests{display:flex;flex-wrap:wrap;gap:6px;min-height:28px;margin-bottom:8px;}
+.stag{display:flex;align-items:center;gap:5px;background:var(--blue-light);color:var(--blue);border:1px solid var(--blue);border-radius:20px;padding:4px 10px;font-size:12px;font-weight:600;}
+.stag button{background:none;border:none;color:var(--blue);cursor:pointer;font-size:15px;line-height:1;padding:0;}
+.no-tr{padding:12px;text-align:center;color:var(--muted);font-size:13px;}
+/* BTN */
+.btn-primary{background:var(--primary);color:#fff;border:none;padding:9px 22px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;}
+.btn-primary:hover:not(:disabled){background:var(--primary-dark);}
+.btn-primary:disabled{background:#90a4ae;cursor:not-allowed;}
+.btn-secondary{background:#fff;color:var(--text);border:1px solid var(--border);padding:9px 18px;border-radius:8px;font-size:14px;cursor:pointer;}
+.btn-secondary:hover{background:var(--bg);}
+.btn-danger{background:var(--red);color:#fff;border:none;padding:6px 12px;border-radius:6px;font-size:12px;cursor:pointer;}
+.btn-danger:hover{background:#B71C1C;}
+.btn-sm{padding:5px 12px;font-size:12px;border-radius:6px;border:none;cursor:pointer;font-weight:600;}
+/* SPINNER */
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;margin-right:6px;vertical-align:middle;}
+@keyframes spin{to{transform:rotate(360deg);}}
+/* USER TABLE */
+.user-table{width:100%;border-collapse:collapse;}
+.user-table th{background:var(--bg);padding:10px 12px;text-align:left;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);}
+.user-table td{padding:10px 12px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle;}
+.user-table tr:last-child td{border-bottom:none;}
+.rbadge{padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;}
+.rbadge.admin{background:var(--blue-light);color:var(--blue);}.rbadge.staff{background:var(--green-light);color:var(--green);}
+/* EMPTY / LOADING */
+.empty{text-align:center;padding:50px 20px;color:var(--muted);}
+.empty-icon{font-size:44px;margin-bottom:10px;}
+.empty h3{font-size:15px;font-weight:600;color:var(--text);margin-bottom:4px;}
+.loading{text-align:center;padding:40px;color:var(--muted);font-size:14px;}
+/* CONFIG */
+.config-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
+.config-card{background:#fff;border-radius:14px;padding:32px;width:100%;max-width:480px;box-shadow:0 2px 8px rgba(0,0,0,.08);}
+.config-note{background:var(--blue-light);border-radius:8px;padding:12px 14px;font-size:13px;color:var(--blue);margin-top:14px;line-height:1.6;}
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1A2332;color:#fff;padding:11px 22px;border-radius:8px;font-size:14px;font-weight:500;z-index:999;display:none;white-space:nowrap;}
+.toast.show{display:block;animation:fadeUp .3s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateX(-50%) translateY(8px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
+@media(max-width:600px){.form-row{grid-template-columns:1fr;}.card-info{grid-template-columns:1fr 1fr;}.header-user{display:none;}}
 </style>
 </head>
 <body>
 
-<!-- CONFIG SCREEN -->
+<!-- CONFIG -->
 <div id="configScreen" class="config-wrap">
   <div class="config-card">
     <div style="text-align:center;margin-bottom:24px;">
-      <div style="font-size:36px;margin-bottom:8px;">🔬</div>
+      <div style="font-size:40px;margin-bottom:8px;">🔬</div>
       <div style="font-size:20px;font-weight:700;color:var(--primary);">Team Smos Lab Tracker</div>
-      <div style="font-size:13px;color:var(--text-secondary);margin-top:4px;">Connect to your Google Sheet</div>
+      <div style="font-size:13px;color:var(--muted);margin-top:4px;">Connect to your Google Sheet to get started</div>
     </div>
     <div class="form-group">
       <label class="form-label">Google Apps Script URL <span class="req">*</span></label>
-      <input class="form-input" id="scriptUrl" placeholder="https://script.google.com/macros/s/.../exec" style="font-size:12px;">
+      <input class="form-input" id="scriptUrl" placeholder="https://script.google.com/macros/s/.../exec" style="font-size:12px;" onkeydown="if(event.key==='Enter')saveConfig()">
     </div>
     <button class="btn-primary" style="width:100%;" onclick="saveConfig()">Connect & Start</button>
-    <div class="config-note">
-      📋 <strong>Setup steps:</strong><br>
-      1. Open Google Sheet → Extensions → Apps Script<br>
-      2. Paste the backend script → Save<br>
-      3. Deploy → New deployment → Web app<br>
-      4. Copy the URL and paste above
-    </div>
+    <div class="config-note">📋 <strong>How to get this URL:</strong><br>
+    1. Open Google Sheet → Extensions → Apps Script<br>
+    2. Paste the backend script → Save<br>
+    3. Deploy → New deployment → Web app → Anyone<br>
+    4. Copy the URL and paste above</div>
   </div>
 </div>
 
-<!-- LOGIN SCREEN -->
+<!-- LOGIN -->
 <div id="loginScreen" style="display:none;">
   <div class="login-wrap">
     <div class="login-card">
@@ -211,7 +186,7 @@
         <label class="form-label">Password</label>
         <input class="form-input" type="password" id="loginPassword" placeholder="Enter password" onkeydown="if(event.key==='Enter')doLogin()">
       </div>
-      <button class="btn-primary" style="width:100%;margin-top:4px;" onclick="doLogin()">Sign In</button>
+      <button class="btn-primary" id="loginBtn" style="width:100%;margin-top:6px;" onclick="doLogin()">Sign In</button>
     </div>
   </div>
 </div>
@@ -219,52 +194,48 @@
 <!-- MAIN APP -->
 <div id="mainApp" style="display:none;">
   <div class="header">
-    <div class="header-left">
-      <div class="logo">🔬 Team Smos <span>Lab Tracker</span></div>
-    </div>
+    <div class="logo">🔬 Team Smos <span>Lab Tracker</span></div>
     <div class="header-right">
       <span class="header-user" id="headerUser"></span>
-      <button class="btn-header" onclick="openChangePassword()">🔑 Password</button>
-      <div id="adminBtns" style="display:none;">
-        <button class="btn-header" onclick="openUserMgmt()">👥 Users</button>
-      </div>
-      <button class="btn-new" onclick="openNewRequest()">+ New Request</button>
-      <button class="btn-header" onclick="doLogout()">Sign Out</button>
+      <button class="btn-hdr" onclick="openChangePassword()">🔑 Password</button>
+      <div id="adminBtns" style="display:none;"><button class="btn-hdr" onclick="openUserMgmt()">👥 Users</button></div>
+      <button class="btn-signout" onclick="doLogout()">⏻ Sign Out</button>
     </div>
   </div>
-
   <div class="tabs">
-    <div class="tab active" onclick="switchTab('overtat')" id="tab-overtat">🔴 Over TAT <span class="tab-badge badge-red" id="badge-overtat">0</span></div>
-    <div class="tab" onclick="switchTab('pending')" id="tab-pending">🟡 Pending <span class="tab-badge badge-orange" id="badge-pending">0</span></div>
-    <div class="tab" onclick="switchTab('completed')" id="tab-completed">✅ Completed <span class="tab-badge badge-gray" id="badge-completed">0</span></div>
+    <div class="tab active" onclick="switchTab('overtat')" id="tab-overtat">🔴 Over TAT <span class="tbadge red" id="badge-overtat">0</span></div>
+    <div class="tab" onclick="switchTab('pending')" id="tab-pending">🟡 Pending <span class="tbadge orange" id="badge-pending">0</span></div>
+    <div class="tab" onclick="switchTab('completed')" id="tab-completed">✅ Completed <span class="tbadge gray" id="badge-completed">0</span></div>
   </div>
-
   <div class="content">
-    <div class="search-bar">
-      <span>🔍</span>
-      <input type="text" placeholder="Search by Request ID, Patient Name, Partner Lab..." id="searchInput" oninput="renderCurrentTab()">
+    <div class="toolbar">
+      <button class="btn-new" onclick="openNewRequest()">+ New Request</button>
+      <div class="search-bar">
+        <span>🔍</span>
+        <input type="text" placeholder="Search Request ID, Patient, Partner Lab..." id="searchInput" oninput="renderCurrentTab()">
+      </div>
     </div>
     <div id="tabContent"></div>
   </div>
 </div>
 
-<!-- NEW REQUEST MODAL -->
-<div class="modal-overlay" id="newRequestModal">
+<!-- NEW / EDIT REQUEST MODAL -->
+<div class="modal-overlay" id="reqModal">
   <div class="modal">
     <div class="modal-header">
-      <div class="modal-title">New Request</div>
-      <button class="modal-close" onclick="closeModal('newRequestModal')">×</button>
+      <div class="modal-title" id="reqModalTitle">New Request</div>
+      <button class="modal-close" onclick="closeModal('reqModal')">×</button>
     </div>
     <div class="modal-body">
       <div class="section-div">Request Info</div>
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">Request ID <span class="req">*</span></label>
-          <input class="form-input" id="f-requestId" placeholder="BTD-000001">
+          <input class="form-input" id="f-rid" placeholder="BTD-000001">
         </div>
         <div class="form-group">
           <label class="form-label">Date & Time</label>
-          <input class="form-input" id="f-datetime" readonly>
+          <input class="form-input" id="f-dt" readonly>
         </div>
       </div>
       <div class="form-group">
@@ -274,7 +245,7 @@
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">Physician / Institution</label>
-          <input class="form-input" id="f-institution" placeholder="Hospital or doctor">
+          <input class="form-input" id="f-inst" placeholder="Hospital or doctor">
         </div>
         <div class="form-group">
           <label class="form-label">Partner Laboratory <span class="req">*</span></label>
@@ -305,12 +276,20 @@
           <input class="form-input" id="f-remark" placeholder="Optional note">
         </div>
       </div>
-      <div class="section-div">Select Tests <span style="color:var(--text-secondary);font-size:11px;text-transform:none;font-weight:400;">(one or more)</span></div>
-      <div class="test-grid" id="testGrid"></div>
+      <div id="testSection">
+        <div class="section-div">Select Tests <span style="color:var(--muted);font-size:11px;text-transform:none;font-weight:400;">(one or more)</span></div>
+        <div class="selected-tests" id="selectedTags"></div>
+        <div class="test-search-wrap">
+          <span class="tsi">🔍</span>
+          <input class="test-search-input" id="testSearch" placeholder="Type to search test name..." oninput="filterTests()" onfocus="openTestDD()" autocomplete="off">
+        </div>
+        <div class="test-dropdown" id="testDD"></div>
+      </div>
+      <div id="editTestNote" style="display:none;background:var(--gray-light);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--muted);margin-top:8px;"></div>
     </div>
     <div class="modal-footer">
-      <button class="btn-secondary" onclick="closeModal('newRequestModal')">Cancel</button>
-      <button class="btn-primary" onclick="saveRequest()">Save Request</button>
+      <button class="btn-secondary" onclick="closeModal('reqModal')">Cancel</button>
+      <button class="btn-primary" id="reqSaveBtn" onclick="saveRequest()">Save Request</button>
     </div>
   </div>
 </div>
@@ -319,62 +298,49 @@
 <div class="modal-overlay" id="completeModal">
   <div class="modal modal-sm">
     <div class="modal-header">
-      <div class="modal-title">Mark as Completed</div>
+      <div class="modal-title">✔ Mark as Completed</div>
       <button class="modal-close" onclick="closeModal('completeModal')">×</button>
     </div>
     <div class="modal-body">
-      <p style="color:var(--text-secondary);font-size:13px;margin-bottom:10px;">Who is releasing this result?</p>
-      <select class="form-select" id="releasedBySelect">
-        <option value="">Select staff...</option>
-      </select>
+      <p style="color:var(--muted);font-size:13px;margin-bottom:10px;">Who is releasing this result?</p>
+      <select class="form-select" id="releasedBy"><option value="">Select staff...</option></select>
     </div>
     <div class="modal-footer">
       <button class="btn-secondary" onclick="closeModal('completeModal')">Cancel</button>
-      <button class="btn-primary" onclick="confirmComplete()">Confirm</button>
+      <button class="btn-primary" id="confirmCompleteBtn" onclick="confirmComplete()">Confirm</button>
     </div>
   </div>
 </div>
 
 <!-- CHANGE PASSWORD MODAL -->
-<div class="modal-overlay" id="changePwModal">
+<div class="modal-overlay" id="pwModal">
   <div class="modal modal-sm">
     <div class="modal-header">
       <div class="modal-title">🔑 Change Password</div>
-      <button class="modal-close" onclick="closeModal('changePwModal')">×</button>
+      <button class="modal-close" onclick="closeModal('pwModal')">×</button>
     </div>
     <div class="modal-body">
-      <div class="login-error" id="pwError" style="display:none;"></div>
-      <div class="form-group">
-        <label class="form-label">Current Password <span class="req">*</span></label>
-        <input class="form-input" type="password" id="pw-old" placeholder="Enter current password">
-      </div>
-      <div class="form-group">
-        <label class="form-label">New Password <span class="req">*</span></label>
-        <input class="form-input" type="password" id="pw-new" placeholder="Enter new password">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Confirm New Password <span class="req">*</span></label>
-        <input class="form-input" type="password" id="pw-confirm" placeholder="Confirm new password">
-      </div>
+      <div class="login-error" id="pwError"></div>
+      <div class="form-group"><label class="form-label">Current Password <span class="req">*</span></label><input class="form-input" type="password" id="pw-old" placeholder="Current password" onkeydown="if(event.key==='Enter')doChangePw()"></div>
+      <div class="form-group"><label class="form-label">New Password <span class="req">*</span></label><input class="form-input" type="password" id="pw-new" placeholder="New password" onkeydown="if(event.key==='Enter')doChangePw()"></div>
+      <div class="form-group"><label class="form-label">Confirm New Password <span class="req">*</span></label><input class="form-input" type="password" id="pw-confirm" placeholder="Confirm new password" onkeydown="if(event.key==='Enter')doChangePw()"></div>
     </div>
     <div class="modal-footer">
-      <button class="btn-secondary" onclick="closeModal('changePwModal')">Cancel</button>
-      <button class="btn-primary" onclick="doChangePassword()">Update Password</button>
+      <button class="btn-secondary" onclick="closeModal('pwModal')">Cancel</button>
+      <button class="btn-primary" id="changePwBtn" onclick="doChangePw()">Update Password</button>
     </div>
   </div>
 </div>
 
-<!-- USER MANAGEMENT MODAL (Admin only) -->
-<div class="modal-overlay" id="userMgmtModal">
+<!-- USER MANAGEMENT MODAL -->
+<div class="modal-overlay" id="userModal">
   <div class="modal modal-lg">
     <div class="modal-header">
       <div class="modal-title">👥 User Management</div>
-      <button class="modal-close" onclick="closeModal('userMgmtModal')">×</button>
+      <button class="modal-close" onclick="closeModal('userModal')">×</button>
     </div>
     <div class="modal-body">
-      <div style="display:flex;justify-content:flex-end;margin-bottom:14px;">
-        <button class="btn-primary btn-sm" onclick="openAddUser()">+ Add User</button>
-      </div>
+      <div style="display:flex;justify-content:flex-end;margin-bottom:14px;"><button class="btn-primary btn-sm" onclick="openAddUser()">+ Add User</button></div>
       <div id="userList"></div>
     </div>
   </div>
@@ -388,26 +354,14 @@
       <button class="modal-close" onclick="closeModal('addUserModal')">×</button>
     </div>
     <div class="modal-body">
-      <div class="login-error" id="addUserError" style="display:none;"></div>
-      <div class="form-group">
-        <label class="form-label">Username <span class="req">*</span></label>
-        <input class="form-input" id="nu-username" placeholder="Enter username">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Password <span class="req">*</span></label>
-        <input class="form-input" type="password" id="nu-password" placeholder="Enter password">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Role <span class="req">*</span></label>
-        <select class="form-select" id="nu-role">
-          <option value="Staff">Staff</option>
-          <option value="Admin">Admin</option>
-        </select>
-      </div>
+      <div class="login-error" id="addUserErr"></div>
+      <div class="form-group"><label class="form-label">Username <span class="req">*</span></label><input class="form-input" id="nu-user" placeholder="Enter username" onkeydown="if(event.key==='Enter')doAddUser()"></div>
+      <div class="form-group"><label class="form-label">Password <span class="req">*</span></label><input class="form-input" type="password" id="nu-pass" placeholder="Enter password" onkeydown="if(event.key==='Enter')doAddUser()"></div>
+      <div class="form-group"><label class="form-label">Role <span class="req">*</span></label><select class="form-select" id="nu-role"><option value="Staff">Staff</option><option value="Admin">Admin</option></select></div>
     </div>
     <div class="modal-footer">
       <button class="btn-secondary" onclick="closeModal('addUserModal')">Cancel</button>
-      <button class="btn-primary" onclick="doAddUser()">Add User</button>
+      <button class="btn-primary" id="addUserBtn" onclick="doAddUser()">Add User</button>
     </div>
   </div>
 </div>
@@ -415,416 +369,432 @@
 <div class="toast" id="toast"></div>
 
 <script>
-let SCRIPT_URL = '';
-let allRequests = [];
-let staffList = [];
-let partnerLabs = [];
-let testMaster = [];
-let usersList = [];
-let currentTab = 'overtat';
-let completingRowId = null;
-let currentUser = null;
+// ── STATE ──
+let SCRIPT_URL='',allRequests=[],staffList=[],partnerLabs=[],testMaster=[],usersList=[];
+let currentTab='overtat',currentUser=null,editingRowId=null,completingRowId=null,selectedTests={};
+let isSaving=false; // prevents duplicate saves
 
 // ── CONFIG ──
-function saveConfig() {
-  const url = document.getElementById('scriptUrl').value.trim();
-  if (!url) { alert('Please enter the Apps Script URL'); return; }
-  SCRIPT_URL = url;
-  localStorage.setItem('labTrackerUrl', url);
-  showLogin();
+function saveConfig(){
+  const url=document.getElementById('scriptUrl').value.trim();
+  if(!url){alert('Please enter the Apps Script URL');return;}
+  SCRIPT_URL=url;localStorage.setItem('labTrackerUrl',url);showLogin();
 }
-
-window.onload = function() {
-  const url = localStorage.getItem('labTrackerUrl');
-  const user = localStorage.getItem('labUser');
-  if (url) {
-    SCRIPT_URL = url;
-    if (user) {
-      currentUser = JSON.parse(user);
-      showApp();
-    } else {
-      showLogin();
-    }
-  }
+window.onload=function(){
+  const url=localStorage.getItem('labTrackerUrl');
+  const user=localStorage.getItem('labUser');
+  if(url){SCRIPT_URL=url;if(user){currentUser=JSON.parse(user);showApp();}else showLogin();}
 };
-
-function showLogin() {
-  document.getElementById('configScreen').style.display = 'none';
-  document.getElementById('loginScreen').style.display = 'block';
-  document.getElementById('mainApp').style.display = 'none';
+function showLogin(){
+  hide('configScreen');hide('mainApp');show('loginScreen');
+  document.getElementById('loginError').style.display='none';
+  document.getElementById('loginUsername').value='';
+  document.getElementById('loginPassword').value='';
+  setTimeout(()=>document.getElementById('loginUsername').focus(),100);
 }
-
-function showApp() {
-  document.getElementById('configScreen').style.display = 'none';
-  document.getElementById('loginScreen').style.display = 'none';
-  document.getElementById('mainApp').style.display = 'block';
-  document.getElementById('headerUser').textContent = '👤 ' + currentUser.Username + ' (' + currentUser.Role + ')';
-  if (currentUser.Role === 'Admin') {
-    document.getElementById('adminBtns').style.display = 'inline-flex';
-  }
+function showApp(){
+  hide('configScreen');hide('loginScreen');show('mainApp');
+  document.getElementById('headerUser').textContent='👤 '+currentUser.Username+' ('+currentUser.Role+')';
+  document.getElementById('adminBtns').style.display=currentUser.Role==='Admin'?'inline-flex':'none';
   loadAllData();
 }
 
 // ── API ──
-async function api(params) {
-  const url = SCRIPT_URL + '?' + new URLSearchParams(params);
-  const res = await fetch(url);
-  return await res.json();
+async function api(params){
+  const url=SCRIPT_URL+'?'+new URLSearchParams(params);
+  const res=await fetch(url);
+  const json=await res.json();
+  return json;
 }
 
 // ── LOGIN ──
-async function doLogin() {
-  const username = document.getElementById('loginUsername').value.trim();
-  const password = document.getElementById('loginPassword').value;
-  if (!username || !password) { showLoginError('Please enter username and password'); return; }
-  try {
-    const users = await api({action: 'getUsers'});
-    const user = users.find(u =>
-      String(u.Username).toLowerCase() === username.toLowerCase() &&
-      String(u.Password) === password &&
-      (u.Active === 'Yes' || u.Active === true)
+async function doLogin(){
+  const btn=document.getElementById('loginBtn');
+  if(btn.disabled)return;
+  const username=document.getElementById('loginUsername').value.trim();
+  const password=document.getElementById('loginPassword').value;
+  if(!username||!password){showErr('loginError','Please enter username and password');return;}
+  setBtn(btn,'Signing in...',true);
+  try{
+    const users=await api({action:'getUsers'});
+    const user=users.find(u=>
+      String(u.Username).toLowerCase()===username.toLowerCase()&&
+      String(u.Password)===password&&
+      (u.Active==='Yes'||u.Active===true)
     );
-    if (!user) { showLoginError('Incorrect username or password'); return; }
-    currentUser = user;
-    localStorage.setItem('labUser', JSON.stringify(user));
-    showApp();
-  } catch(e) { showLoginError('Connection error. Check your setup.'); }
+    if(!user){showErr('loginError','Incorrect username or password');setBtn(btn,'Sign In',false);return;}
+    currentUser=user;localStorage.setItem('labUser',JSON.stringify(user));showApp();
+  }catch(e){showErr('loginError','Connection error. Check your Apps Script URL.');setBtn(btn,'Sign In',false);}
 }
+function doLogout(){currentUser=null;localStorage.removeItem('labUser');showLogin();}
 
-function showLoginError(msg) {
-  const el = document.getElementById('loginError');
-  el.textContent = msg;
-  el.style.display = 'block';
-}
-
-function doLogout() {
-  currentUser = null;
-  localStorage.removeItem('labUser');
-  showLogin();
-}
-
-// ── LOAD DATA ──
-async function loadAllData() {
-  document.getElementById('tabContent').innerHTML = '<div class="loading">⏳ Loading data...</div>';
-  try {
-    const [requests, staff, labs, tests, users] = await Promise.all([
-      api({action:'getRequests'}),
-      api({action:'getStaff'}),
-      api({action:'getPartnerLabs'}),
-      api({action:'getTestMaster'}),
-      api({action:'getUsers'})
+// ── LOAD ALL DATA ──
+async function loadAllData(){
+  document.getElementById('tabContent').innerHTML='<div class="loading">⏳ Loading data...</div>';
+  try{
+    const [requests,staff,labs,tests,users]=await Promise.all([
+      api({action:'getRequests'}),api({action:'getStaff'}),
+      api({action:'getPartnerLabs'}),api({action:'getTestMaster'}),api({action:'getUsers'})
     ]);
-    allRequests = requests || [];
-    staffList = (staff || []).filter(s => s.Active === 'Yes' || s.Active === true);
-    partnerLabs = labs || [];
-    testMaster = tests || [];
-    usersList = users || [];
-    populateDropdowns();
-    renderCurrentTab();
-  } catch(e) {
-    document.getElementById('tabContent').innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><h3>Connection Error</h3><p>Check your Apps Script URL.</p></div>';
+    allRequests=Array.isArray(requests)?requests:[];
+    staffList=(Array.isArray(staff)?staff:[]).filter(s=>s.Active==='Yes'||s.Active===true);
+    partnerLabs=Array.isArray(labs)?labs:[];
+    testMaster=Array.isArray(tests)?tests:[];
+    usersList=Array.isArray(users)?users:[];
+    populateDropdowns();renderCurrentTab();
+  }catch(e){
+    document.getElementById('tabContent').innerHTML='<div class="empty"><div class="empty-icon">⚠️</div><h3>Connection Error</h3><p>Check your Apps Script URL.</p></div>';
   }
 }
 
 // ── DROPDOWNS ──
-function populateDropdowns() {
-  const pSel = document.getElementById('f-partner');
-  pSel.innerHTML = '<option value="">Select lab...</option>';
-  const sorted = [...partnerLabs].sort((a,b) => a.Country==='Cambodia'?-1:b.Country==='Cambodia'?1:0);
-  sorted.forEach(l => {
-    pSel.innerHTML += `<option value="${l.Lab_ID}" data-country="${l.Country}">${l.Partner_Name} — ${l.Country}</option>`;
-  });
-
-  const cSel = document.getElementById('f-createdby');
-  cSel.innerHTML = '<option value="">Select staff...</option>';
-  staffList.forEach(s => { cSel.innerHTML += `<option value="${s.Staff_ID}">${s.Staff_Name}</option>`; });
-
-  const rSel = document.getElementById('releasedBySelect');
-  rSel.innerHTML = '<option value="">Select staff...</option>';
-  staffList.forEach(s => { rSel.innerHTML += `<option value="${s.Staff_ID}">${s.Staff_Name}</option>`; });
-
-  const grid = document.getElementById('testGrid');
-  grid.innerHTML = '';
-  testMaster.forEach(t => {
-    grid.innerHTML += `
-      <div class="test-item" id="ti-${t.Test_ID}" onclick="toggleTest('${t.Test_ID}')">
-        <div class="test-left">
-          <input type="checkbox" id="chk-${t.Test_ID}" onclick="event.stopPropagation();toggleTest('${t.Test_ID}')">
-          <div><div class="test-name-lbl">${t.Test_Name}</div><div class="test-cat">${t.Category}</div></div>
-        </div>
-        <div class="test-tat-lbl">${t.TAT_Value} ${t.TAT_Unit}</div>
-      </div>`;
-  });
+function populateDropdowns(){
+  const ps=document.getElementById('f-partner');
+  ps.innerHTML='<option value="">Select lab...</option>';
+  [...partnerLabs].sort((a,b)=>a.Country==='Cambodia'?-1:b.Country==='Cambodia'?1:0)
+    .forEach(l=>{ps.innerHTML+=`<option value="${l.Lab_ID}" data-country="${l.Country}">${l.Partner_Name} — ${l.Country}</option>`;});
+  const cs=document.getElementById('f-createdby');
+  cs.innerHTML='<option value="">Select staff...</option>';
+  staffList.forEach(s=>{cs.innerHTML+=`<option value="${s.Staff_ID}">${s.Staff_Name}</option>`;});
+  const rs=document.getElementById('releasedBy');
+  rs.innerHTML='<option value="">Select staff...</option>';
+  staffList.forEach(s=>{rs.innerHTML+=`<option value="${s.Staff_ID}">${s.Staff_Name}</option>`;});
+}
+function updateCountry(){
+  const sel=document.getElementById('f-partner');
+  const opt=sel.options[sel.selectedIndex];
+  document.getElementById('f-country').value=opt?opt.dataset.country||'':'';
 }
 
-function toggleTest(id) {
-  const chk = document.getElementById('chk-'+id);
-  const item = document.getElementById('ti-'+id);
-  chk.checked = !chk.checked;
-  item.classList.toggle('selected', chk.checked);
+// ── TEST SEARCH ──
+function openTestDD(){filterTests();document.getElementById('testDD').classList.add('open');}
+function filterTests(){
+  const q=document.getElementById('testSearch').value.toLowerCase();
+  const dd=document.getElementById('testDD');
+  const filtered=testMaster.filter(t=>t.Test_Name.toLowerCase().includes(q));
+  if(!filtered.length){dd.innerHTML='<div class="no-tr">No tests found</div>';dd.classList.add('open');return;}
+  dd.innerHTML=filtered.map(t=>`
+    <div class="test-drop-item ${selectedTests[t.Test_ID]?'sel':''}" onclick="selectTest('${t.Test_ID}')">
+      <div><div class="tn">${selectedTests[t.Test_ID]?'✓ ':''} ${t.Test_Name}</div><div class="tc">${t.Category}</div></div>
+      <div class="tt">${t.TAT_Value} ${t.TAT_Unit}</div>
+    </div>`).join('');
+  dd.classList.add('open');
 }
-
-function updateCountry() {
-  const sel = document.getElementById('f-partner');
-  const opt = sel.options[sel.selectedIndex];
-  document.getElementById('f-country').value = opt ? (opt.dataset.country||'') : '';
+function selectTest(id){
+  const t=testMaster.find(x=>x.Test_ID==id);if(!t)return;
+  if(selectedTests[id])delete selectedTests[id];else selectedTests[id]=t;
+  renderTags();filterTests();
 }
+function removeTest(id){delete selectedTests[id];renderTags();filterTests();}
+function renderTags(){
+  const el=document.getElementById('selectedTags');
+  const keys=Object.keys(selectedTests);
+  if(!keys.length){el.innerHTML='<span style="color:var(--muted);font-size:13px;">No tests selected yet — search and click above</span>';return;}
+  el.innerHTML=keys.map(id=>{
+    const t=selectedTests[id];
+    return`<div class="stag">${t.Test_Name} <span style="font-size:11px;opacity:.7;">${t.TAT_Value}${t.TAT_Unit[0]}</span><button onclick="removeTest('${id}')">×</button></div>`;
+  }).join('');
+}
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.test-search-wrap')&&!e.target.closest('.test-dropdown'))
+    document.getElementById('testDD')?.classList.remove('open');
+});
 
 // ── TAT ──
-function calcDue(requestDateTime, tatValue, tatUnit) {
-  const dt = new Date(requestDateTime);
-  const v = parseFloat(tatValue);
-  if (tatUnit==='Hours') dt.setTime(dt.getTime()+v*3600000);
-  else dt.setDate(dt.getDate()+v);
-  return dt;
+function calcDue(dt,val,unit){
+  const d=new Date(dt);const v=parseFloat(val);
+  if(unit==='Hours')d.setTime(d.getTime()+v*3600000);else d.setDate(d.getDate()+v);return d;
 }
-
-function getTATStatus(r) {
-  if (r.Status==='Completed') return 'completed';
-  const due = calcDue(r.Request_DateTime, r.TAT_Value, r.TAT_Unit);
-  const now = new Date();
-  if (now>due) return 'over-tat';
-  const diffDays = (due-now)/(1000*60*60*24);
-  if (diffDays<=2) return 'approaching';
-  return 'on-track';
+function getTATStatus(r){
+  if(r.Status==='Completed')return'completed';
+  const due=calcDue(r.Request_DateTime,r.TAT_Value,r.TAT_Unit);const now=new Date();
+  if(now>due)return'over-tat';
+  if((due-now)/(864e5)<=2)return'approaching';
+  return'on-track';
 }
-
-function fmtDT(dt) {
-  if (!dt) return '-';
-  const d = new Date(dt);
-  if (isNaN(d)) return dt;
+function fmtDT(dt){
+  if(!dt)return'-';const d=new Date(dt);if(isNaN(d))return String(dt);
   return d.toLocaleDateString('en-GB')+' '+d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:true});
 }
-
-function fmtRemaining(r) {
-  if (r.Status==='Completed') return 'Completed';
-  const due = calcDue(r.Request_DateTime, r.TAT_Value, r.TAT_Unit);
-  const diff = due - new Date();
-  if (diff<0) {
-    const h = Math.abs(Math.floor(diff/3600000));
-    const d = Math.floor(h/24);
-    return d>0 ? `Overdue ${d}d ${h%24}h` : `Overdue ${h}h`;
-  }
-  const h = Math.floor(diff/3600000);
-  const d = Math.floor(h/24);
-  return d>0 ? `${d}d ${h%24}h left` : `${h}h left`;
+function fmtRem(r){
+  if(r.Status==='Completed')return'Completed';
+  const diff=calcDue(r.Request_DateTime,r.TAT_Value,r.TAT_Unit)-new Date();
+  if(diff<0){const h=Math.abs(Math.floor(diff/36e5));const d=Math.floor(h/24);return d>0?`Overdue ${d}d ${h%24}h`:`Overdue ${h}h`;}
+  const h=Math.floor(diff/36e5);const d=Math.floor(h/24);return d>0?`${d}d ${h%24}h left`:`${h}h left`;
 }
-
-function getStaffName(id) { const s=staffList.find(x=>x.Staff_ID==id); return s?s.Staff_Name:id||'-'; }
-function getLabName(id) { const l=partnerLabs.find(x=>x.Lab_ID==id); return l?l.Partner_Name:id||'-'; }
+function staffName(id){const s=staffList.find(x=>x.Staff_ID==id);return s?s.Staff_Name:id||'-';}
+function labName(id){const l=partnerLabs.find(x=>x.Lab_ID==id);return l?l.Partner_Name:id||'-';}
 
 // ── TABS ──
-function switchTab(tab) {
-  currentTab = tab;
+function switchTab(tab){
+  currentTab=tab;
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('tab-'+tab).classList.add('active');
   renderCurrentTab();
 }
-
-function renderCurrentTab() {
+function renderCurrentTab(){
   updateBadges();
-  const q = document.getElementById('searchInput').value.toLowerCase();
-  let data = allRequests.filter(r => !q ||
-    (r.Request_ID||'').toLowerCase().includes(q) ||
-    (r.Patient_Name||'').toLowerCase().includes(q) ||
-    getLabName(r.Partner).toLowerCase().includes(q)
+  const q=document.getElementById('searchInput').value.toLowerCase();
+  let data=allRequests.filter(r=>!q||
+    (r.Request_ID||'').toLowerCase().includes(q)||
+    (r.Patient_Name||'').toLowerCase().includes(q)||
+    labName(r.Partner).toLowerCase().includes(q)
   );
-  if (currentTab==='overtat') renderOverTAT(data);
-  else if (currentTab==='pending') renderPending(data);
+  if(currentTab==='overtat')renderOverTAT(data);
+  else if(currentTab==='pending')renderPending(data);
   else renderCompleted(data);
 }
-
-function updateBadges() {
-  document.getElementById('badge-overtat').textContent = allRequests.filter(r=>getTATStatus(r)==='over-tat').length;
-  document.getElementById('badge-pending').textContent = allRequests.filter(r=>r.Status==='Pending').length;
-  document.getElementById('badge-completed').textContent = allRequests.filter(r=>r.Status==='Completed').length;
+function updateBadges(){
+  document.getElementById('badge-overtat').textContent=allRequests.filter(r=>getTATStatus(r)==='over-tat').length;
+  document.getElementById('badge-pending').textContent=allRequests.filter(r=>r.Status==='Pending').length;
+  document.getElementById('badge-completed').textContent=allRequests.filter(r=>r.Status==='Completed').length;
 }
-
-function renderOverTAT(data) {
-  const rows = data.filter(r=>getTATStatus(r)==='over-tat').sort((a,b)=>new Date(a.Request_DateTime)-new Date(b.Request_DateTime));
-  const el = document.getElementById('tabContent');
-  if (!rows.length) { el.innerHTML='<div class="empty"><div class="empty-icon">✅</div><h3>No overdue requests</h3><p>All tests are within TAT.</p></div>'; return; }
-  el.innerHTML = rows.map(r=>card(r,'over-tat')).join('');
+function renderOverTAT(data){
+  const rows=data.filter(r=>getTATStatus(r)==='over-tat').sort((a,b)=>new Date(a.Request_DateTime)-new Date(b.Request_DateTime));
+  const el=document.getElementById('tabContent');
+  if(!rows.length){el.innerHTML='<div class="empty"><div class="empty-icon">✅</div><h3>No overdue requests</h3><p>All tests are within TAT.</p></div>';return;}
+  el.innerHTML=rows.map(r=>makeCard(r,'over-tat')).join('');
 }
-
-function renderPending(data) {
-  const rows = data.filter(r=>r.Status==='Pending');
-  const cambodia = rows.filter(r=>{ const l=partnerLabs.find(x=>x.Lab_ID==r.Partner); return l&&l.Country==='Cambodia'; }).sort((a,b)=>new Date(a.Request_DateTime)-new Date(b.Request_DateTime));
-  const others = rows.filter(r=>{ const l=partnerLabs.find(x=>x.Lab_ID==r.Partner); return !l||l.Country!=='Cambodia'; }).sort((a,b)=>new Date(a.Request_DateTime)-new Date(b.Request_DateTime));
-  const el = document.getElementById('tabContent');
-  if (!rows.length) { el.innerHTML='<div class="empty"><div class="empty-icon">🎉</div><h3>No pending requests</h3></div>'; return; }
+function renderPending(data){
+  const rows=data.filter(r=>r.Status==='Pending');
+  const cambodia=rows.filter(r=>{const l=partnerLabs.find(x=>x.Lab_ID==r.Partner);return l&&l.Country==='Cambodia';}).sort((a,b)=>new Date(a.Request_DateTime)-new Date(b.Request_DateTime));
+  const others=rows.filter(r=>{const l=partnerLabs.find(x=>x.Lab_ID==r.Partner);return!l||l.Country!=='Cambodia';}).sort((a,b)=>new Date(a.Request_DateTime)-new Date(b.Request_DateTime));
+  const el=document.getElementById('tabContent');
+  if(!rows.length){el.innerHTML='<div class="empty"><div class="empty-icon">🎉</div><h3>No pending requests</h3></div>';return;}
   let html='';
-  if (cambodia.length) html+='<div class="group-header">🇰🇭 Cambodia</div>'+cambodia.map(r=>card(r,getTATStatus(r))).join('');
-  if (others.length) html+='<div class="group-header">🌏 Overseas</div>'+others.map(r=>card(r,getTATStatus(r))).join('');
+  if(cambodia.length)html+='<div class="group-header">🇰🇭 Cambodia</div>'+cambodia.map(r=>makeCard(r,getTATStatus(r))).join('');
+  if(others.length)html+='<div class="group-header">🌏 Overseas</div>'+others.map(r=>makeCard(r,getTATStatus(r))).join('');
   el.innerHTML=html;
 }
-
-function renderCompleted(data) {
-  const rows = data.filter(r=>r.Status==='Completed').sort((a,b)=>new Date(b.Released_DateTime)-new Date(a.Released_DateTime));
-  const el = document.getElementById('tabContent');
-  if (!rows.length) { el.innerHTML='<div class="empty"><div class="empty-icon">📋</div><h3>No completed requests</h3></div>'; return; }
-  el.innerHTML=rows.map(r=>card(r,'completed')).join('');
+function renderCompleted(data){
+  const rows=data.filter(r=>r.Status==='Completed').sort((a,b)=>new Date(b.Released_DateTime)-new Date(a.Released_DateTime));
+  const el=document.getElementById('tabContent');
+  if(!rows.length){el.innerHTML='<div class="empty"><div class="empty-icon">📋</div><h3>No completed requests</h3></div>';return;}
+  el.innerHTML=rows.map(r=>makeCard(r,'completed')).join('');
 }
 
-function card(r, status) {
-  const labels = {'over-tat':'OVER TAT','approaching':'APPROACHING','on-track':'ON TRACK','completed':'COMPLETED'};
-  const badgeCls = {'over-tat':'badge-over','approaching':'badge-approach','on-track':'badge-ontrack','completed':'badge-done'};
-  const valCls = {'over-tat':'red','approaching':'orange','on-track':'green','completed':''};
-  const due = calcDue(r.Request_DateTime, r.TAT_Value, r.TAT_Unit);
-  let actions = '';
-  if (r.Status==='Pending') actions=`<div class="card-actions"><button class="btn-complete" onclick="event.stopPropagation();openComplete('${r.Row_ID}')">✔ Mark as Completed</button></div>`;
-  else if (r.Status==='Completed') actions=`<div class="card-actions"><button class="btn-reopen" onclick="event.stopPropagation();reopenRequest('${r.Row_ID}')">↩ Reopen</button></div>`;
-  return `<div class="request-card ${status}">
+function makeCard(r,status){
+  const lbl={'over-tat':'OVER TAT','approaching':'APPROACHING','on-track':'ON TRACK','completed':'COMPLETED'};
+  const bcls={'over-tat':'over','approaching':'approach','on-track':'ontrack','completed':'done'};
+  const vcls={'over-tat':'red','approaching':'orange','on-track':'green','completed':''};
+  const due=calcDue(r.Request_DateTime,r.TAT_Value,r.TAT_Unit);
+  let actions='';
+  if(r.Status==='Pending')actions=`<div class="card-actions"><button class="btn-complete" onclick="openComplete('${r.Row_ID}')">✔ Mark as Completed</button></div>`;
+  else if(r.Status==='Completed')actions=`<div class="card-actions"><button class="btn-reopen" onclick="reopenRequest('${r.Row_ID}')">↩ Reopen</button></div>`;
+  return`<div class="request-card ${status}">
     <div class="card-top">
       <div><div class="card-id">${r.Request_ID}</div><div class="card-patient">${r.Patient_Name}</div></div>
-      <span class="status-badge ${badgeCls[status]}">${labels[status]}</span>
+      <div class="card-top-right">
+        <span class="sbadge ${bcls[status]}">${lbl[status]}</span>
+        <button class="btn-edit-card" onclick="openEdit('${r.Row_ID}')">✏️ Edit</button>
+      </div>
     </div>
     <div class="card-info">
-      <div class="ci"><span class="ci-label">Test</span><span class="ci-value">${r.Test_Name||'-'}</span></div>
-      <div class="ci"><span class="ci-label">Partner Lab</span><span class="ci-value blue">${getLabName(r.Partner)}</span></div>
-      <div class="ci"><span class="ci-label">Country</span><span class="ci-value blue">${r.Country||'-'}</span></div>
-      <div class="ci"><span class="ci-label">TAT</span><span class="ci-value">${r.TAT_Value} ${r.TAT_Unit}</span></div>
-      <div class="ci"><span class="ci-label">Due</span><span class="ci-value">${fmtDT(due)}</span></div>
-      <div class="ci"><span class="ci-label">Remaining</span><span class="ci-value ${valCls[status]}">${fmtRemaining(r)}</span></div>
-      <div class="ci"><span class="ci-label">Created By</span><span class="ci-value">${getStaffName(r.Created_By)}</span></div>
-      <div class="ci"><span class="ci-label">Request Date</span><span class="ci-value">${fmtDT(r.Request_DateTime)}</span></div>
-      ${r.Specimen?`<div class="ci"><span class="ci-label">Specimen</span><span class="ci-value">${r.Specimen}</span></div>`:''}
-      ${r.Remark?`<div class="ci"><span class="ci-label">Remark</span><span class="ci-value">${r.Remark}</span></div>`:''}
-      ${r.Status==='Completed'?`<div class="ci"><span class="ci-label">Released By</span><span class="ci-value">${getStaffName(r.Released_By)}</span></div><div class="ci"><span class="ci-label">Released At</span><span class="ci-value">${fmtDT(r.Released_DateTime)}</span></div>`:''}
+      <div class="ci"><span class="ci-lbl">Test</span><span class="ci-val">${r.Test_Name||'-'}</span></div>
+      <div class="ci"><span class="ci-lbl">Partner Lab</span><span class="ci-val blue">${labName(r.Partner)}</span></div>
+      <div class="ci"><span class="ci-lbl">Country</span><span class="ci-val blue">${r.Country||'-'}</span></div>
+      <div class="ci"><span class="ci-lbl">TAT</span><span class="ci-val">${r.TAT_Value} ${r.TAT_Unit}</span></div>
+      <div class="ci"><span class="ci-lbl">Due</span><span class="ci-val">${fmtDT(due)}</span></div>
+      <div class="ci"><span class="ci-lbl">Remaining</span><span class="ci-val ${vcls[status]}">${fmtRem(r)}</span></div>
+      <div class="ci"><span class="ci-lbl">Created By</span><span class="ci-val">${staffName(r.Created_By)}</span></div>
+      <div class="ci"><span class="ci-lbl">Request Date</span><span class="ci-val">${fmtDT(r.Request_DateTime)}</span></div>
+      ${r.Specimen?`<div class="ci"><span class="ci-lbl">Specimen</span><span class="ci-val">${r.Specimen}</span></div>`:''}
+      ${r.Remark?`<div class="ci"><span class="ci-lbl">Remark</span><span class="ci-val">${r.Remark}</span></div>`:''}
+      ${r.Status==='Completed'?`
+      <div class="ci"><span class="ci-lbl">Released By</span><span class="ci-val">${staffName(r.Released_By)}</span></div>
+      <div class="ci"><span class="ci-lbl">Released At</span><span class="ci-val">${fmtDT(r.Released_DateTime)}</span></div>`:''}
     </div>
     ${actions}
   </div>`;
 }
 
 // ── NEW REQUEST ──
-function openNewRequest() {
-  ['f-requestId','f-patient','f-institution','f-specimen','f-remark'].forEach(id=>document.getElementById(id).value='');
+function openNewRequest(){
+  editingRowId=null;
+  document.getElementById('reqModalTitle').textContent='New Request';
+  document.getElementById('reqSaveBtn').textContent='Save Request';
+  ['f-rid','f-patient','f-inst','f-specimen','f-remark'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('f-rid').readOnly=false;
   document.getElementById('f-partner').value='';
   document.getElementById('f-country').value='';
   document.getElementById('f-createdby').value='';
-  document.getElementById('f-datetime').value=fmtDT(new Date());
-  testMaster.forEach(t=>{ const c=document.getElementById('chk-'+t.Test_ID); if(c){c.checked=false;} document.getElementById('ti-'+t.Test_ID)?.classList.remove('selected'); });
-  document.getElementById('newRequestModal').classList.add('open');
+  document.getElementById('f-dt').value=fmtDT(new Date());
+  selectedTests={};
+  document.getElementById('testSearch').value='';
+  document.getElementById('testDD').innerHTML='';
+  document.getElementById('testDD').classList.remove('open');
+  document.getElementById('testSection').style.display='';
+  document.getElementById('editTestNote').style.display='none';
+  renderTags();
+  document.getElementById('reqModal').classList.add('open');
 }
 
-async function saveRequest() {
-  const rid = document.getElementById('f-requestId').value.trim();
-  const patient = document.getElementById('f-patient').value.trim();
-  const partner = document.getElementById('f-partner').value;
-  const createdBy = document.getElementById('f-createdby').value;
-  if (!rid||!patient||!partner||!createdBy) { alert('Please fill all required fields'); return; }
-  if (!/^BTD-\d{6}$/.test(rid)) { alert('Request ID format must be BTD-000001'); return; }
-  const selected = testMaster.filter(t=>{ const c=document.getElementById('chk-'+t.Test_ID); return c&&c.checked; });
-  if (!selected.length) { alert('Please select at least one test'); return; }
-  const institution = document.getElementById('f-institution').value.trim();
-  const country = document.getElementById('f-country').value;
-  const specimen = document.getElementById('f-specimen').value.trim();
-  const remark = document.getElementById('f-remark').value.trim();
-  try {
-    for (const t of selected) {
-      await api({ action:'addRequest', Request_ID:rid, Patient_Name:patient, Physician_Institution:institution, Partner:partner, Country:country, Created_By:createdBy, Test_ID:t.Test_ID, Test_Name:t.Test_Name, TAT_Value:t.TAT_Value, TAT_Unit:t.TAT_Unit, Category:t.Category, Specimen:specimen, Remark:remark });
+// ── EDIT REQUEST ──
+function openEdit(rowId){
+  const r=allRequests.find(x=>x.Row_ID==rowId);if(!r)return;
+  editingRowId=rowId;
+  document.getElementById('reqModalTitle').textContent='Edit Request';
+  document.getElementById('reqSaveBtn').textContent='Update Request';
+  document.getElementById('f-rid').value=r.Request_ID;
+  document.getElementById('f-rid').readOnly=true;
+  document.getElementById('f-dt').value=fmtDT(r.Request_DateTime);
+  document.getElementById('f-patient').value=r.Patient_Name||'';
+  document.getElementById('f-inst').value=r.Physician_Institution||'';
+  document.getElementById('f-specimen').value=r.Specimen||'';
+  document.getElementById('f-remark').value=r.Remark||'';
+  document.getElementById('f-partner').value=r.Partner||'';
+  updateCountry();
+  document.getElementById('f-createdby').value=r.Created_By||'';
+  // Hide test section on edit
+  document.getElementById('testSection').style.display='none';
+  document.getElementById('editTestNote').style.display='';
+  document.getElementById('editTestNote').innerHTML=`📌 <strong>Test:</strong> ${r.Test_Name||'-'} &nbsp;|&nbsp; <strong>TAT:</strong> ${r.TAT_Value} ${r.TAT_Unit}<br><span style="font-size:12px;">Test cannot be changed on edit. Create a new request to add different tests.</span>`;
+  document.getElementById('reqModal').classList.add('open');
+}
+
+// ── SAVE REQUEST (with duplicate prevention) ──
+async function saveRequest(){
+  if(isSaving)return; // block if already saving
+  const btn=document.getElementById('reqSaveBtn');
+  const rid=document.getElementById('f-rid').value.trim();
+  const patient=document.getElementById('f-patient').value.trim();
+  const partner=document.getElementById('f-partner').value;
+  const createdBy=document.getElementById('f-createdby').value;
+  if(!rid||!patient||!partner||!createdBy){alert('Please fill all required fields (Request ID, Patient Name, Partner Lab, Created By)');return;}
+  const institution=document.getElementById('f-inst').value.trim();
+  const country=document.getElementById('f-country').value;
+  const specimen=document.getElementById('f-specimen').value.trim();
+  const remark=document.getElementById('f-remark').value.trim();
+
+  if(editingRowId){
+    // UPDATE
+    isSaving=true;setBtn(btn,'Updating...',true);
+    try{
+      const res=await api({action:'editRequest',Row_ID:editingRowId,Patient_Name:patient,Physician_Institution:institution,Partner:partner,Country:country,Created_By:createdBy,Specimen:specimen,Remark:remark});
+      if(res.error){alert('Error: '+res.error);return;}
+      closeModal('reqModal');showToast('✅ Request updated');
+      await loadAllData();
+    }catch(e){alert('Error updating. Please try again.');}
+    finally{isSaving=false;setBtn(btn,'Update Request',false);}
+    return;
+  }
+
+  // NEW
+  if(!/^BTD-\d{6}$/.test(rid)){alert('Request ID must be in format BTD-000001');return;}
+  const selected=Object.values(selectedTests);
+  if(!selected.length){alert('Please select at least one test');return;}
+
+  isSaving=true;setBtn(btn,`Saving ${selected.length} test(s)...`,true);
+  try{
+    for(const t of selected){
+      await api({action:'addRequest',Request_ID:rid,Patient_Name:patient,Physician_Institution:institution,Partner:partner,Country:country,Created_By:createdBy,Test_ID:t.Test_ID,Test_Name:t.Test_Name,TAT_Value:t.TAT_Value,TAT_Unit:t.TAT_Unit,Category:t.Category,Specimen:specimen,Remark:remark});
     }
-    closeModal('newRequestModal');
-    showToast(`✅ Request saved with ${selected.length} test(s)`);
+    closeModal('reqModal');showToast(`✅ Saved with ${selected.length} test(s)`);
     await loadAllData();
-  } catch(e) { alert('Error saving. Please try again.'); }
+  }catch(e){alert('Error saving. Please try again.');}
+  finally{isSaving=false;setBtn(btn,'Save Request',false);}
 }
 
 // ── COMPLETE ──
-function openComplete(rowId) { completingRowId=rowId; document.getElementById('releasedBySelect').value=''; document.getElementById('completeModal').classList.add('open'); }
-async function confirmComplete() {
-  const rb = document.getElementById('releasedBySelect').value;
-  if (!rb) { alert('Please select who is releasing'); return; }
-  try { await api({action:'updateRequest',Row_ID:completingRowId,Status:'Completed',Released_By:rb}); closeModal('completeModal'); showToast('✅ Marked as Completed'); await loadAllData(); }
-  catch(e) { alert('Error updating'); }
+function openComplete(rowId){
+  completingRowId=rowId;
+  document.getElementById('releasedBy').value='';
+  document.getElementById('completeModal').classList.add('open');
 }
-
-async function reopenRequest(rowId) {
-  if (!confirm('Reopen this request?')) return;
-  try { await api({action:'updateRequest',Row_ID:rowId,Status:'Pending',Released_By:''}); showToast('↩ Request reopened'); await loadAllData(); }
-  catch(e) { alert('Error reopening'); }
+async function confirmComplete(){
+  const btn=document.getElementById('confirmCompleteBtn');
+  if(btn.disabled)return;
+  const rb=document.getElementById('releasedBy').value;
+  if(!rb){alert('Please select who is releasing');return;}
+  setBtn(btn,'Saving...',true);
+  try{
+    await api({action:'updateRequest',Row_ID:completingRowId,Status:'Completed',Released_By:rb});
+    closeModal('completeModal');showToast('✅ Marked as Completed');await loadAllData();
+  }catch(e){alert('Error updating.');}
+  finally{setBtn(btn,'Confirm',false);}
+}
+async function reopenRequest(rowId){
+  if(!confirm('Reopen this request?'))return;
+  try{await api({action:'updateRequest',Row_ID:rowId,Status:'Pending',Released_By:''});showToast('↩ Request reopened');await loadAllData();}
+  catch(e){alert('Error reopening.');}
 }
 
 // ── CHANGE PASSWORD ──
-function openChangePassword() { ['pw-old','pw-new','pw-confirm'].forEach(id=>document.getElementById(id).value=''); document.getElementById('pwError').style.display='none'; document.getElementById('changePwModal').classList.add('open'); }
-async function doChangePassword() {
-  const old = document.getElementById('pw-old').value;
-  const nw = document.getElementById('pw-new').value;
-  const conf = document.getElementById('pw-confirm').value;
-  if (!old||!nw||!conf) { showPwError('Please fill all fields'); return; }
-  if (nw!==conf) { showPwError('New passwords do not match'); return; }
-  if (nw.length<4) { showPwError('Password must be at least 4 characters'); return; }
-  try {
-    const res = await api({action:'changePassword', User_ID:currentUser.User_ID, OldPassword:old, NewPassword:nw});
-    if (res.error) { showPwError(res.error); return; }
-    closeModal('changePwModal');
-    showToast('🔑 Password updated successfully');
-    currentUser.Password = nw;
-    localStorage.setItem('labUser', JSON.stringify(currentUser));
-  } catch(e) { showPwError('Error updating password'); }
+function openChangePassword(){
+  ['pw-old','pw-new','pw-confirm'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('pwError').style.display='none';
+  document.getElementById('pwModal').classList.add('open');
 }
-function showPwError(msg) { const el=document.getElementById('pwError'); el.textContent=msg; el.style.display='block'; }
-
-// ── USER MANAGEMENT (Admin only) ──
-function openUserMgmt() {
-  renderUserList();
-  document.getElementById('userMgmtModal').classList.add('open');
+async function doChangePw(){
+  const btn=document.getElementById('changePwBtn');if(btn.disabled)return;
+  const old=document.getElementById('pw-old').value;
+  const nw=document.getElementById('pw-new').value;
+  const conf=document.getElementById('pw-confirm').value;
+  if(!old||!nw||!conf){showErr('pwError','Please fill all fields');return;}
+  if(nw!==conf){showErr('pwError','New passwords do not match');return;}
+  if(nw.length<4){showErr('pwError','Password must be at least 4 characters');return;}
+  setBtn(btn,'Updating...',true);
+  try{
+    const res=await api({action:'changePassword',User_ID:currentUser.User_ID,OldPassword:old,NewPassword:nw});
+    if(res.error){showErr('pwError',res.error);return;}
+    closeModal('pwModal');showToast('🔑 Password updated');
+    currentUser.Password=nw;localStorage.setItem('labUser',JSON.stringify(currentUser));
+  }catch(e){showErr('pwError','Error updating password.');}
+  finally{setBtn(btn,'Update Password',false);}
 }
 
-function renderUserList() {
-  const el = document.getElementById('userList');
-  if (!usersList.length) { el.innerHTML='<div class="empty"><h3>No users found</h3></div>'; return; }
-  el.innerHTML = `<table class="user-table">
+// ── USER MANAGEMENT ──
+function openUserMgmt(){renderUserList();document.getElementById('userModal').classList.add('open');}
+function renderUserList(){
+  const el=document.getElementById('userList');
+  if(!usersList.length){el.innerHTML='<div class="empty"><h3>No users found</h3></div>';return;}
+  el.innerHTML=`<table class="user-table">
     <thead><tr><th>#</th><th>Username</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead>
-    <tbody>
-      ${usersList.map(u=>`<tr>
-        <td>${u.User_ID}</td>
-        <td><strong>${u.Username}</strong></td>
-        <td><span class="role-badge ${u.Role==='Admin'?'role-admin':'role-staff'}">${u.Role}</span></td>
-        <td><span style="color:${u.Active==='Yes'?'var(--green)':'var(--red)'};">${u.Active==='Yes'?'Active':'Inactive'}</span></td>
-        <td>
-          ${u.Username!==currentUser.Username?`<button class="btn-sm btn-danger" onclick="deleteUser('${u.User_ID}','${u.Username}')">Delete</button>`:'<span style="color:var(--text-secondary);font-size:12px;">You</span>'}
-        </td>
-      </tr>`).join('')}
-    </tbody>
+    <tbody>${usersList.map(u=>`<tr>
+      <td>${u.User_ID}</td><td><strong>${u.Username}</strong></td>
+      <td><span class="rbadge ${u.Role==='Admin'?'admin':'staff'}">${u.Role}</span></td>
+      <td><span style="color:${u.Active==='Yes'?'var(--green)':'var(--red)'};">${u.Active==='Yes'?'Active':'Inactive'}</span></td>
+      <td>${u.Username!==currentUser.Username?`<button class="btn-sm btn-danger" onclick="deleteUser('${u.User_ID}','${u.Username}')">Delete</button>`:'<span style="color:var(--muted);font-size:12px;">You</span>'}</td>
+    </tr>`).join('')}</tbody>
   </table>`;
 }
-
-function openAddUser() { ['nu-username','nu-password'].forEach(id=>document.getElementById(id).value=''); document.getElementById('nu-role').value='Staff'; document.getElementById('addUserError').style.display='none'; document.getElementById('addUserModal').classList.add('open'); }
-
-async function doAddUser() {
-  const username = document.getElementById('nu-username').value.trim();
-  const password = document.getElementById('nu-password').value;
-  const role = document.getElementById('nu-role').value;
-  if (!username||!password) { showAddUserError('Please fill all fields'); return; }
-  if (password.length<4) { showAddUserError('Password must be at least 4 characters'); return; }
-  try {
-    const res = await api({action:'addUser', Username:username, Password:password, Role:role});
-    if (res.error) { showAddUserError(res.error); return; }
-    closeModal('addUserModal');
-    showToast('✅ User added successfully');
-    const users = await api({action:'getUsers'});
-    usersList = users||[];
-    renderUserList();
-  } catch(e) { showAddUserError('Error adding user'); }
+function openAddUser(){
+  ['nu-user','nu-pass'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('nu-role').value='Staff';
+  document.getElementById('addUserErr').style.display='none';
+  document.getElementById('addUserModal').classList.add('open');
 }
-
-function showAddUserError(msg) { const el=document.getElementById('addUserError'); el.textContent=msg; el.style.display='block'; }
-
-async function deleteUser(userId, username) {
-  if (!confirm(`Delete user "${username}"? This cannot be undone.`)) return;
-  try {
-    await api({action:'deleteUser', User_ID:userId});
-    showToast('🗑️ User deleted');
-    const users = await api({action:'getUsers'});
-    usersList = users||[];
-    renderUserList();
-  } catch(e) { alert('Error deleting user'); }
+async function doAddUser(){
+  const btn=document.getElementById('addUserBtn');if(btn.disabled)return;
+  const username=document.getElementById('nu-user').value.trim();
+  const password=document.getElementById('nu-pass').value;
+  const role=document.getElementById('nu-role').value;
+  if(!username||!password){showErr('addUserErr','Please fill all fields');return;}
+  if(password.length<4){showErr('addUserErr','Password must be at least 4 characters');return;}
+  setBtn(btn,'Adding...',true);
+  try{
+    const res=await api({action:'addUser',Username:username,Password:password,Role:role});
+    if(res.error){showErr('addUserErr',res.error);return;}
+    closeModal('addUserModal');showToast('✅ User added');
+    const users=await api({action:'getUsers'});usersList=Array.isArray(users)?users:[];renderUserList();
+  }catch(e){showErr('addUserErr','Error adding user.');}
+  finally{setBtn(btn,'Add User',false);}
+}
+async function deleteUser(id,username){
+  if(!confirm(`Delete user "${username}"? This cannot be undone.`))return;
+  try{
+    await api({action:'deleteUser',User_ID:id});showToast('🗑️ User deleted');
+    const users=await api({action:'getUsers'});usersList=Array.isArray(users)?users:[];renderUserList();
+  }catch(e){alert('Error deleting user.');}
 }
 
 // ── UTILS ──
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-function showToast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); }
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+function showErr(id,msg){const el=document.getElementById(id);el.textContent=msg;el.style.display='block';}
+function setBtn(btn,text,disabled){btn.disabled=disabled;btn.innerHTML=disabled?`<span class="spinner"></span>${text}`:text;}
+function show(id){document.getElementById(id).style.display='block';}
+function hide(id){document.getElementById(id).style.display='none';}
 </script>
 </body>
 </html>
