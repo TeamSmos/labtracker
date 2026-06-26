@@ -334,6 +334,7 @@ async function doLogin(){
   }catch(e){showErr('loginErr','Connection error. Please try again.');setBtn(btn,'Sign In',false);}
 }
 function doLogout(){
+  if(!confirm('Are you sure you want to sign out?'))return;
   currentUser=null;localStorage.removeItem('labUser');showLogin();
 }
 
@@ -416,7 +417,14 @@ function frem(r){
   const h=Math.floor(diff/36e5);const d=Math.floor(h/24);return d>0?`${d}d ${h%24}h left`:`${h}h left`;
 }
 function sname(id){const s=staffList.find(x=>x.Staff_ID==id);return s?s.Staff_Name:id||'-';}
-function lname(id){const l=partnerLabs.find(x=>x.Lab_ID==id);return l?l.Partner_Name:id||'-';}
+function lname(id){
+  if(!id)return'-';
+  // Try match by Lab_ID first
+  let l=partnerLabs.find(x=>String(x.Lab_ID)===String(id));
+  // If not found try match by Partner_Name
+  if(!l)l=partnerLabs.find(x=>String(x.Partner_Name).toLowerCase()===String(id).toLowerCase());
+  return l?l.Partner_Name:id;
+}
 
 // TABS
 function switchTab(t){
@@ -584,7 +592,10 @@ async function saveRequest(){
   const btn=document.getElementById('reqSaveBtn');
   const rid=document.getElementById('f-rid').value.trim();
   const patient=document.getElementById('f-patient').value.trim();
-  const partner=document.getElementById('f-partner').value;
+  const partnerSel=document.getElementById('f-partner');
+  const partner=partnerSel.value;
+  const partnerOpt=partnerSel.options[partnerSel.selectedIndex];
+  const partnerName=partnerOpt?partnerOpt.text.split(' — ')[0].trim():'';
   const createdBy=document.getElementById('f-createdby').value;
   if(!rid||!patient||!partner||!createdBy){alert('Please fill all required fields:\n• Request ID\n• Patient Name\n• Partner Laboratory\n• Created By');return;}
   if(!/^BTD-\d{6}$/.test(rid)){alert('Request ID must be in format BTD-000001');return;}
@@ -596,15 +607,15 @@ async function saveRequest(){
   const remark=document.getElementById('f-remark').value.trim();
 
   if(editingRowId){
-    // UPDATE existing row — updates all fields including Request_ID and Test
     isSaving=true;setBtn(btn,'Updating...',true);
-    const t=selected[0]; // use first selected test for edit
+    const t=selected[0];
     try{
       const res=await api({
         action:'editRequest',Row_ID:editingRowId,
         Request_ID:rid,
         Patient_Name:patient,Physician_Institution:inst,
-        Partner:partner,Country:country,Created_By:createdBy,
+        Partner:partner,Partner_Name:partnerName,
+        Country:country,Created_By:createdBy,
         Test_ID:t.Test_ID,Test_Name:t.Test_Name,
         TAT_Value:t.TAT_Value,TAT_Unit:t.TAT_Unit,
         Category:t.Category||'',
@@ -618,16 +629,17 @@ async function saveRequest(){
     return;
   }
 
-  // NEW — save all selected tests in parallel
+  // NEW
   isSaving=true;
-  setBtn(btn,`Saving...`,true);
+  setBtn(btn,'Saving...',true);
   closeM('reqModal');
   showToast(`⏳ Saving ${selected.length} test(s)...`);
   try{
     await Promise.all(selected.map(t=>api({
       action:'addRequest',
       Request_ID:rid,Patient_Name:patient,
-      Physician_Institution:inst,Partner:partner,
+      Physician_Institution:inst,
+      Partner:partner,Partner_Name:partnerName,
       Country:country,Created_By:createdBy,
       Test_ID:t.Test_ID,Test_Name:t.Test_Name,
       TAT_Value:t.TAT_Value,TAT_Unit:t.TAT_Unit,
