@@ -447,7 +447,7 @@ function renderOverTAT(data){
 function renderPending(data){
   const rows=data.filter(r=>r.Status==='Pending');
   const cam=rows.filter(r=>{const l=partnerLabs.find(x=>x.Lab_ID==r.Partner);return l&&l.Country==='Cambodia';}).sort((a,b)=>new Date(a.Request_DateTime)-new Date(b.Request_DateTime));
-  const oth=rows.filter(r=>{const l=partnerLabs.find(x=>x.Lab_ID==r.Partner);return!l||l.Country!=='Cambodia';}).sort((a,b)=>new Date(a.Request_DateTime)-new new Date(b.Request_DateTime));
+  const oth=rows.filter(r=>{const l=partnerLabs.find(x=>x.Lab_ID==r.Partner);return!l||l.Country!=='Cambodia';}).sort((a,b)=>new Date(a.Request_DateTime)-new Date(b.Request_DateTime));
   const el=document.getElementById('tabContent');
   if(!rows.length){el.innerHTML='<div class="empty"><div class="eicon">🎉</div><h3>No pending requests</h3></div>';return;}
   let html='';
