@@ -14,159 +14,135 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:14px;}
-/* LOGIN */
 .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1565C0,#0D47A1);padding:20px;}
 .login-card{background:#fff;border-radius:16px;padding:36px 32px;width:100%;max-width:380px;box-shadow:0 20px 60px rgba(0,0,0,.2);}
 .login-logo{text-align:center;margin-bottom:28px;}
 .login-logo-icon{font-size:44px;margin-bottom:8px;}
 .login-logo h1{font-size:22px;font-weight:700;color:var(--primary);}
 .login-logo p{font-size:13px;color:var(--muted);margin-top:4px;}
-.login-error{background:var(--red-light);color:var(--red);padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:14px;display:none;}
-/* HEADER */
+.lerr{background:var(--red-light);color:var(--red);padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:14px;display:none;}
 .header{background:var(--primary);color:#fff;padding:0 16px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.15);}
-.logo{font-size:17px;font-weight:700;letter-spacing:-.2px;}
+.logo{font-size:17px;font-weight:700;}
 .logo span{opacity:.65;font-weight:400;font-size:12px;margin-left:6px;}
 .header-right{display:flex;align-items:center;gap:7px;}
-.header-user{font-size:12px;background:rgba(255,255,255,.15);padding:5px 10px;border-radius:6px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.btn-hdr{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);padding:6px 11px;border-radius:6px;font-size:12px;cursor:pointer;white-space:nowrap;}
-.btn-hdr:hover{background:rgba(255,255,255,.25);}
-.btn-signout{background:rgba(220,50,50,.35);color:#fff;border:1px solid rgba(255,100,100,.4);padding:6px 11px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:600;}
-.btn-signout:hover{background:rgba(220,50,50,.55);}
-/* TABS */
+.huser{font-size:12px;background:rgba(255,255,255,.15);padding:5px 10px;border-radius:6px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.bhdr{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);padding:6px 11px;border-radius:6px;font-size:12px;cursor:pointer;}
+.bhdr:hover{background:rgba(255,255,255,.25);}
+.bso{background:rgba(220,50,50,.35);color:#fff;border:1px solid rgba(255,100,100,.4);padding:6px 11px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:600;}
+.bso:hover{background:rgba(220,50,50,.55);}
 .tabs{background:#fff;border-bottom:1px solid var(--border);display:flex;padding:0 16px;position:sticky;top:56px;z-index:99;overflow-x:auto;}
-.tab{padding:13px 16px;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;display:flex;align-items:center;gap:6px;white-space:nowrap;transition:color .15s;}
+.tab{padding:13px 16px;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;display:flex;align-items:center;gap:6px;white-space:nowrap;}
 .tab:hover{color:var(--primary);}
 .tab.active{color:var(--primary);border-bottom-color:var(--primary);}
 .tbadge{border-radius:10px;padding:1px 7px;font-size:11px;font-weight:700;color:#fff;}
 .tbadge.red{background:var(--red);}.tbadge.orange{background:var(--orange);}.tbadge.gray{background:var(--gray);}
-/* CONTENT */
 .content{padding:14px 16px;max-width:1100px;margin:0 auto;}
-/* TOOLBAR */
 .toolbar{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
-.btn-new{background:var(--primary);color:#fff;border:none;padding:9px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;}
-.btn-new:hover{background:var(--primary-dark);}
+.bnew{background:var(--primary);color:#fff;border:none;padding:9px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;}
+.bnew:hover{background:var(--primary-dark);}
 .search-bar{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:9px 14px;display:flex;align-items:center;gap:8px;flex:1;}
 .search-bar input{border:none;outline:none;flex:1;font-size:14px;color:var(--text);background:transparent;}
-/* CARDS */
-.request-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px;border-left:4px solid var(--border);transition:box-shadow .15s;}
-.request-card:hover{box-shadow:0 2px 12px rgba(0,0,0,.08);}
-.request-card.over-tat{border-left-color:var(--red);background:var(--red-light);}
-.request-card.approaching{border-left-color:var(--orange);background:var(--orange-light);}
-.request-card.on-track{border-left-color:var(--green);}
-.request-card.completed{border-left-color:var(--gray);background:var(--gray-light);}
-.card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;gap:10px;}
-.card-id{font-weight:700;font-size:12px;color:var(--muted);}
-.card-patient{font-size:15px;font-weight:600;color:var(--text);margin-top:2px;}
-.card-top-right{display:flex;align-items:center;gap:7px;flex-shrink:0;}
+/* CARD */
+.rcard{background:#fff;border:1px solid var(--border);border-radius:var(--radius);margin-bottom:10px;border-left:4px solid var(--border);overflow:hidden;transition:box-shadow .15s;}
+.rcard:hover{box-shadow:0 2px 12px rgba(0,0,0,.08);}
+.rcard.over-tat{border-left-color:var(--red);}
+.rcard.approaching{border-left-color:var(--orange);}
+.rcard.on-track{border-left-color:var(--green);}
+.rcard.completed{border-left-color:var(--gray);}
+.card-header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--border);gap:10px;}
+.card-header.over-tat{background:var(--red-light);}
+.card-header.approaching{background:var(--orange-light);}
+.card-header.on-track{background:var(--green-light);}
+.card-header.completed{background:var(--gray-light);}
+.card-header-left{display:flex;align-items:center;gap:10px;min-width:0;flex:1;}
+.card-id-pill{background:rgba(0,0,0,.08);padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap;flex-shrink:0;}
+.card-patient-name{font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.card-header-right{display:flex;align-items:center;gap:6px;flex-shrink:0;}
 .sbadge{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap;}
-.sbadge.over{background:var(--red);color:#fff;}.sbadge.approach{background:var(--orange);color:#fff;}
-.sbadge.ontrack{background:var(--green);color:#fff;}.sbadge.done{background:var(--gray);color:#fff;}
-.btn-edit-card{background:var(--blue-light);color:var(--blue);border:1px solid var(--blue);padding:4px 10px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;}
-.btn-edit-card:hover{background:var(--blue);color:#fff;}
-.card-info{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;}
+.sbadge.over{background:var(--red);color:#fff;}
+.sbadge.approach{background:var(--orange);color:#fff;}
+.sbadge.ontrack{background:var(--green);color:#fff;}
+.sbadge.done{background:var(--gray);color:#fff;}
+.bedit{background:#fff;color:var(--blue);border:1px solid var(--blue);padding:4px 10px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;}
+.bedit:hover{background:var(--blue);color:#fff;}
+.bdel{background:#fff;color:var(--red);border:1px solid var(--red);padding:4px 10px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;}
+.bdel:hover{background:var(--red);color:#fff;}
+.card-body{padding:12px 14px;}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;}
 .ci{display:flex;flex-direction:column;gap:2px;}
 .ci-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
 .ci-val{font-size:13px;color:var(--text);font-weight:500;}
-.ci-val.blue{color:var(--blue);font-weight:600;}.ci-val.red{color:var(--red);font-weight:700;}
-.ci-val.orange{color:var(--orange);font-weight:700;}.ci-val.green{color:var(--green);font-weight:700;}
-.card-actions{display:flex;gap:8px;margin-top:12px;padding-top:10px;border-top:1px solid rgba(0,0,0,.06);flex-wrap:wrap;}
-.btn-complete{background:var(--green);color:#fff;border:none;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;}
-.btn-complete:hover{background:#1B5E20;}
-.btn-reopen{background:var(--orange);color:#fff;border:none;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;}
-.btn-reopen:hover{background:#E65100;}
+.ci-val.blue{color:var(--blue);font-weight:600;}
+.ci-val.red{color:var(--red);font-weight:700;}
+.ci-val.orange{color:var(--orange);font-weight:700;}
+.ci-val.green{color:var(--green);font-weight:700;}
+.card-footer{display:flex;gap:8px;padding:10px 14px;border-top:1px solid var(--border);background:#fafafa;}
+.bcomplete{background:var(--green);color:#fff;border:none;padding:7px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;}
+.bcomplete:hover{background:#1B5E20;}
+.breopen{background:var(--orange);color:#fff;border:none;padding:7px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;}
+.breopen:hover{background:#E65100;}
 .group-header{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin:14px 0 8px;padding-left:2px;}
 /* MODAL */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:center;justify-content:center;padding:16px;}
-.modal-overlay.open{display:flex;}
+.moverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:center;justify-content:center;padding:16px;}
+.moverlay.open{display:flex;}
 .modal{background:#fff;border-radius:14px;width:100%;max-width:560px;max-height:92vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2);}
 .modal-sm{max-width:400px;}.modal-lg{max-width:720px;}
-.modal-header{padding:18px 22px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#fff;z-index:1;border-radius:14px 14px 0 0;}
-.modal-title{font-size:16px;font-weight:700;}
-.modal-close{background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted);padding:2px 6px;border-radius:6px;}
-.modal-close:hover{background:var(--gray-light);}
-.modal-body{padding:18px 22px;}
-.modal-footer{padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;}
-/* FORM */
-.form-group{margin-bottom:13px;}
-.form-label{display:block;font-size:11px;font-weight:600;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px;}
+.mhdr{padding:16px 22px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#fff;z-index:1;border-radius:14px 14px 0 0;}
+.mtitle{font-size:16px;font-weight:700;}
+.mclose{background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted);padding:2px 6px;border-radius:6px;}
+.mclose:hover{background:var(--gray-light);}
+.mbody{padding:18px 22px;}
+.mfoot{padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;}
+.fg{margin-bottom:13px;}
+.fl{display:block;font-size:11px;font-weight:600;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px;}
 .req{color:var(--red);}
-.form-input,.form-select{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;color:var(--text);background:#fff;outline:none;transition:border .15s;}
-.form-input:focus,.form-select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(21,101,192,.1);}
-.form-input[readonly]{background:var(--bg);color:var(--muted);}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.section-div{font-size:11px;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:.8px;margin:16px 0 10px;padding-bottom:5px;border-bottom:2px solid var(--blue-light);}
+.fi,.fs{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;color:var(--text);background:#fff;outline:none;transition:border .15s;}
+.fi:focus,.fs:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(21,101,192,.1);}
+.fi[readonly]{background:var(--bg);color:var(--muted);}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.sdiv{font-size:11px;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:.8px;margin:16px 0 10px;padding-bottom:5px;border-bottom:2px solid var(--blue-light);}
 /* TEST SEARCH */
-.test-search-wrap{position:relative;margin-bottom:8px;}
-.test-search-input{width:100%;padding:9px 12px 9px 36px;border:1px solid var(--border);border-radius:8px;font-size:14px;color:var(--text);outline:none;transition:border .15s;}
-.test-search-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(21,101,192,.1);}
-.tsi{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:15px;pointer-events:none;}
-.test-dropdown{border:1px solid var(--border);border-radius:8px;max-height:200px;overflow-y:auto;display:none;background:#fff;margin-bottom:8px;}
-.test-dropdown.open{display:block;}
-.test-drop-item{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;cursor:pointer;border-bottom:1px solid var(--border);}
-.test-drop-item:last-child{border-bottom:none;}
-.test-drop-item:hover,.test-drop-item.sel{background:var(--blue-light);}
+.tswrap{position:relative;margin-bottom:8px;}
+.tsinput{width:100%;padding:9px 12px 9px 36px;border:1px solid var(--border);border-radius:8px;font-size:14px;color:var(--text);outline:none;transition:border .15s;}
+.tsinput:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(21,101,192,.1);}
+.tsicon{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;}
+.tdd{border:1px solid var(--border);border-radius:8px;max-height:200px;overflow-y:auto;display:none;background:#fff;margin-bottom:8px;}
+.tdd.open{display:block;}
+.tdi{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;cursor:pointer;border-bottom:1px solid var(--border);}
+.tdi:last-child{border-bottom:none;}
+.tdi:hover,.tdi.sel{background:var(--blue-light);}
 .tn{font-weight:600;font-size:13px;}.tc{font-size:11px;color:var(--muted);}.tt{font-size:12px;color:var(--blue);font-weight:600;}
-.selected-tests{display:flex;flex-wrap:wrap;gap:6px;min-height:28px;margin-bottom:8px;}
+.stags{display:flex;flex-wrap:wrap;gap:6px;min-height:28px;margin-bottom:8px;}
 .stag{display:flex;align-items:center;gap:5px;background:var(--blue-light);color:var(--blue);border:1px solid var(--blue);border-radius:20px;padding:4px 10px;font-size:12px;font-weight:600;}
 .stag button{background:none;border:none;color:var(--blue);cursor:pointer;font-size:15px;line-height:1;padding:0;}
-.no-tr{padding:12px;text-align:center;color:var(--muted);font-size:13px;}
-/* BTN */
-.btn-primary{background:var(--primary);color:#fff;border:none;padding:9px 22px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;}
-.btn-primary:hover:not(:disabled){background:var(--primary-dark);}
-.btn-primary:disabled{background:#90a4ae;cursor:not-allowed;}
-.btn-secondary{background:#fff;color:var(--text);border:1px solid var(--border);padding:9px 18px;border-radius:8px;font-size:14px;cursor:pointer;}
-.btn-secondary:hover{background:var(--bg);}
-.btn-danger{background:var(--red);color:#fff;border:none;padding:6px 12px;border-radius:6px;font-size:12px;cursor:pointer;}
-.btn-danger:hover{background:#B71C1C;}
-.btn-sm{padding:5px 12px;font-size:12px;border-radius:6px;border:none;cursor:pointer;font-weight:600;}
-/* SPINNER */
+.ntr{padding:12px;text-align:center;color:var(--muted);font-size:13px;}
+.bp{background:var(--primary);color:#fff;border:none;padding:9px 22px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;}
+.bp:hover:not(:disabled){background:var(--primary-dark);}
+.bp:disabled{background:#90a4ae;cursor:not-allowed;}
+.bs{background:#fff;color:var(--text);border:1px solid var(--border);padding:9px 18px;border-radius:8px;font-size:14px;cursor:pointer;}
+.bs:hover{background:var(--bg);}
+.bdng{background:var(--red);color:#fff;border:none;padding:6px 12px;border-radius:6px;font-size:12px;cursor:pointer;}
+.bdng:hover{background:#B71C1C;}
+.bsm{padding:5px 12px;font-size:12px;border-radius:6px;border:none;cursor:pointer;font-weight:600;}
 .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;margin-right:6px;vertical-align:middle;}
 @keyframes spin{to{transform:rotate(360deg);}}
-/* USER TABLE */
-.user-table{width:100%;border-collapse:collapse;}
-.user-table th{background:var(--bg);padding:10px 12px;text-align:left;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);}
-.user-table td{padding:10px 12px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle;}
-.user-table tr:last-child td{border-bottom:none;}
-.rbadge{padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;}
-.rbadge.admin{background:var(--blue-light);color:var(--blue);}.rbadge.staff{background:var(--green-light);color:var(--green);}
-/* EMPTY / LOADING */
+.utable{width:100%;border-collapse:collapse;}
+.utable th{background:var(--bg);padding:10px 12px;text-align:left;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;border-bottom:1px solid var(--border);}
+.utable td{padding:10px 12px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle;}
+.utable tr:last-child td{border-bottom:none;}
+.rb{padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;}
+.rb.admin{background:var(--blue-light);color:var(--blue);}.rb.staff{background:var(--green-light);color:var(--green);}
 .empty{text-align:center;padding:50px 20px;color:var(--muted);}
-.empty-icon{font-size:44px;margin-bottom:10px;}
+.eicon{font-size:44px;margin-bottom:10px;}
 .empty h3{font-size:15px;font-weight:600;color:var(--text);margin-bottom:4px;}
-.loading{text-align:center;padding:40px;color:var(--muted);font-size:14px;}
-/* CONFIG */
-.config-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
-.config-card{background:#fff;border-radius:14px;padding:32px;width:100%;max-width:480px;box-shadow:0 2px 8px rgba(0,0,0,.08);}
-.config-note{background:var(--blue-light);border-radius:8px;padding:12px 14px;font-size:13px;color:var(--blue);margin-top:14px;line-height:1.6;}
-/* TOAST */
+.loading{text-align:center;padding:40px;color:var(--muted);}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1A2332;color:#fff;padding:11px 22px;border-radius:8px;font-size:14px;font-weight:500;z-index:999;display:none;white-space:nowrap;}
-.toast.show{display:block;animation:fadeUp .3s ease;}
-@keyframes fadeUp{from{opacity:0;transform:translateX(-50%) translateY(8px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
-@media(max-width:600px){.form-row{grid-template-columns:1fr;}.card-info{grid-template-columns:1fr 1fr;}.header-user{display:none;}}
+.toast.show{display:block;animation:fup .3s ease;}
+@keyframes fup{from{opacity:0;transform:translateX(-50%) translateY(8px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
+@media(max-width:600px){.frow{grid-template-columns:1fr;}.card-grid{grid-template-columns:1fr 1fr;}.huser{display:none;}}
 </style>
 </head>
 <body>
-
-<!-- CONFIG -->
-<div id="configScreen" class="config-wrap">
-  <div class="config-card">
-    <div style="text-align:center;margin-bottom:24px;">
-      <div style="font-size:40px;margin-bottom:8px;">🔬</div>
-      <div style="font-size:20px;font-weight:700;color:var(--primary);">Team Smos Lab Tracker</div>
-      <div style="font-size:13px;color:var(--muted);margin-top:4px;">Connect to your Google Sheet to get started</div>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Google Apps Script URL <span class="req">*</span></label>
-      <input class="form-input" id="scriptUrl" placeholder="https://script.google.com/macros/s/.../exec" style="font-size:12px;" onkeydown="if(event.key==='Enter')saveConfig()">
-    </div>
-    <button class="btn-primary" style="width:100%;" onclick="saveConfig()">Connect & Start</button>
-    <div class="config-note">📋 <strong>How to get this URL:</strong><br>
-    1. Open Google Sheet → Extensions → Apps Script<br>
-    2. Paste the backend script → Save<br>
-    3. Deploy → New deployment → Web app → Anyone<br>
-    4. Copy the URL and paste above</div>
-  </div>
-</div>
 
 <!-- LOGIN -->
 <div id="loginScreen" style="display:none;">
@@ -177,16 +153,10 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
         <h1>Team Smos</h1>
         <p>External Lab Tracking System</p>
       </div>
-      <div class="login-error" id="loginError"></div>
-      <div class="form-group">
-        <label class="form-label">Username</label>
-        <input class="form-input" id="loginUsername" placeholder="Enter username" onkeydown="if(event.key==='Enter')doLogin()">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Password</label>
-        <input class="form-input" type="password" id="loginPassword" placeholder="Enter password" onkeydown="if(event.key==='Enter')doLogin()">
-      </div>
-      <button class="btn-primary" id="loginBtn" style="width:100%;margin-top:6px;" onclick="doLogin()">Sign In</button>
+      <div class="lerr" id="loginErr"></div>
+      <div class="fg"><label class="fl">Username</label><input class="fi" id="loginUser" placeholder="Enter username" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <div class="fg"><label class="fl">Password</label><input class="fi" type="password" id="loginPass" placeholder="Enter password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <button class="bp" id="loginBtn" style="width:100%;margin-top:6px;" onclick="doLogin()">Sign In</button>
     </div>
   </div>
 </div>
@@ -196,172 +166,121 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
   <div class="header">
     <div class="logo">🔬 Team Smos <span>Lab Tracker</span></div>
     <div class="header-right">
-      <span class="header-user" id="headerUser"></span>
-      <button class="btn-hdr" onclick="openChangePassword()">🔑 Password</button>
-      <div id="adminBtns" style="display:none;"><button class="btn-hdr" onclick="openUserMgmt()">👥 Users</button></div>
-      <button class="btn-signout" onclick="doLogout()">⏻ Sign Out</button>
+      <span class="huser" id="huser"></span>
+      <button class="bhdr" onclick="openChangePw()">🔑 Password</button>
+      <div id="adminBtns" style="display:none;"><button class="bhdr" onclick="openUserMgmt()">👥 Users</button></div>
+      <button class="bso" onclick="doLogout()">⏻ Sign Out</button>
     </div>
   </div>
   <div class="tabs">
-    <div class="tab active" onclick="switchTab('overtat')" id="tab-overtat">🔴 Over TAT <span class="tbadge red" id="badge-overtat">0</span></div>
-    <div class="tab" onclick="switchTab('pending')" id="tab-pending">🟡 Pending <span class="tbadge orange" id="badge-pending">0</span></div>
-    <div class="tab" onclick="switchTab('completed')" id="tab-completed">✅ Completed <span class="tbadge gray" id="badge-completed">0</span></div>
+    <div class="tab active" onclick="switchTab('overtat')" id="tab-overtat">🔴 Over TAT <span class="tbadge red" id="b-overtat">0</span></div>
+    <div class="tab" onclick="switchTab('pending')" id="tab-pending">🟡 Pending <span class="tbadge orange" id="b-pending">0</span></div>
+    <div class="tab" onclick="switchTab('completed')" id="tab-completed">✅ Completed <span class="tbadge gray" id="b-completed">0</span></div>
   </div>
   <div class="content">
     <div class="toolbar">
-      <button class="btn-new" onclick="openNewRequest()">+ New Request</button>
-      <div class="search-bar">
-        <span>🔍</span>
-        <input type="text" placeholder="Search Request ID, Patient, Partner Lab..." id="searchInput" oninput="renderCurrentTab()">
-      </div>
+      <button class="bnew" onclick="openNew()">+ New Request</button>
+      <div class="search-bar"><span>🔍</span><input type="text" placeholder="Search Request ID, Patient, Partner Lab..." id="searchInput" oninput="renderTab()"></div>
     </div>
     <div id="tabContent"></div>
   </div>
 </div>
 
-<!-- NEW / EDIT REQUEST MODAL -->
-<div class="modal-overlay" id="reqModal">
+<!-- REQUEST MODAL -->
+<div class="moverlay" id="reqModal">
   <div class="modal">
-    <div class="modal-header">
-      <div class="modal-title" id="reqModalTitle">New Request</div>
-      <button class="modal-close" onclick="closeModal('reqModal')">×</button>
+    <div class="mhdr"><div class="mtitle" id="reqTitle">New Request</div><button class="mclose" onclick="closeM('reqModal')">×</button></div>
+    <div class="mbody">
+      <div class="sdiv">Request Info</div>
+      <div class="frow">
+        <div class="fg"><label class="fl">Request ID <span class="req">*</span></label><input class="fi" id="f-rid" placeholder="BTD-000001"></div>
+        <div class="fg"><label class="fl">Date & Time</label><input class="fi" id="f-dt" readonly></div>
+      </div>
+      <div class="fg"><label class="fl">Patient Name <span class="req">*</span></label><input class="fi" id="f-patient" placeholder="Full name"></div>
+      <div class="frow">
+        <div class="fg"><label class="fl">Physician / Institution</label><input class="fi" id="f-inst" placeholder="Hospital or doctor"></div>
+        <div class="fg"><label class="fl">Partner Laboratory <span class="req">*</span></label>
+          <select class="fs" id="f-partner" onchange="updateCountry()"><option value="">Select lab...</option></select>
+        </div>
+      </div>
+      <div class="frow">
+        <div class="fg"><label class="fl">Country</label><input class="fi" id="f-country" readonly></div>
+        <div class="fg"><label class="fl">Created By <span class="req">*</span></label>
+          <select class="fs" id="f-createdby"><option value="">Select staff...</option></select>
+        </div>
+      </div>
+      <div class="frow">
+        <div class="fg"><label class="fl">Specimen</label><input class="fi" id="f-specimen" placeholder="e.g. Blood, Urine"></div>
+        <div class="fg"><label class="fl">Remark</label><input class="fi" id="f-remark" placeholder="Optional note"></div>
+      </div>
+      <div class="sdiv">Select Test <span style="color:var(--muted);font-size:11px;text-transform:none;font-weight:400;" id="testSectionHint">(one or more)</span></div>
+      <div class="stags" id="stags"></div>
+      <div class="tswrap"><span class="tsicon">🔍</span><input class="tsinput" id="tsearch" placeholder="Type to search test name..." oninput="filterTests()" onfocus="openTDD()" autocomplete="off"></div>
+      <div class="tdd" id="tdd"></div>
     </div>
-    <div class="modal-body">
-      <div class="section-div">Request Info</div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Request ID <span class="req">*</span></label>
-          <input class="form-input" id="f-rid" placeholder="BTD-000001">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Date & Time</label>
-          <input class="form-input" id="f-dt" readonly>
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Patient Name <span class="req">*</span></label>
-        <input class="form-input" id="f-patient" placeholder="Full name">
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Physician / Institution</label>
-          <input class="form-input" id="f-inst" placeholder="Hospital or doctor">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Partner Laboratory <span class="req">*</span></label>
-          <select class="form-select" id="f-partner" onchange="updateCountry()">
-            <option value="">Select lab...</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Country</label>
-          <input class="form-input" id="f-country" readonly>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Created By <span class="req">*</span></label>
-          <select class="form-select" id="f-createdby">
-            <option value="">Select staff...</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Specimen</label>
-          <input class="form-input" id="f-specimen" placeholder="e.g. Blood, Urine">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Remark</label>
-          <input class="form-input" id="f-remark" placeholder="Optional note">
-        </div>
-      </div>
-      <div id="testSection">
-        <div class="section-div">Select Tests <span style="color:var(--muted);font-size:11px;text-transform:none;font-weight:400;">(one or more)</span></div>
-        <div class="selected-tests" id="selectedTags"></div>
-        <div class="test-search-wrap">
-          <span class="tsi">🔍</span>
-          <input class="test-search-input" id="testSearch" placeholder="Type to search test name..." oninput="filterTests()" onfocus="openTestDD()" autocomplete="off">
-        </div>
-        <div class="test-dropdown" id="testDD"></div>
-      </div>
-      <div id="editTestNote" style="display:none;background:var(--gray-light);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--muted);margin-top:8px;"></div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn-secondary" onclick="closeModal('reqModal')">Cancel</button>
-      <button class="btn-primary" id="reqSaveBtn" onclick="saveRequest()">Save Request</button>
+    <div class="mfoot">
+      <button class="bs" onclick="closeM('reqModal')">Cancel</button>
+      <button class="bp" id="reqSaveBtn" onclick="saveRequest()">Save Request</button>
     </div>
   </div>
 </div>
 
 <!-- COMPLETE MODAL -->
-<div class="modal-overlay" id="completeModal">
+<div class="moverlay" id="completeModal">
   <div class="modal modal-sm">
-    <div class="modal-header">
-      <div class="modal-title">✔ Mark as Completed</div>
-      <button class="modal-close" onclick="closeModal('completeModal')">×</button>
-    </div>
-    <div class="modal-body">
+    <div class="mhdr"><div class="mtitle">✔ Mark as Completed</div><button class="mclose" onclick="closeM('completeModal')">×</button></div>
+    <div class="mbody">
       <p style="color:var(--muted);font-size:13px;margin-bottom:10px;">Who is releasing this result?</p>
-      <select class="form-select" id="releasedBy"><option value="">Select staff...</option></select>
+      <select class="fs" id="releasedBy"><option value="">Select staff...</option></select>
     </div>
-    <div class="modal-footer">
-      <button class="btn-secondary" onclick="closeModal('completeModal')">Cancel</button>
-      <button class="btn-primary" id="confirmCompleteBtn" onclick="confirmComplete()">Confirm</button>
+    <div class="mfoot">
+      <button class="bs" onclick="closeM('completeModal')">Cancel</button>
+      <button class="bp" id="confirmBtn" onclick="confirmComplete()">Confirm</button>
     </div>
   </div>
 </div>
 
-<!-- CHANGE PASSWORD MODAL -->
-<div class="modal-overlay" id="pwModal">
+<!-- PASSWORD MODAL -->
+<div class="moverlay" id="pwModal">
   <div class="modal modal-sm">
-    <div class="modal-header">
-      <div class="modal-title">🔑 Change Password</div>
-      <button class="modal-close" onclick="closeModal('pwModal')">×</button>
+    <div class="mhdr"><div class="mtitle">🔑 Change Password</div><button class="mclose" onclick="closeM('pwModal')">×</button></div>
+    <div class="mbody">
+      <div class="lerr" id="pwErr"></div>
+      <div class="fg"><label class="fl">Current Password <span class="req">*</span></label><input class="fi" type="password" id="pw-old" placeholder="Current password" onkeydown="if(event.key==='Enter')doChangePw()"></div>
+      <div class="fg"><label class="fl">New Password <span class="req">*</span></label><input class="fi" type="password" id="pw-new" placeholder="New password" onkeydown="if(event.key==='Enter')doChangePw()"></div>
+      <div class="fg"><label class="fl">Confirm New Password <span class="req">*</span></label><input class="fi" type="password" id="pw-confirm" placeholder="Confirm" onkeydown="if(event.key==='Enter')doChangePw()"></div>
     </div>
-    <div class="modal-body">
-      <div class="login-error" id="pwError"></div>
-      <div class="form-group"><label class="form-label">Current Password <span class="req">*</span></label><input class="form-input" type="password" id="pw-old" placeholder="Current password" onkeydown="if(event.key==='Enter')doChangePw()"></div>
-      <div class="form-group"><label class="form-label">New Password <span class="req">*</span></label><input class="form-input" type="password" id="pw-new" placeholder="New password" onkeydown="if(event.key==='Enter')doChangePw()"></div>
-      <div class="form-group"><label class="form-label">Confirm New Password <span class="req">*</span></label><input class="form-input" type="password" id="pw-confirm" placeholder="Confirm new password" onkeydown="if(event.key==='Enter')doChangePw()"></div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn-secondary" onclick="closeModal('pwModal')">Cancel</button>
-      <button class="btn-primary" id="changePwBtn" onclick="doChangePw()">Update Password</button>
+    <div class="mfoot">
+      <button class="bs" onclick="closeM('pwModal')">Cancel</button>
+      <button class="bp" id="pwBtn" onclick="doChangePw()">Update Password</button>
     </div>
   </div>
 </div>
 
-<!-- USER MANAGEMENT MODAL -->
-<div class="modal-overlay" id="userModal">
+<!-- USER MGMT -->
+<div class="moverlay" id="userModal">
   <div class="modal modal-lg">
-    <div class="modal-header">
-      <div class="modal-title">👥 User Management</div>
-      <button class="modal-close" onclick="closeModal('userModal')">×</button>
-    </div>
-    <div class="modal-body">
-      <div style="display:flex;justify-content:flex-end;margin-bottom:14px;"><button class="btn-primary btn-sm" onclick="openAddUser()">+ Add User</button></div>
+    <div class="mhdr"><div class="mtitle">👥 User Management</div><button class="mclose" onclick="closeM('userModal')">×</button></div>
+    <div class="mbody">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:14px;"><button class="bp bsm" onclick="openAddUser()">+ Add User</button></div>
       <div id="userList"></div>
     </div>
   </div>
 </div>
 
-<!-- ADD USER MODAL -->
-<div class="modal-overlay" id="addUserModal">
+<!-- ADD USER -->
+<div class="moverlay" id="addUserModal">
   <div class="modal modal-sm">
-    <div class="modal-header">
-      <div class="modal-title">Add New User</div>
-      <button class="modal-close" onclick="closeModal('addUserModal')">×</button>
+    <div class="mhdr"><div class="mtitle">Add New User</div><button class="mclose" onclick="closeM('addUserModal')">×</button></div>
+    <div class="mbody">
+      <div class="lerr" id="addUserErr"></div>
+      <div class="fg"><label class="fl">Username <span class="req">*</span></label><input class="fi" id="nu-user" placeholder="Enter username" onkeydown="if(event.key==='Enter')doAddUser()"></div>
+      <div class="fg"><label class="fl">Password <span class="req">*</span></label><input class="fi" type="password" id="nu-pass" placeholder="Enter password" onkeydown="if(event.key==='Enter')doAddUser()"></div>
+      <div class="fg"><label class="fl">Role <span class="req">*</span></label><select class="fs" id="nu-role"><option value="Staff">Staff</option><option value="Admin">Admin</option></select></div>
     </div>
-    <div class="modal-body">
-      <div class="login-error" id="addUserErr"></div>
-      <div class="form-group"><label class="form-label">Username <span class="req">*</span></label><input class="form-input" id="nu-user" placeholder="Enter username" onkeydown="if(event.key==='Enter')doAddUser()"></div>
-      <div class="form-group"><label class="form-label">Password <span class="req">*</span></label><input class="form-input" type="password" id="nu-pass" placeholder="Enter password" onkeydown="if(event.key==='Enter')doAddUser()"></div>
-      <div class="form-group"><label class="form-label">Role <span class="req">*</span></label><select class="form-select" id="nu-role"><option value="Staff">Staff</option><option value="Admin">Admin</option></select></div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn-secondary" onclick="closeModal('addUserModal')">Cancel</button>
-      <button class="btn-primary" id="addUserBtn" onclick="doAddUser()">Add User</button>
+    <div class="mfoot">
+      <button class="bs" onclick="closeM('addUserModal')">Cancel</button>
+      <button class="bp" id="addUserBtn" onclick="doAddUser()">Add User</button>
     </div>
   </div>
 </div>
@@ -369,86 +288,72 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 <div class="toast" id="toast"></div>
 
 <script>
-// ── STATE ──
-let SCRIPT_URL='',allRequests=[],staffList=[],partnerLabs=[],testMaster=[],usersList=[];
-let currentTab='overtat',currentUser=null,editingRowId=null,completingRowId=null,selectedTests={};
-let isSaving=false; // prevents duplicate saves
+const SCRIPT_URL='https://script.google.com/macros/s/AKfycbyHG1_uCzea7erAnkG6PgRFQSL0LGQNoKbY0D_9wxxV-XRy-SmvqPUo6t7BIodFgAzy/exec';
+let allRequests=[],staffList=[],partnerLabs=[],testMaster=[],usersList=[];
+let currentTab='overtat',currentUser=null,editingRowId=null,completingRowId=null,selTests={};
+let isSaving=false;
 
-// ── CONFIG ──
-function saveConfig(){
-  const url=document.getElementById('scriptUrl').value.trim();
-  if(!url){alert('Please enter the Apps Script URL');return;}
-  SCRIPT_URL=url;localStorage.setItem('labTrackerUrl',url);showLogin();
-}
 window.onload=function(){
-  const url=localStorage.getItem('labTrackerUrl');
-  const user=localStorage.getItem('labUser');
-  if(url){SCRIPT_URL=url;if(user){currentUser=JSON.parse(user);showApp();}else showLogin();}
+  const u=localStorage.getItem('labUser');
+  if(u){currentUser=JSON.parse(u);showApp();}else showLogin();
 };
+
 function showLogin(){
-  hide('configScreen');hide('mainApp');show('loginScreen');
-  document.getElementById('loginError').style.display='none';
-  document.getElementById('loginUsername').value='';
-  document.getElementById('loginPassword').value='';
-  setTimeout(()=>document.getElementById('loginUsername').focus(),100);
+  hide('mainApp');show('loginScreen');
+  setBtn(document.getElementById('loginBtn'),'Sign In',false);
+  document.getElementById('loginErr').style.display='none';
+  setTimeout(()=>document.getElementById('loginUser').focus(),100);
 }
 function showApp(){
-  hide('configScreen');hide('loginScreen');show('mainApp');
-  document.getElementById('headerUser').textContent='👤 '+currentUser.Username+' ('+currentUser.Role+')';
+  hide('loginScreen');show('mainApp');
+  document.getElementById('huser').textContent='👤 '+currentUser.Username+' ('+currentUser.Role+')';
   document.getElementById('adminBtns').style.display=currentUser.Role==='Admin'?'inline-flex':'none';
-  loadAllData();
+  loadAll();
 }
 
-// ── API ──
 async function api(params){
-  const url=SCRIPT_URL+'?'+new URLSearchParams(params);
-  const res=await fetch(url);
-  const json=await res.json();
-  return json;
+  const ctrl=new AbortController();
+  const timer=setTimeout(()=>ctrl.abort(),15000);
+  try{
+    const res=await fetch(SCRIPT_URL+'?'+new URLSearchParams(params),{signal:ctrl.signal});
+    clearTimeout(timer);return await res.json();
+  }catch(e){clearTimeout(timer);throw e;}
 }
 
-// ── LOGIN ──
 async function doLogin(){
-  const btn=document.getElementById('loginBtn');
-  if(btn.disabled)return;
-  const username=document.getElementById('loginUsername').value.trim();
-  const password=document.getElementById('loginPassword').value;
-  if(!username||!password){showErr('loginError','Please enter username and password');return;}
+  const btn=document.getElementById('loginBtn');if(btn.disabled)return;
+  const u=document.getElementById('loginUser').value.trim();
+  const p=document.getElementById('loginPass').value;
+  if(!u||!p){showErr('loginErr','Please enter username and password');return;}
   setBtn(btn,'Signing in...',true);
   try{
     const users=await api({action:'getUsers'});
-    const user=users.find(u=>
-      String(u.Username).toLowerCase()===username.toLowerCase()&&
-      String(u.Password)===password&&
-      (u.Active==='Yes'||u.Active===true)
-    );
-    if(!user){showErr('loginError','Incorrect username or password');setBtn(btn,'Sign In',false);return;}
+    const user=users.find(x=>String(x.Username).toLowerCase()===u.toLowerCase()&&String(x.Password)===p&&(x.Active==='Yes'||x.Active===true));
+    if(!user){showErr('loginErr','Incorrect username or password');setBtn(btn,'Sign In',false);return;}
     currentUser=user;localStorage.setItem('labUser',JSON.stringify(user));showApp();
-  }catch(e){showErr('loginError','Connection error. Check your Apps Script URL.');setBtn(btn,'Sign In',false);}
+  }catch(e){showErr('loginErr','Connection error. Please try again.');setBtn(btn,'Sign In',false);}
 }
-function doLogout(){currentUser=null;localStorage.removeItem('labUser');showLogin();}
+function doLogout(){
+  currentUser=null;localStorage.removeItem('labUser');showLogin();
+}
 
-// ── LOAD ALL DATA ──
-async function loadAllData(){
-  document.getElementById('tabContent').innerHTML='<div class="loading">⏳ Loading data...</div>';
+async function loadAll(){
+  document.getElementById('tabContent').innerHTML='<div class="loading">⏳ Loading...</div>';
   try{
-    const [requests,staff,labs,tests,users]=await Promise.all([
+    const [req,stf,labs,tests,users]=await Promise.all([
       api({action:'getRequests'}),api({action:'getStaff'}),
       api({action:'getPartnerLabs'}),api({action:'getTestMaster'}),api({action:'getUsers'})
     ]);
-    allRequests=Array.isArray(requests)?requests:[];
-    staffList=(Array.isArray(staff)?staff:[]).filter(s=>s.Active==='Yes'||s.Active===true);
-    partnerLabs=Array.isArray(labs)?labs:[];
-    testMaster=Array.isArray(tests)?tests:[];
-    usersList=Array.isArray(users)?users:[];
-    populateDropdowns();renderCurrentTab();
+    allRequests=arr(req);
+    staffList=arr(stf).filter(s=>s.Active==='Yes'||s.Active===true);
+    partnerLabs=arr(labs);testMaster=arr(tests);usersList=arr(users);
+    fillDropdowns();renderTab();
   }catch(e){
-    document.getElementById('tabContent').innerHTML='<div class="empty"><div class="empty-icon">⚠️</div><h3>Connection Error</h3><p>Check your Apps Script URL.</p></div>';
+    document.getElementById('tabContent').innerHTML='<div class="empty"><div class="eicon">⚠️</div><h3>Connection Error</h3><p>Check your Apps Script and try again.</p></div>';
   }
 }
 
-// ── DROPDOWNS ──
-function populateDropdowns(){
+function fillDropdowns(){
   const ps=document.getElementById('f-partner');
   ps.innerHTML='<option value="">Select lab...</option>';
   [...partnerLabs].sort((a,b)=>a.Country==='Cambodia'?-1:b.Country==='Cambodia'?1:0)
@@ -466,335 +371,353 @@ function updateCountry(){
   document.getElementById('f-country').value=opt?opt.dataset.country||'':'';
 }
 
-// ── TEST SEARCH ──
-function openTestDD(){filterTests();document.getElementById('testDD').classList.add('open');}
+// TEST SEARCH
+function openTDD(){filterTests();document.getElementById('tdd').classList.add('open');}
 function filterTests(){
-  const q=document.getElementById('testSearch').value.toLowerCase();
-  const dd=document.getElementById('testDD');
+  const q=document.getElementById('tsearch').value.toLowerCase();
+  const dd=document.getElementById('tdd');
   const filtered=testMaster.filter(t=>t.Test_Name.toLowerCase().includes(q));
-  if(!filtered.length){dd.innerHTML='<div class="no-tr">No tests found</div>';dd.classList.add('open');return;}
+  if(!filtered.length){dd.innerHTML='<div class="ntr">No tests found</div>';dd.classList.add('open');return;}
   dd.innerHTML=filtered.map(t=>`
-    <div class="test-drop-item ${selectedTests[t.Test_ID]?'sel':''}" onclick="selectTest('${t.Test_ID}')">
-      <div><div class="tn">${selectedTests[t.Test_ID]?'✓ ':''} ${t.Test_Name}</div><div class="tc">${t.Category}</div></div>
+    <div class="tdi ${selTests[t.Test_ID]?'sel':''}" onclick="selTest('${t.Test_ID}')">
+      <div><div class="tn">${selTests[t.Test_ID]?'✓ ':''} ${t.Test_Name}</div><div class="tc">${t.Category}</div></div>
       <div class="tt">${t.TAT_Value} ${t.TAT_Unit}</div>
     </div>`).join('');
   dd.classList.add('open');
 }
-function selectTest(id){
+function selTest(id){
   const t=testMaster.find(x=>x.Test_ID==id);if(!t)return;
-  if(selectedTests[id])delete selectedTests[id];else selectedTests[id]=t;
+  if(selTests[id])delete selTests[id];else selTests[id]=t;
   renderTags();filterTests();
 }
-function removeTest(id){delete selectedTests[id];renderTags();filterTests();}
+function remTest(id){delete selTests[id];renderTags();filterTests();}
 function renderTags(){
-  const el=document.getElementById('selectedTags');
-  const keys=Object.keys(selectedTests);
-  if(!keys.length){el.innerHTML='<span style="color:var(--muted);font-size:13px;">No tests selected yet — search and click above</span>';return;}
-  el.innerHTML=keys.map(id=>{
-    const t=selectedTests[id];
-    return`<div class="stag">${t.Test_Name} <span style="font-size:11px;opacity:.7;">${t.TAT_Value}${t.TAT_Unit[0]}</span><button onclick="removeTest('${id}')">×</button></div>`;
-  }).join('');
+  const el=document.getElementById('stags');
+  const keys=Object.keys(selTests);
+  if(!keys.length){el.innerHTML='<span style="color:var(--muted);font-size:13px;">No tests selected — search above</span>';return;}
+  el.innerHTML=keys.map(id=>{const t=selTests[id];return`<div class="stag">${t.Test_Name} <span style="opacity:.7;font-size:11px;">${t.TAT_Value}${t.TAT_Unit[0]}</span><button onclick="remTest('${id}')">×</button></div>`;}).join('');
 }
-document.addEventListener('click',e=>{
-  if(!e.target.closest('.test-search-wrap')&&!e.target.closest('.test-dropdown'))
-    document.getElementById('testDD')?.classList.remove('open');
-});
+document.addEventListener('click',e=>{if(!e.target.closest('.tswrap')&&!e.target.closest('.tdd'))document.getElementById('tdd')?.classList.remove('open');});
 
-// ── TAT ──
-function calcDue(dt,val,unit){
-  const d=new Date(dt);const v=parseFloat(val);
-  if(unit==='Hours')d.setTime(d.getTime()+v*3600000);else d.setDate(d.getDate()+v);return d;
-}
-function getTATStatus(r){
+// TAT
+function calcDue(dt,val,unit){const d=new Date(dt);const v=parseFloat(val);if(unit==='Hours')d.setTime(d.getTime()+v*3600000);else d.setDate(d.getDate()+v);return d;}
+function tatStatus(r){
   if(r.Status==='Completed')return'completed';
   const due=calcDue(r.Request_DateTime,r.TAT_Value,r.TAT_Unit);const now=new Date();
   if(now>due)return'over-tat';
-  if((due-now)/(864e5)<=2)return'approaching';
+  if((due-now)/864e5<=2)return'approaching';
   return'on-track';
 }
-function fmtDT(dt){
-  if(!dt)return'-';const d=new Date(dt);if(isNaN(d))return String(dt);
-  return d.toLocaleDateString('en-GB')+' '+d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:true});
-}
-function fmtRem(r){
+function fdt(dt){if(!dt)return'-';const d=new Date(dt);if(isNaN(d))return String(dt);return d.toLocaleDateString('en-GB')+' '+d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:true});}
+function frem(r){
   if(r.Status==='Completed')return'Completed';
   const diff=calcDue(r.Request_DateTime,r.TAT_Value,r.TAT_Unit)-new Date();
   if(diff<0){const h=Math.abs(Math.floor(diff/36e5));const d=Math.floor(h/24);return d>0?`Overdue ${d}d ${h%24}h`:`Overdue ${h}h`;}
   const h=Math.floor(diff/36e5);const d=Math.floor(h/24);return d>0?`${d}d ${h%24}h left`:`${h}h left`;
 }
-function staffName(id){const s=staffList.find(x=>x.Staff_ID==id);return s?s.Staff_Name:id||'-';}
-function labName(id){const l=partnerLabs.find(x=>x.Lab_ID==id);return l?l.Partner_Name:id||'-';}
+function sname(id){const s=staffList.find(x=>x.Staff_ID==id);return s?s.Staff_Name:id||'-';}
+function lname(id){const l=partnerLabs.find(x=>x.Lab_ID==id);return l?l.Partner_Name:id||'-';}
 
-// ── TABS ──
-function switchTab(tab){
-  currentTab=tab;
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.getElementById('tab-'+tab).classList.add('active');
-  renderCurrentTab();
+// TABS
+function switchTab(t){
+  currentTab=t;
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  document.getElementById('tab-'+t).classList.add('active');
+  renderTab();
 }
-function renderCurrentTab(){
+function renderTab(){
   updateBadges();
   const q=document.getElementById('searchInput').value.toLowerCase();
-  let data=allRequests.filter(r=>!q||
-    (r.Request_ID||'').toLowerCase().includes(q)||
-    (r.Patient_Name||'').toLowerCase().includes(q)||
-    labName(r.Partner).toLowerCase().includes(q)
-  );
+  let data=allRequests.filter(r=>!q||(r.Request_ID||'').toLowerCase().includes(q)||(r.Patient_Name||'').toLowerCase().includes(q)||lname(r.Partner).toLowerCase().includes(q));
   if(currentTab==='overtat')renderOverTAT(data);
   else if(currentTab==='pending')renderPending(data);
   else renderCompleted(data);
 }
 function updateBadges(){
-  document.getElementById('badge-overtat').textContent=allRequests.filter(r=>getTATStatus(r)==='over-tat').length;
-  document.getElementById('badge-pending').textContent=allRequests.filter(r=>r.Status==='Pending').length;
-  document.getElementById('badge-completed').textContent=allRequests.filter(r=>r.Status==='Completed').length;
+  document.getElementById('b-overtat').textContent=allRequests.filter(r=>tatStatus(r)==='over-tat').length;
+  document.getElementById('b-pending').textContent=allRequests.filter(r=>r.Status==='Pending').length;
+  document.getElementById('b-completed').textContent=allRequests.filter(r=>r.Status==='Completed').length;
 }
 function renderOverTAT(data){
-  const rows=data.filter(r=>getTATStatus(r)==='over-tat').sort((a,b)=>new Date(a.Request_DateTime)-new Date(b.Request_DateTime));
+  const rows=data.filter(r=>tatStatus(r)==='over-tat').sort((a,b)=>new Date(a.Request_DateTime)-new Date(b.Request_DateTime));
   const el=document.getElementById('tabContent');
-  if(!rows.length){el.innerHTML='<div class="empty"><div class="empty-icon">✅</div><h3>No overdue requests</h3><p>All tests are within TAT.</p></div>';return;}
-  el.innerHTML=rows.map(r=>makeCard(r,'over-tat')).join('');
+  if(!rows.length){el.innerHTML='<div class="empty"><div class="eicon">✅</div><h3>No overdue requests</h3><p>All tests within TAT.</p></div>';return;}
+  el.innerHTML=rows.map(r=>card(r,'over-tat')).join('');
 }
 function renderPending(data){
   const rows=data.filter(r=>r.Status==='Pending');
-  const cambodia=rows.filter(r=>{const l=partnerLabs.find(x=>x.Lab_ID==r.Partner);return l&&l.Country==='Cambodia';}).sort((a,b)=>new Date(a.Request_DateTime)-new Date(b.Request_DateTime));
-  const others=rows.filter(r=>{const l=partnerLabs.find(x=>x.Lab_ID==r.Partner);return!l||l.Country!=='Cambodia';}).sort((a,b)=>new Date(a.Request_DateTime)-new Date(b.Request_DateTime));
+  const cam=rows.filter(r=>{const l=partnerLabs.find(x=>x.Lab_ID==r.Partner);return l&&l.Country==='Cambodia';}).sort((a,b)=>new Date(a.Request_DateTime)-new Date(b.Request_DateTime));
+  const oth=rows.filter(r=>{const l=partnerLabs.find(x=>x.Lab_ID==r.Partner);return!l||l.Country!=='Cambodia';}).sort((a,b)=>new Date(a.Request_DateTime)-new new Date(b.Request_DateTime));
   const el=document.getElementById('tabContent');
-  if(!rows.length){el.innerHTML='<div class="empty"><div class="empty-icon">🎉</div><h3>No pending requests</h3></div>';return;}
+  if(!rows.length){el.innerHTML='<div class="empty"><div class="eicon">🎉</div><h3>No pending requests</h3></div>';return;}
   let html='';
-  if(cambodia.length)html+='<div class="group-header">🇰🇭 Cambodia</div>'+cambodia.map(r=>makeCard(r,getTATStatus(r))).join('');
-  if(others.length)html+='<div class="group-header">🌏 Overseas</div>'+others.map(r=>makeCard(r,getTATStatus(r))).join('');
+  if(cam.length)html+='<div class="group-header">🇰🇭 Cambodia</div>'+cam.map(r=>card(r,tatStatus(r))).join('');
+  if(oth.length)html+='<div class="group-header">🌏 Overseas</div>'+oth.map(r=>card(r,tatStatus(r))).join('');
   el.innerHTML=html;
 }
 function renderCompleted(data){
   const rows=data.filter(r=>r.Status==='Completed').sort((a,b)=>new Date(b.Released_DateTime)-new Date(a.Released_DateTime));
   const el=document.getElementById('tabContent');
-  if(!rows.length){el.innerHTML='<div class="empty"><div class="empty-icon">📋</div><h3>No completed requests</h3></div>';return;}
-  el.innerHTML=rows.map(r=>makeCard(r,'completed')).join('');
+  if(!rows.length){el.innerHTML='<div class="empty"><div class="eicon">📋</div><h3>No completed requests</h3></div>';return;}
+  el.innerHTML=rows.map(r=>card(r,'completed')).join('');
 }
 
-function makeCard(r,status){
+function card(r,status){
   const lbl={'over-tat':'OVER TAT','approaching':'APPROACHING','on-track':'ON TRACK','completed':'COMPLETED'};
-  const bcls={'over-tat':'over','approaching':'approach','on-track':'ontrack','completed':'done'};
-  const vcls={'over-tat':'red','approaching':'orange','on-track':'green','completed':''};
+  const bc={'over-tat':'over','approaching':'approach','on-track':'ontrack','completed':'done'};
+  const vc={'over-tat':'red','approaching':'orange','on-track':'green','completed':''};
   const due=calcDue(r.Request_DateTime,r.TAT_Value,r.TAT_Unit);
-  let actions='';
-  if(r.Status==='Pending')actions=`<div class="card-actions"><button class="btn-complete" onclick="openComplete('${r.Row_ID}')">✔ Mark as Completed</button></div>`;
-  else if(r.Status==='Completed')actions=`<div class="card-actions"><button class="btn-reopen" onclick="reopenRequest('${r.Row_ID}')">↩ Reopen</button></div>`;
-  return`<div class="request-card ${status}">
-    <div class="card-top">
-      <div><div class="card-id">${r.Request_ID}</div><div class="card-patient">${r.Patient_Name}</div></div>
-      <div class="card-top-right">
-        <span class="sbadge ${bcls[status]}">${lbl[status]}</span>
-        <button class="btn-edit-card" onclick="openEdit('${r.Row_ID}')">✏️ Edit</button>
+  const isAdmin=currentUser&&currentUser.Role==='Admin';
+  // Admin buttons
+  const adminBtns=isAdmin?`<button class="bdel" onclick="deleteReq('${r.Row_ID}','${r.Request_ID}')">🗑️ Delete</button>`:'';
+  let footer='';
+  if(r.Status==='Pending')footer=`<div class="card-footer"><button class="bcomplete" onclick="openComplete('${r.Row_ID}')">✔ Mark as Completed</button></div>`;
+  else if(r.Status==='Completed')footer=`<div class="card-footer"><button class="breopen" onclick="reopenReq('${r.Row_ID}')">↩ Reopen</button></div>`;
+  return`<div class="rcard ${status}">
+    <div class="card-header ${status}">
+      <div class="card-header-left">
+        <span class="card-id-pill">${r.Request_ID}</span>
+        <span class="card-patient-name">${r.Patient_Name}</span>
+      </div>
+      <div class="card-header-right">
+        <span class="sbadge ${bc[status]}">${lbl[status]}</span>
+        <button class="bedit" onclick="openEdit('${r.Row_ID}')">✏️ Edit</button>
+        ${adminBtns}
       </div>
     </div>
-    <div class="card-info">
-      <div class="ci"><span class="ci-lbl">Test</span><span class="ci-val">${r.Test_Name||'-'}</span></div>
-      <div class="ci"><span class="ci-lbl">Partner Lab</span><span class="ci-val blue">${labName(r.Partner)}</span></div>
-      <div class="ci"><span class="ci-lbl">Country</span><span class="ci-val blue">${r.Country||'-'}</span></div>
-      <div class="ci"><span class="ci-lbl">TAT</span><span class="ci-val">${r.TAT_Value} ${r.TAT_Unit}</span></div>
-      <div class="ci"><span class="ci-lbl">Due</span><span class="ci-val">${fmtDT(due)}</span></div>
-      <div class="ci"><span class="ci-lbl">Remaining</span><span class="ci-val ${vcls[status]}">${fmtRem(r)}</span></div>
-      <div class="ci"><span class="ci-lbl">Created By</span><span class="ci-val">${staffName(r.Created_By)}</span></div>
-      <div class="ci"><span class="ci-lbl">Request Date</span><span class="ci-val">${fmtDT(r.Request_DateTime)}</span></div>
-      ${r.Specimen?`<div class="ci"><span class="ci-lbl">Specimen</span><span class="ci-val">${r.Specimen}</span></div>`:''}
-      ${r.Remark?`<div class="ci"><span class="ci-lbl">Remark</span><span class="ci-val">${r.Remark}</span></div>`:''}
-      ${r.Status==='Completed'?`
-      <div class="ci"><span class="ci-lbl">Released By</span><span class="ci-val">${staffName(r.Released_By)}</span></div>
-      <div class="ci"><span class="ci-lbl">Released At</span><span class="ci-val">${fmtDT(r.Released_DateTime)}</span></div>`:''}
+    <div class="card-body">
+      <div class="card-grid">
+        <div class="ci"><span class="ci-lbl">Test Name</span><span class="ci-val">${r.Test_Name||'-'}</span></div>
+        <div class="ci"><span class="ci-lbl">Partner Lab</span><span class="ci-val blue">${lname(r.Partner)}</span></div>
+        <div class="ci"><span class="ci-lbl">Country</span><span class="ci-val blue">${r.Country||'-'}</span></div>
+        <div class="ci"><span class="ci-lbl">TAT</span><span class="ci-val">${r.TAT_Value} ${r.TAT_Unit}</span></div>
+        <div class="ci"><span class="ci-lbl">Due Date</span><span class="ci-val">${fdt(due)}</span></div>
+        <div class="ci"><span class="ci-lbl">Remaining</span><span class="ci-val ${vc[status]}">${frem(r)}</span></div>
+        <div class="ci"><span class="ci-lbl">Created By</span><span class="ci-val">${sname(r.Created_By)}</span></div>
+        <div class="ci"><span class="ci-lbl">Request Date</span><span class="ci-val">${fdt(r.Request_DateTime)}</span></div>
+        ${r.Specimen?`<div class="ci"><span class="ci-lbl">Specimen</span><span class="ci-val">${r.Specimen}</span></div>`:''}
+        ${r.Remark?`<div class="ci"><span class="ci-lbl">Remark</span><span class="ci-val">${r.Remark}</span></div>`:''}
+        ${r.Status==='Completed'?`<div class="ci"><span class="ci-lbl">Released By</span><span class="ci-val">${sname(r.Released_By)}</span></div><div class="ci"><span class="ci-lbl">Released At</span><span class="ci-val">${fdt(r.Released_DateTime)}</span></div>`:''}
+      </div>
     </div>
-    ${actions}
+    ${footer}
   </div>`;
 }
 
-// ── NEW REQUEST ──
-function openNewRequest(){
+// NEW REQUEST
+function openNew(){
   editingRowId=null;
-  document.getElementById('reqModalTitle').textContent='New Request';
+  document.getElementById('reqTitle').textContent='New Request';
   document.getElementById('reqSaveBtn').textContent='Save Request';
+  document.getElementById('testSectionHint').textContent='(one or more)';
   ['f-rid','f-patient','f-inst','f-specimen','f-remark'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('f-rid').readOnly=false;
   document.getElementById('f-partner').value='';
   document.getElementById('f-country').value='';
   document.getElementById('f-createdby').value='';
-  document.getElementById('f-dt').value=fmtDT(new Date());
-  selectedTests={};
-  document.getElementById('testSearch').value='';
-  document.getElementById('testDD').innerHTML='';
-  document.getElementById('testDD').classList.remove('open');
-  document.getElementById('testSection').style.display='';
-  document.getElementById('editTestNote').style.display='none';
+  document.getElementById('f-dt').value=fdt(new Date());
+  selTests={};
+  document.getElementById('tsearch').value='';
+  document.getElementById('tdd').innerHTML='';
+  document.getElementById('tdd').classList.remove('open');
+  document.getElementById('tsearch').placeholder='Type to search test name...';
+  document.getElementById('tsearch').readOnly=false;
   renderTags();
   document.getElementById('reqModal').classList.add('open');
 }
 
-// ── EDIT REQUEST ──
+// EDIT REQUEST — now allows editing Request ID and Test
 function openEdit(rowId){
   const r=allRequests.find(x=>x.Row_ID==rowId);if(!r)return;
   editingRowId=rowId;
-  document.getElementById('reqModalTitle').textContent='Edit Request';
+  document.getElementById('reqTitle').textContent='Edit Request';
   document.getElementById('reqSaveBtn').textContent='Update Request';
+  document.getElementById('testSectionHint').textContent='(change if needed)';
   document.getElementById('f-rid').value=r.Request_ID;
-  document.getElementById('f-rid').readOnly=true;
-  document.getElementById('f-dt').value=fmtDT(r.Request_DateTime);
+  document.getElementById('f-rid').readOnly=false; // allow editing
+  document.getElementById('f-dt').value=fdt(r.Request_DateTime);
   document.getElementById('f-patient').value=r.Patient_Name||'';
   document.getElementById('f-inst').value=r.Physician_Institution||'';
   document.getElementById('f-specimen').value=r.Specimen||'';
   document.getElementById('f-remark').value=r.Remark||'';
-  document.getElementById('f-partner').value=r.Partner||'';
-  updateCountry();
+  // Set partner
+  const ps=document.getElementById('f-partner');
+  ps.value=r.Partner||'';
+  const opt=ps.options[ps.selectedIndex];
+  document.getElementById('f-country').value=opt&&opt.dataset.country?opt.dataset.country:r.Country||'';
   document.getElementById('f-createdby').value=r.Created_By||'';
-  // Hide test section on edit
-  document.getElementById('testSection').style.display='none';
-  document.getElementById('editTestNote').style.display='';
-  document.getElementById('editTestNote').innerHTML=`📌 <strong>Test:</strong> ${r.Test_Name||'-'} &nbsp;|&nbsp; <strong>TAT:</strong> ${r.TAT_Value} ${r.TAT_Unit}<br><span style="font-size:12px;">Test cannot be changed on edit. Create a new request to add different tests.</span>`;
+  // Pre-select existing test
+  selTests={};
+  if(r.Test_ID&&r.Test_Name){
+    selTests[r.Test_ID]={Test_ID:r.Test_ID,Test_Name:r.Test_Name,TAT_Value:r.TAT_Value,TAT_Unit:r.TAT_Unit,Category:r.Category||''};
+  }
+  document.getElementById('tsearch').value='';
+  document.getElementById('tdd').innerHTML='';
+  document.getElementById('tdd').classList.remove('open');
+  document.getElementById('tsearch').readOnly=false;
+  renderTags();
   document.getElementById('reqModal').classList.add('open');
 }
 
-// ── SAVE REQUEST (with duplicate prevention) ──
+// SAVE REQUEST
 async function saveRequest(){
-  if(isSaving)return; // block if already saving
+  if(isSaving)return;
   const btn=document.getElementById('reqSaveBtn');
   const rid=document.getElementById('f-rid').value.trim();
   const patient=document.getElementById('f-patient').value.trim();
   const partner=document.getElementById('f-partner').value;
   const createdBy=document.getElementById('f-createdby').value;
-  if(!rid||!patient||!partner||!createdBy){alert('Please fill all required fields (Request ID, Patient Name, Partner Lab, Created By)');return;}
-  const institution=document.getElementById('f-inst').value.trim();
+  if(!rid||!patient||!partner||!createdBy){alert('Please fill all required fields:\n• Request ID\n• Patient Name\n• Partner Laboratory\n• Created By');return;}
+  if(!/^BTD-\d{6}$/.test(rid)){alert('Request ID must be in format BTD-000001');return;}
+  const selected=Object.values(selTests);
+  if(!selected.length){alert('Please select at least one test');return;}
+  const inst=document.getElementById('f-inst').value.trim();
   const country=document.getElementById('f-country').value;
   const specimen=document.getElementById('f-specimen').value.trim();
   const remark=document.getElementById('f-remark').value.trim();
 
   if(editingRowId){
-    // UPDATE
+    // UPDATE existing row — updates all fields including Request_ID and Test
     isSaving=true;setBtn(btn,'Updating...',true);
+    const t=selected[0]; // use first selected test for edit
     try{
-      const res=await api({action:'editRequest',Row_ID:editingRowId,Patient_Name:patient,Physician_Institution:institution,Partner:partner,Country:country,Created_By:createdBy,Specimen:specimen,Remark:remark});
+      const res=await api({
+        action:'editRequest',Row_ID:editingRowId,
+        Request_ID:rid,
+        Patient_Name:patient,Physician_Institution:inst,
+        Partner:partner,Country:country,Created_By:createdBy,
+        Test_ID:t.Test_ID,Test_Name:t.Test_Name,
+        TAT_Value:t.TAT_Value,TAT_Unit:t.TAT_Unit,
+        Category:t.Category||'',
+        Specimen:specimen,Remark:remark
+      });
       if(res.error){alert('Error: '+res.error);return;}
-      closeModal('reqModal');showToast('✅ Request updated');
-      await loadAllData();
-    }catch(e){alert('Error updating. Please try again.');}
+      closeM('reqModal');showToast('✅ Request updated successfully');
+      await loadAll();
+    }catch(e){alert('Network error. Please try again.');}
     finally{isSaving=false;setBtn(btn,'Update Request',false);}
     return;
   }
 
-  // NEW
-  if(!/^BTD-\d{6}$/.test(rid)){alert('Request ID must be in format BTD-000001');return;}
-  const selected=Object.values(selectedTests);
-  if(!selected.length){alert('Please select at least one test');return;}
-
-  isSaving=true;setBtn(btn,`Saving ${selected.length} test(s)...`,true);
+  // NEW — save all selected tests in parallel
+  isSaving=true;
+  setBtn(btn,`Saving...`,true);
+  closeM('reqModal');
+  showToast(`⏳ Saving ${selected.length} test(s)...`);
   try{
-    for(const t of selected){
-      await api({action:'addRequest',Request_ID:rid,Patient_Name:patient,Physician_Institution:institution,Partner:partner,Country:country,Created_By:createdBy,Test_ID:t.Test_ID,Test_Name:t.Test_Name,TAT_Value:t.TAT_Value,TAT_Unit:t.TAT_Unit,Category:t.Category,Specimen:specimen,Remark:remark});
-    }
-    closeModal('reqModal');showToast(`✅ Saved with ${selected.length} test(s)`);
-    await loadAllData();
-  }catch(e){alert('Error saving. Please try again.');}
+    await Promise.all(selected.map(t=>api({
+      action:'addRequest',
+      Request_ID:rid,Patient_Name:patient,
+      Physician_Institution:inst,Partner:partner,
+      Country:country,Created_By:createdBy,
+      Test_ID:t.Test_ID,Test_Name:t.Test_Name,
+      TAT_Value:t.TAT_Value,TAT_Unit:t.TAT_Unit,
+      Category:t.Category||'',Specimen:specimen,Remark:remark
+    })));
+    showToast(`✅ Saved ${selected.length} test(s) successfully`);
+    await loadAll();
+  }catch(e){showToast('❌ Error saving. Please try again.');}
   finally{isSaving=false;setBtn(btn,'Save Request',false);}
 }
 
-// ── COMPLETE ──
-function openComplete(rowId){
-  completingRowId=rowId;
-  document.getElementById('releasedBy').value='';
-  document.getElementById('completeModal').classList.add('open');
+// DELETE REQUEST (Admin only)
+async function deleteReq(rowId,requestId){
+  if(!confirm(`Delete request ${requestId}?\n\nThis cannot be undone.`))return;
+  try{
+    const res=await api({action:'deleteRequest',Row_ID:rowId});
+    if(res.error){alert('Error: '+res.error);return;}
+    showToast(`🗑️ Request ${requestId} deleted`);
+    await loadAll();
+  }catch(e){alert('Error deleting request.');}
 }
+
+// COMPLETE
+function openComplete(rowId){completingRowId=rowId;document.getElementById('releasedBy').value='';document.getElementById('completeModal').classList.add('open');}
 async function confirmComplete(){
-  const btn=document.getElementById('confirmCompleteBtn');
-  if(btn.disabled)return;
+  const btn=document.getElementById('confirmBtn');if(btn.disabled)return;
   const rb=document.getElementById('releasedBy').value;
-  if(!rb){alert('Please select who is releasing');return;}
+  if(!rb){alert('Please select who is releasing this result');return;}
   setBtn(btn,'Saving...',true);
   try{
     await api({action:'updateRequest',Row_ID:completingRowId,Status:'Completed',Released_By:rb});
-    closeModal('completeModal');showToast('✅ Marked as Completed');await loadAllData();
-  }catch(e){alert('Error updating.');}
+    closeM('completeModal');showToast('✅ Marked as Completed');await loadAll();
+  }catch(e){alert('Error. Please try again.');}
   finally{setBtn(btn,'Confirm',false);}
 }
-async function reopenRequest(rowId){
+async function reopenReq(rowId){
   if(!confirm('Reopen this request?'))return;
-  try{await api({action:'updateRequest',Row_ID:rowId,Status:'Pending',Released_By:''});showToast('↩ Request reopened');await loadAllData();}
+  try{await api({action:'updateRequest',Row_ID:rowId,Status:'Pending',Released_By:''});showToast('↩ Request reopened');await loadAll();}
   catch(e){alert('Error reopening.');}
 }
 
-// ── CHANGE PASSWORD ──
-function openChangePassword(){
-  ['pw-old','pw-new','pw-confirm'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('pwError').style.display='none';
-  document.getElementById('pwModal').classList.add('open');
-}
+// CHANGE PASSWORD
+function openChangePw(){['pw-old','pw-new','pw-confirm'].forEach(id=>document.getElementById(id).value='');document.getElementById('pwErr').style.display='none';document.getElementById('pwModal').classList.add('open');}
 async function doChangePw(){
-  const btn=document.getElementById('changePwBtn');if(btn.disabled)return;
+  const btn=document.getElementById('pwBtn');if(btn.disabled)return;
   const old=document.getElementById('pw-old').value;
   const nw=document.getElementById('pw-new').value;
-  const conf=document.getElementById('pw-confirm').value;
-  if(!old||!nw||!conf){showErr('pwError','Please fill all fields');return;}
-  if(nw!==conf){showErr('pwError','New passwords do not match');return;}
-  if(nw.length<4){showErr('pwError','Password must be at least 4 characters');return;}
+  const cf=document.getElementById('pw-confirm').value;
+  if(!old||!nw||!cf){showErr('pwErr','Please fill all fields');return;}
+  if(nw!==cf){showErr('pwErr','New passwords do not match');return;}
+  if(nw.length<4){showErr('pwErr','Password must be at least 4 characters');return;}
   setBtn(btn,'Updating...',true);
   try{
     const res=await api({action:'changePassword',User_ID:currentUser.User_ID,OldPassword:old,NewPassword:nw});
-    if(res.error){showErr('pwError',res.error);return;}
-    closeModal('pwModal');showToast('🔑 Password updated');
+    if(res.error){showErr('pwErr',res.error);return;}
+    closeM('pwModal');showToast('🔑 Password updated successfully');
     currentUser.Password=nw;localStorage.setItem('labUser',JSON.stringify(currentUser));
-  }catch(e){showErr('pwError','Error updating password.');}
+  }catch(e){showErr('pwErr','Error. Please try again.');}
   finally{setBtn(btn,'Update Password',false);}
 }
 
-// ── USER MANAGEMENT ──
-function openUserMgmt(){renderUserList();document.getElementById('userModal').classList.add('open');}
-function renderUserList(){
+// USER MGMT
+function openUserMgmt(){renderUsers();document.getElementById('userModal').classList.add('open');}
+function renderUsers(){
   const el=document.getElementById('userList');
   if(!usersList.length){el.innerHTML='<div class="empty"><h3>No users found</h3></div>';return;}
-  el.innerHTML=`<table class="user-table">
+  el.innerHTML=`<table class="utable">
     <thead><tr><th>#</th><th>Username</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead>
     <tbody>${usersList.map(u=>`<tr>
       <td>${u.User_ID}</td><td><strong>${u.Username}</strong></td>
-      <td><span class="rbadge ${u.Role==='Admin'?'admin':'staff'}">${u.Role}</span></td>
+      <td><span class="rb ${u.Role==='Admin'?'admin':'staff'}">${u.Role}</span></td>
       <td><span style="color:${u.Active==='Yes'?'var(--green)':'var(--red)'};">${u.Active==='Yes'?'Active':'Inactive'}</span></td>
-      <td>${u.Username!==currentUser.Username?`<button class="btn-sm btn-danger" onclick="deleteUser('${u.User_ID}','${u.Username}')">Delete</button>`:'<span style="color:var(--muted);font-size:12px;">You</span>'}</td>
+      <td>${u.Username!==currentUser.Username?`<button class="bdng bsm" onclick="delUser('${u.User_ID}','${u.Username}')">Delete</button>`:'<span style="color:var(--muted);font-size:12px;">You</span>'}</td>
     </tr>`).join('')}</tbody>
   </table>`;
 }
-function openAddUser(){
-  ['nu-user','nu-pass'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('nu-role').value='Staff';
-  document.getElementById('addUserErr').style.display='none';
-  document.getElementById('addUserModal').classList.add('open');
-}
+function openAddUser(){['nu-user','nu-pass'].forEach(id=>document.getElementById(id).value='');document.getElementById('nu-role').value='Staff';document.getElementById('addUserErr').style.display='none';document.getElementById('addUserModal').classList.add('open');}
 async function doAddUser(){
   const btn=document.getElementById('addUserBtn');if(btn.disabled)return;
-  const username=document.getElementById('nu-user').value.trim();
-  const password=document.getElementById('nu-pass').value;
-  const role=document.getElementById('nu-role').value;
-  if(!username||!password){showErr('addUserErr','Please fill all fields');return;}
-  if(password.length<4){showErr('addUserErr','Password must be at least 4 characters');return;}
+  const u=document.getElementById('nu-user').value.trim();
+  const p=document.getElementById('nu-pass').value;
+  const r=document.getElementById('nu-role').value;
+  if(!u||!p){showErr('addUserErr','Please fill all fields');return;}
+  if(p.length<4){showErr('addUserErr','Password must be at least 4 characters');return;}
   setBtn(btn,'Adding...',true);
   try{
-    const res=await api({action:'addUser',Username:username,Password:password,Role:role});
+    const res=await api({action:'addUser',Username:u,Password:p,Role:r});
     if(res.error){showErr('addUserErr',res.error);return;}
-    closeModal('addUserModal');showToast('✅ User added');
-    const users=await api({action:'getUsers'});usersList=Array.isArray(users)?users:[];renderUserList();
-  }catch(e){showErr('addUserErr','Error adding user.');}
+    closeM('addUserModal');showToast('✅ User added successfully');
+    usersList=arr(await api({action:'getUsers'}));renderUsers();
+  }catch(e){showErr('addUserErr','Error. Please try again.');}
   finally{setBtn(btn,'Add User',false);}
 }
-async function deleteUser(id,username){
-  if(!confirm(`Delete user "${username}"? This cannot be undone.`))return;
+async function delUser(id,username){
+  if(!confirm(`Delete user "${username}"?\nThis cannot be undone.`))return;
   try{
     await api({action:'deleteUser',User_ID:id});showToast('🗑️ User deleted');
-    const users=await api({action:'getUsers'});usersList=Array.isArray(users)?users:[];renderUserList();
+    usersList=arr(await api({action:'getUsers'}));renderUsers();
   }catch(e){alert('Error deleting user.');}
 }
 
-// ── UTILS ──
-function closeModal(id){document.getElementById(id).classList.remove('open');}
-function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+// UTILS
+function closeM(id){document.getElementById(id).classList.remove('open');}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3500);}
 function showErr(id,msg){const el=document.getElementById(id);el.textContent=msg;el.style.display='block';}
 function setBtn(btn,text,disabled){btn.disabled=disabled;btn.innerHTML=disabled?`<span class="spinner"></span>${text}`:text;}
 function show(id){document.getElementById(id).style.display='block';}
 function hide(id){document.getElementById(id).style.display='none';}
+function arr(x){return Array.isArray(x)?x:[];}
 </script>
 </body>
 </html>
