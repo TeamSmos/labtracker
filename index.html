@@ -14,8 +14,11 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:14px;}
-.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1565C0,#0D47A1);padding:20px;}
-.login-card{background:#fff;border-radius:16px;padding:36px 32px;width:100%;max-width:380px;box-shadow:0 20px 60px rgba(0,0,0,.2);}
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;position:relative;overflow:hidden;background:linear-gradient(135deg,#0a1628 0%,#1565C0 50%,#0a2a5e 100%);}
+.login-wrap::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle at 20% 50%,rgba(21,101,192,.3) 0%,transparent 50%),radial-gradient(circle at 80% 20%,rgba(100,181,246,.2) 0%,transparent 40%),radial-gradient(circle at 60% 80%,rgba(13,71,161,.4) 0%,transparent 50%);pointer-events:none;}
+.dna-bg{position:absolute;inset:0;overflow:hidden;pointer-events:none;}
+.dna-bg svg{width:100%;height:100%;opacity:.12;}
+.login-card{background:rgba(255,255,255,.97);backdrop-filter:blur(10px);border-radius:20px;padding:40px 36px;width:100%;max-width:400px;box-shadow:0 25px 80px rgba(0,0,0,.35);position:relative;z-index:1;border:1px solid rgba(255,255,255,.3);}
 .login-logo{text-align:center;margin-bottom:28px;}
 .login-logo-icon{font-size:44px;margin-bottom:8px;}
 .login-logo h1{font-size:22px;font-weight:700;color:var(--primary);}
@@ -147,6 +150,54 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 <!-- LOGIN -->
 <div id="loginScreen" style="display:none;">
   <div class="login-wrap">
+    <!-- DNA Background Animation -->
+    <div class="dna-bg">
+      <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+        <!-- DNA Helix Left -->
+        <g stroke="#64B5F6" stroke-width="2" fill="none">
+          <path d="M100,0 C150,100 50,200 100,300 C150,400 50,500 100,600 C150,700 50,800 100,900"><animate attributeName="d" values="M100,0 C150,100 50,200 100,300 C150,400 50,500 100,600 C150,700 50,800 100,900;M100,0 C50,100 150,200 100,300 C50,400 150,500 100,600 C50,700 150,800 100,900;M100,0 C150,100 50,200 100,300 C150,400 50,500 100,600 C150,700 50,800 100,900" dur="6s" repeatCount="indefinite"/></path>
+          <path d="M160,0 C110,100 210,200 160,300 C110,400 210,500 160,600 C110,700 210,800 160,900"><animate attributeName="d" values="M160,0 C110,100 210,200 160,300 C110,400 210,500 160,600 C110,700 210,800 160,900;M160,0 C210,100 110,200 160,300 C210,400 110,500 160,600 C210,700 110,800 160,900;M160,0 C110,100 210,200 160,300 C110,400 210,500 160,600 C110,700 210,800 160,900" dur="6s" repeatCount="indefinite"/></path>
+          <line x1="100" y1="50" x2="160" y2="50" opacity=".6"><animate attributeName="y1" values="50;150;250;350;450;550;650;750;850" dur="6s" repeatCount="indefinite"/><animate attributeName="y2" values="50;150;250;350;450;550;650;750;850" dur="6s" repeatCount="indefinite"/></line>
+          <line x1="100" y1="150" x2="160" y2="150" opacity=".6"/>
+          <line x1="100" y1="250" x2="160" y2="250" opacity=".6"/>
+          <line x1="100" y1="350" x2="160" y2="350" opacity=".6"/>
+          <line x1="100" y1="450" x2="160" y2="450" opacity=".6"/>
+          <line x1="100" y1="550" x2="160" y2="550" opacity=".6"/>
+          <line x1="100" y1="650" x2="160" y2="650" opacity=".6"/>
+          <line x1="100" y1="750" x2="160" y2="750" opacity=".6"/>
+        </g>
+        <!-- DNA Helix Right -->
+        <g stroke="#90CAF9" stroke-width="2" fill="none">
+          <path d="M1050,0 C1100,100 1000,200 1050,300 C1100,400 1000,500 1050,600 C1100,700 1000,800 1050,900"><animate attributeName="d" values="M1050,0 C1100,100 1000,200 1050,300 C1100,400 1000,500 1050,600 C1100,700 1000,800 1050,900;M1050,0 C1000,100 1100,200 1050,300 C1000,400 1100,500 1050,600 C1000,700 1100,800 1050,900;M1050,0 C1100,100 1000,200 1050,300 C1100,400 1000,500 1050,600 C1100,700 1000,800 1050,900" dur="8s" repeatCount="indefinite"/></path>
+          <path d="M1110,0 C1060,100 1160,200 1110,300 C1060,400 1160,500 1110,600 C1060,700 1160,800 1110,900"><animate attributeName="d" values="M1110,0 C1060,100 1160,200 1110,300 C1060,400 1160,500 1110,600 C1060,700 1160,800 1110,900;M1110,0 C1160,100 1060,200 1110,300 C1160,400 1060,500 1110,600 C1160,700 1060,800 1110,900;M1110,0 C1060,100 1160,200 1110,300 C1060,400 1160,500 1110,600 C1060,700 1160,800 1110,900" dur="8s" repeatCount="indefinite"/></path>
+          <line x1="1050" y1="100" x2="1110" y2="100" opacity=".6"/>
+          <line x1="1050" y1="200" x2="1110" y2="200" opacity=".6"/>
+          <line x1="1050" y1="300" x2="1110" y2="300" opacity=".6"/>
+          <line x1="1050" y1="400" x2="1110" y2="400" opacity=".6"/>
+          <line x1="1050" y1="500" x2="1110" y2="500" opacity=".6"/>
+          <line x1="1050" y1="600" x2="1110" y2="600" opacity=".6"/>
+          <line x1="1050" y1="700" x2="1110" y2="700" opacity=".6"/>
+        </g>
+        <!-- Floating circles (cells/molecules) -->
+        <g fill="#64B5F6">
+          <circle cx="300" cy="150" r="4" opacity=".5"><animate attributeName="cy" values="150;100;150" dur="4s" repeatCount="indefinite"/></circle>
+          <circle cx="500" cy="300" r="6" opacity=".4"><animate attributeName="cy" values="300;250;300" dur="5s" repeatCount="indefinite"/></circle>
+          <circle cx="700" cy="100" r="3" opacity=".6"><animate attributeName="cy" values="100;60;100" dur="3s" repeatCount="indefinite"/></circle>
+          <circle cx="900" cy="400" r="5" opacity=".4"><animate attributeName="cy" values="400;350;400" dur="6s" repeatCount="indefinite"/></circle>
+          <circle cx="400" cy="600" r="4" opacity=".5"><animate attributeName="cy" values="600;550;600" dur="4.5s" repeatCount="indefinite"/></circle>
+          <circle cx="800" cy="650" r="7" opacity=".3"><animate attributeName="cy" values="650;600;650" dur="5.5s" repeatCount="indefinite"/></circle>
+          <circle cx="200" cy="500" r="3" opacity=".5"><animate attributeName="cy" values="500;460;500" dur="3.5s" repeatCount="indefinite"/></circle>
+          <circle cx="600" cy="700" r="5" opacity=".4"><animate attributeName="cy" values="700;660;700" dur="4s" repeatCount="indefinite"/></circle>
+        </g>
+        <!-- Cross/plus signs (microscope/lab feel) -->
+        <g stroke="#42A5F5" stroke-width="1.5" opacity=".3">
+          <line x1="350" y1="240" x2="350" y2="260"/><line x1="340" y1="250" x2="360" y2="250"/>
+          <line x1="750" y1="180" x2="750" y2="200"/><line x1="740" y1="190" x2="760" y2="190"/>
+          <line x1="550" y1="500" x2="550" y2="520"/><line x1="540" y1="510" x2="560" y2="510"/>
+          <line x1="850" y1="350" x2="850" y2="370"/><line x1="840" y1="360" x2="860" y2="360"/>
+        </g>
+      </svg>
+    </div>
     <div class="login-card">
       <div class="login-logo">
         <div class="login-logo-icon">🔬</div>
@@ -358,7 +409,7 @@ function fillDropdowns(){
   const ps=document.getElementById('f-partner');
   ps.innerHTML='<option value="">Select lab...</option>';
   [...partnerLabs].sort((a,b)=>a.Country==='Cambodia'?-1:b.Country==='Cambodia'?1:0)
-    .forEach(l=>{ps.innerHTML+=`<option value="${l.Lab_ID}" data-country="${l.Country}">${l.Partner_Name} — ${l.Country}</option>`;});
+    .forEach(l=>{ps.innerHTML+=`<option value="${l.Partner_Name}" data-country="${l.Country}" data-labid="${l.Lab_ID}">${l.Partner_Name} — ${l.Country}</option>`;});
   const cs=document.getElementById('f-createdby');
   cs.innerHTML='<option value="">Select staff...</option>';
   staffList.forEach(s=>{cs.innerHTML+=`<option value="${s.Staff_ID}">${s.Staff_Name}</option>`;});
@@ -419,11 +470,9 @@ function frem(r){
 function sname(id){const s=staffList.find(x=>x.Staff_ID==id);return s?s.Staff_Name:id||'-';}
 function lname(id){
   if(!id)return'-';
-  // Try match by Lab_ID first
-  let l=partnerLabs.find(x=>String(x.Lab_ID)===String(id));
-  // If not found try match by Partner_Name
-  if(!l)l=partnerLabs.find(x=>String(x.Partner_Name).toLowerCase()===String(id).toLowerCase());
-  return l?l.Partner_Name:id;
+  // Partner column now stores Partner_Name directly
+  const l=partnerLabs.find(x=>String(x.Partner_Name)===String(id)||String(x.Lab_ID)===String(id));
+  return l?l.Partner_Name:String(id);
 }
 
 // TABS
@@ -476,8 +525,8 @@ function card(r,status){
   const vc={'over-tat':'red','approaching':'orange','on-track':'green','completed':''};
   const due=calcDue(r.Request_DateTime,r.TAT_Value,r.TAT_Unit);
   const isAdmin=currentUser&&currentUser.Role==='Admin';
-  // Admin buttons
   const adminBtns=isAdmin?`<button class="bdel" onclick="deleteReq('${r.Row_ID}','${r.Request_ID}')">🗑️ Delete</button>`:'';
+  const inst=r.Physician_Institution?` <span style="font-size:12px;font-weight:400;opacity:.75;">(${r.Physician_Institution})</span>`:'';
   let footer='';
   if(r.Status==='Pending')footer=`<div class="card-footer"><button class="bcomplete" onclick="openComplete('${r.Row_ID}')">✔ Mark as Completed</button></div>`;
   else if(r.Status==='Completed')footer=`<div class="card-footer"><button class="breopen" onclick="reopenReq('${r.Row_ID}')">↩ Reopen</button></div>`;
@@ -485,7 +534,7 @@ function card(r,status){
     <div class="card-header ${status}">
       <div class="card-header-left">
         <span class="card-id-pill">${r.Request_ID}</span>
-        <span class="card-patient-name">${r.Patient_Name}</span>
+        <span class="card-patient-name">${r.Patient_Name}${inst}</span>
       </div>
       <div class="card-header-right">
         <span class="sbadge ${bc[status]}">${lbl[status]}</span>
@@ -550,22 +599,15 @@ function openEdit(rowId){
   document.getElementById('f-specimen').value=r.Specimen||'';
   document.getElementById('f-remark').value=r.Remark||'';
   document.getElementById('f-createdby').value=r.Created_By||'';
-  // Match partner lab — try by Lab_ID first, then by name
+  // Match partner lab by Partner_Name (stored value) or Lab_ID
   const ps=document.getElementById('f-partner');
   ps.value='';
   for(let i=0;i<ps.options.length;i++){
-    if(String(ps.options[i].value)===String(r.Partner)){
+    if(String(ps.options[i].value)===String(r.Partner)||
+       String(ps.options[i].dataset.labid)===String(r.Partner)){
       ps.selectedIndex=i;break;
     }
   }
-  // If still not matched, try matching lab name
-  if(!ps.value&&r.Partner){
-    const stored=String(r.Partner).toLowerCase();
-    for(let i=0;i<ps.options.length;i++){
-      if(ps.options[i].text.toLowerCase().includes(stored)){ps.selectedIndex=i;break;}
-    }
-  }
-  // Set country from selected option or stored value
   const selOpt=ps.options[ps.selectedIndex];
   document.getElementById('f-country').value=selOpt&&selOpt.dataset.country?selOpt.dataset.country:r.Country||'';
   // Pre-select test — find in testMaster by Test_ID or Test_Name
