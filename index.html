@@ -491,11 +491,28 @@ function updateBadges(){
   document.getElementById('b-completed').textContent=allRequests.filter(r=>r.Status==='Completed').length;
 }
 function renderOverTAT(data){
-  let rows=data.filter(r=>tatStatus(r)==='over-tat');
-  rows=sortRows(rows);
+  const rows=data.filter(r=>tatStatus(r)==='over-tat');
   const el=document.getElementById('tabContent');
   if(!rows.length){el.innerHTML='<div class="empty"><div class="eicon">✅</div><h3>No overdue requests</h3><p>All tests within TAT.</p></div>';return;}
-  el.innerHTML=rows.map(r=>card(r,'over-tat')).join('');
+  // Urgent first
+  const urgent=sortRows(rows.filter(r=>r.Urgent==='Yes'||r.Urgent===true));
+  // Cambodia
+  const cam=sortRows(rows.filter(r=>{
+    if(r.Urgent==='Yes'||r.Urgent===true)return false;
+    const l=partnerLabs.find(x=>String(x.Partner_Name)===String(r.Partner)||String(x.Lab_ID)===String(r.Partner));
+    return l&&l.Country==='Cambodia';
+  }));
+  // Overseas
+  const oth=sortRows(rows.filter(r=>{
+    if(r.Urgent==='Yes'||r.Urgent===true)return false;
+    const l=partnerLabs.find(x=>String(x.Partner_Name)===String(r.Partner)||String(x.Lab_ID)===String(r.Partner));
+    return!l||l.Country!=='Cambodia';
+  }));
+  let html='';
+  if(urgent.length)html+='<div class="group-header">🚨 Urgent</div>'+urgent.map(r=>card(r,'over-tat')).join('');
+  if(cam.length)html+='<div class="group-header">🇰🇭 Cambodia</div>'+cam.map(r=>card(r,'over-tat')).join('');
+  if(oth.length)html+='<div class="group-header">🌏 Overseas</div>'+oth.map(r=>card(r,'over-tat')).join('');
+  el.innerHTML=html;
 }
 function renderPending(data){
   let rows=data.filter(r=>r.Status==='Pending');
