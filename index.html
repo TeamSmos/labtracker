@@ -14,11 +14,9 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:14px;}
-.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;position:relative;overflow:hidden;background:linear-gradient(135deg,#0a1628 0%,#1565C0 50%,#0a2a5e 100%);}
-.login-wrap::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle at 20% 50%,rgba(21,101,192,.3) 0%,transparent 50%),radial-gradient(circle at 80% 20%,rgba(100,181,246,.2) 0%,transparent 40%),radial-gradient(circle at 60% 80%,rgba(13,71,161,.4) 0%,transparent 50%);pointer-events:none;}
-.dna-bg{position:absolute;inset:0;overflow:hidden;pointer-events:none;}
-.dna-bg svg{width:100%;height:100%;opacity:.12;}
-.login-card{background:rgba(255,255,255,.97);backdrop-filter:blur(10px);border-radius:20px;padding:40px 36px;width:100%;max-width:400px;box-shadow:0 25px 80px rgba(0,0,0,.35);position:relative;z-index:1;border:1px solid rgba(255,255,255,.3);}
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;position:relative;overflow:hidden;background:linear-gradient(135deg,#0D47A1 0%,#1565C0 40%,#1976D2 70%,#0A2A6E 100%);}
+.login-card{background:#fff;border-radius:16px;padding:40px 36px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.25);position:relative;z-index:2;}
+
 .login-logo{text-align:center;margin-bottom:28px;}
 .login-logo-icon{font-size:44px;margin-bottom:8px;}
 .login-logo h1{font-size:22px;font-weight:700;color:var(--primary);}
@@ -41,6 +39,12 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .tbadge.red{background:var(--red);}.tbadge.orange{background:var(--orange);}.tbadge.gray{background:var(--gray);}
 .content{padding:14px 16px;max-width:1100px;margin:0 auto;}
 .toolbar{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.sort-sel{padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;color:var(--text);background:#fff;outline:none;cursor:pointer;white-space:nowrap;}
+.sort-sel:focus{border-color:var(--primary);}
+.burgent{background:#fff;color:#7B1FA2;border:1px solid #7B1FA2;padding:4px 10px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;}
+.burgent:hover{background:#7B1FA2;color:#fff;}
+.burgent.active{background:#7B1FA2;color:#fff;}
+.urgent-badge{background:#7B1FA2;color:#fff;font-size:10px;padding:2px 6px;border-radius:10px;font-weight:700;margin-left:4px;}
 .bnew{background:var(--primary);color:#fff;border:none;padding:9px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;}
 .bnew:hover{background:var(--primary-dark);}
 .search-bar{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:9px 14px;display:flex;align-items:center;gap:8px;flex:1;}
@@ -150,55 +154,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 <!-- LOGIN -->
 <div id="loginScreen" style="display:none;">
   <div class="login-wrap">
-    <!-- DNA Background Animation -->
-    <div class="dna-bg">
-      <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-        <!-- DNA Helix Left -->
-        <g stroke="#64B5F6" stroke-width="2" fill="none">
-          <path d="M100,0 C150,100 50,200 100,300 C150,400 50,500 100,600 C150,700 50,800 100,900"><animate attributeName="d" values="M100,0 C150,100 50,200 100,300 C150,400 50,500 100,600 C150,700 50,800 100,900;M100,0 C50,100 150,200 100,300 C50,400 150,500 100,600 C50,700 150,800 100,900;M100,0 C150,100 50,200 100,300 C150,400 50,500 100,600 C150,700 50,800 100,900" dur="6s" repeatCount="indefinite"/></path>
-          <path d="M160,0 C110,100 210,200 160,300 C110,400 210,500 160,600 C110,700 210,800 160,900"><animate attributeName="d" values="M160,0 C110,100 210,200 160,300 C110,400 210,500 160,600 C110,700 210,800 160,900;M160,0 C210,100 110,200 160,300 C210,400 110,500 160,600 C210,700 110,800 160,900;M160,0 C110,100 210,200 160,300 C110,400 210,500 160,600 C110,700 210,800 160,900" dur="6s" repeatCount="indefinite"/></path>
-          <line x1="100" y1="50" x2="160" y2="50" opacity=".6"><animate attributeName="y1" values="50;150;250;350;450;550;650;750;850" dur="6s" repeatCount="indefinite"/><animate attributeName="y2" values="50;150;250;350;450;550;650;750;850" dur="6s" repeatCount="indefinite"/></line>
-          <line x1="100" y1="150" x2="160" y2="150" opacity=".6"/>
-          <line x1="100" y1="250" x2="160" y2="250" opacity=".6"/>
-          <line x1="100" y1="350" x2="160" y2="350" opacity=".6"/>
-          <line x1="100" y1="450" x2="160" y2="450" opacity=".6"/>
-          <line x1="100" y1="550" x2="160" y2="550" opacity=".6"/>
-          <line x1="100" y1="650" x2="160" y2="650" opacity=".6"/>
-          <line x1="100" y1="750" x2="160" y2="750" opacity=".6"/>
-        </g>
-        <!-- DNA Helix Right -->
-        <g stroke="#90CAF9" stroke-width="2" fill="none">
-          <path d="M1050,0 C1100,100 1000,200 1050,300 C1100,400 1000,500 1050,600 C1100,700 1000,800 1050,900"><animate attributeName="d" values="M1050,0 C1100,100 1000,200 1050,300 C1100,400 1000,500 1050,600 C1100,700 1000,800 1050,900;M1050,0 C1000,100 1100,200 1050,300 C1000,400 1100,500 1050,600 C1000,700 1100,800 1050,900;M1050,0 C1100,100 1000,200 1050,300 C1100,400 1000,500 1050,600 C1100,700 1000,800 1050,900" dur="8s" repeatCount="indefinite"/></path>
-          <path d="M1110,0 C1060,100 1160,200 1110,300 C1060,400 1160,500 1110,600 C1060,700 1160,800 1110,900"><animate attributeName="d" values="M1110,0 C1060,100 1160,200 1110,300 C1060,400 1160,500 1110,600 C1060,700 1160,800 1110,900;M1110,0 C1160,100 1060,200 1110,300 C1160,400 1060,500 1110,600 C1160,700 1060,800 1110,900;M1110,0 C1060,100 1160,200 1110,300 C1060,400 1160,500 1110,600 C1060,700 1160,800 1110,900" dur="8s" repeatCount="indefinite"/></path>
-          <line x1="1050" y1="100" x2="1110" y2="100" opacity=".6"/>
-          <line x1="1050" y1="200" x2="1110" y2="200" opacity=".6"/>
-          <line x1="1050" y1="300" x2="1110" y2="300" opacity=".6"/>
-          <line x1="1050" y1="400" x2="1110" y2="400" opacity=".6"/>
-          <line x1="1050" y1="500" x2="1110" y2="500" opacity=".6"/>
-          <line x1="1050" y1="600" x2="1110" y2="600" opacity=".6"/>
-          <line x1="1050" y1="700" x2="1110" y2="700" opacity=".6"/>
-        </g>
-        <!-- Floating circles (cells/molecules) -->
-        <g fill="#64B5F6">
-          <circle cx="300" cy="150" r="4" opacity=".5"><animate attributeName="cy" values="150;100;150" dur="4s" repeatCount="indefinite"/></circle>
-          <circle cx="500" cy="300" r="6" opacity=".4"><animate attributeName="cy" values="300;250;300" dur="5s" repeatCount="indefinite"/></circle>
-          <circle cx="700" cy="100" r="3" opacity=".6"><animate attributeName="cy" values="100;60;100" dur="3s" repeatCount="indefinite"/></circle>
-          <circle cx="900" cy="400" r="5" opacity=".4"><animate attributeName="cy" values="400;350;400" dur="6s" repeatCount="indefinite"/></circle>
-          <circle cx="400" cy="600" r="4" opacity=".5"><animate attributeName="cy" values="600;550;600" dur="4.5s" repeatCount="indefinite"/></circle>
-          <circle cx="800" cy="650" r="7" opacity=".3"><animate attributeName="cy" values="650;600;650" dur="5.5s" repeatCount="indefinite"/></circle>
-          <circle cx="200" cy="500" r="3" opacity=".5"><animate attributeName="cy" values="500;460;500" dur="3.5s" repeatCount="indefinite"/></circle>
-          <circle cx="600" cy="700" r="5" opacity=".4"><animate attributeName="cy" values="700;660;700" dur="4s" repeatCount="indefinite"/></circle>
-        </g>
-        <!-- Cross/plus signs (microscope/lab feel) -->
-        <g stroke="#42A5F5" stroke-width="1.5" opacity=".3">
-          <line x1="350" y1="240" x2="350" y2="260"/><line x1="340" y1="250" x2="360" y2="250"/>
-          <line x1="750" y1="180" x2="750" y2="200"/><line x1="740" y1="190" x2="760" y2="190"/>
-          <line x1="550" y1="500" x2="550" y2="520"/><line x1="540" y1="510" x2="560" y2="510"/>
-          <line x1="850" y1="350" x2="850" y2="370"/><line x1="840" y1="360" x2="860" y2="360"/>
-        </g>
-      </svg>
-    </div>
-    <div class="login-card">
+    
+    <div class="login-card" style="z-index:2;">
       <div class="login-logo">
         <div class="login-logo-icon">🔬</div>
         <h1>Team Smos</h1>
@@ -231,7 +188,14 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
   <div class="content">
     <div class="toolbar">
       <button class="bnew" onclick="openNew()">+ New Request</button>
-      <div class="search-bar"><span>🔍</span><input type="text" placeholder="Search Request ID, Patient, Partner Lab..." id="searchInput" oninput="renderTab()"></div>
+      <div class="search-bar"><span>🔍</span><input type="text" placeholder="Search ID, Patient, Partner, Remark..." id="searchInput" oninput="renderTab()"></div>
+      <select class="sort-sel" id="sortSel" onchange="renderTab()">
+        <option value="default">Sort: Default</option>
+        <option value="date_asc">Date ↑ Oldest</option>
+        <option value="date_desc">Date ↓ Newest</option>
+        <option value="tat_asc">TAT ↑ Urgent first</option>
+        <option value="patient_az">Patient A→Z</option>
+      </select>
     </div>
     <div id="tabContent"></div>
   </div>
@@ -469,10 +433,20 @@ function frem(r){
 }
 function sname(id){const s=staffList.find(x=>x.Staff_ID==id);return s?s.Staff_Name:id||'-';}
 function lname(id){
-  if(!id)return'-';
-  // Partner column now stores Partner_Name directly
-  const l=partnerLabs.find(x=>String(x.Partner_Name)===String(id)||String(x.Lab_ID)===String(id));
-  return l?l.Partner_Name:String(id);
+  if(!id||id==='-'||id==='')return'-';
+  // Try exact Partner_Name match
+  let l=partnerLabs.find(x=>String(x.Partner_Name)===String(id));
+  if(l)return l.Partner_Name;
+  // Try Lab_ID match
+  l=partnerLabs.find(x=>String(x.Lab_ID)===String(id));
+  if(l)return l.Partner_Name;
+  // Try case-insensitive
+  l=partnerLabs.find(x=>String(x.Partner_Name).toLowerCase()===String(id).toLowerCase());
+  if(l)return l.Partner_Name;
+  // Try partial match
+  l=partnerLabs.find(x=>String(id).toLowerCase().includes(String(x.Partner_Name).toLowerCase())||String(x.Partner_Name).toLowerCase().includes(String(id).toLowerCase()));
+  if(l)return l.Partner_Name;
+  return String(id);
 }
 
 // TABS
@@ -482,10 +456,30 @@ function switchTab(t){
   document.getElementById('tab-'+t).classList.add('active');
   renderTab();
 }
+function sortRows(rows){
+  const s=document.getElementById('sortSel')?.value||'default';
+  // Always put urgent on top first
+  const urgent=rows.filter(r=>r.Urgent==='Yes'||r.Urgent===true);
+  const normal=rows.filter(r=>r.Urgent!=='Yes'&&r.Urgent!==true);
+  function applySort(arr){
+    if(s==='date_asc')return arr.sort((a,b)=>new Date(a.Request_DateTime)-new Date(b.Request_DateTime));
+    if(s==='date_desc')return arr.sort((a,b)=>new Date(b.Request_DateTime)-new Date(a.Request_DateTime));
+    if(s==='tat_asc')return arr.sort((a,b)=>calcDue(a.Request_DateTime,a.TAT_Value,a.TAT_Unit)-calcDue(b.Request_DateTime,b.TAT_Value,b.TAT_Unit));
+    if(s==='patient_az')return arr.sort((a,b)=>(a.Patient_Name||'').localeCompare(b.Patient_Name||''));
+    return arr.sort((a,b)=>new Date(a.Request_DateTime)-new Date(b.Request_DateTime));
+  }
+  return [...applySort(urgent),...applySort(normal)];
+}
 function renderTab(){
   updateBadges();
   const q=document.getElementById('searchInput').value.toLowerCase();
-  let data=allRequests.filter(r=>!q||(r.Request_ID||'').toLowerCase().includes(q)||(r.Patient_Name||'').toLowerCase().includes(q)||lname(r.Partner).toLowerCase().includes(q));
+  let data=allRequests.filter(r=>!q||
+    (r.Request_ID||'').toLowerCase().includes(q)||
+    (r.Patient_Name||'').toLowerCase().includes(q)||
+    lname(r.Partner).toLowerCase().includes(q)||
+    (r.Remark||'').toLowerCase().includes(q)||
+    (r.Physician_Institution||'').toLowerCase().includes(q)
+  );
   if(currentTab==='overtat')renderOverTAT(data);
   else if(currentTab==='pending')renderPending(data);
   else renderCompleted(data);
@@ -496,18 +490,30 @@ function updateBadges(){
   document.getElementById('b-completed').textContent=allRequests.filter(r=>r.Status==='Completed').length;
 }
 function renderOverTAT(data){
-  const rows=data.filter(r=>tatStatus(r)==='over-tat').sort((a,b)=>new Date(a.Request_DateTime)-new Date(b.Request_DateTime));
+  let rows=data.filter(r=>tatStatus(r)==='over-tat');
+  rows=sortRows(rows);
   const el=document.getElementById('tabContent');
   if(!rows.length){el.innerHTML='<div class="empty"><div class="eicon">✅</div><h3>No overdue requests</h3><p>All tests within TAT.</p></div>';return;}
   el.innerHTML=rows.map(r=>card(r,'over-tat')).join('');
 }
 function renderPending(data){
-  const rows=data.filter(r=>r.Status==='Pending');
-  const cam=rows.filter(r=>{const l=partnerLabs.find(x=>x.Lab_ID==r.Partner);return l&&l.Country==='Cambodia';}).sort((a,b)=>new Date(a.Request_DateTime)-new Date(b.Request_DateTime));
-  const oth=rows.filter(r=>{const l=partnerLabs.find(x=>x.Lab_ID==r.Partner);return!l||l.Country!=='Cambodia';}).sort((a,b)=>new Date(a.Request_DateTime)-new Date(b.Request_DateTime));
+  let rows=data.filter(r=>r.Status==='Pending');
+  // Urgent always on top
+  const urgent=sortRows(rows.filter(r=>r.Urgent==='Yes'||r.Urgent===true));
+  const cam=sortRows(rows.filter(r=>{
+    if(r.Urgent==='Yes'||r.Urgent===true)return false;
+    const l=partnerLabs.find(x=>String(x.Partner_Name)===String(r.Partner)||String(x.Lab_ID)===String(r.Partner));
+    return l&&l.Country==='Cambodia';
+  }));
+  const oth=sortRows(rows.filter(r=>{
+    if(r.Urgent==='Yes'||r.Urgent===true)return false;
+    const l=partnerLabs.find(x=>String(x.Partner_Name)===String(r.Partner)||String(x.Lab_ID)===String(r.Partner));
+    return!l||l.Country!=='Cambodia';
+  }));
   const el=document.getElementById('tabContent');
   if(!rows.length){el.innerHTML='<div class="empty"><div class="eicon">🎉</div><h3>No pending requests</h3></div>';return;}
   let html='';
+  if(urgent.length)html+='<div class="group-header">🚨 Urgent</div>'+urgent.map(r=>card(r,tatStatus(r))).join('');
   if(cam.length)html+='<div class="group-header">🇰🇭 Cambodia</div>'+cam.map(r=>card(r,tatStatus(r))).join('');
   if(oth.length)html+='<div class="group-header">🌏 Overseas</div>'+oth.map(r=>card(r,tatStatus(r))).join('');
   el.innerHTML=html;
@@ -526,7 +532,11 @@ function card(r,status){
   const due=calcDue(r.Request_DateTime,r.TAT_Value,r.TAT_Unit);
   const isAdmin=currentUser&&currentUser.Role==='Admin';
   const adminBtns=isAdmin?`<button class="bdel" onclick="deleteReq('${r.Row_ID}','${r.Request_ID}')">🗑️ Delete</button>`:'';
+  const isUrgent=r.Urgent==='Yes'||r.Urgent===true;
+  const urgentBtn=r.Status==='Pending'?`<button class="burgent ${isUrgent?'active':''}" onclick="toggleUrgent('${r.Row_ID}',${isUrgent})">${isUrgent?'🚨 Urgent':'⚑ Urgent'}</button>`:'';
+  const urgentMark=isUrgent?`<span class="urgent-badge">🚨 URGENT</span>`:'';
   const inst=r.Physician_Institution?` <span style="font-size:12px;font-weight:400;opacity:.75;">(${r.Physician_Institution})</span>`:'';
+
   let footer='';
   if(r.Status==='Pending')footer=`<div class="card-footer"><button class="bcomplete" onclick="openComplete('${r.Row_ID}')">✔ Mark as Completed</button></div>`;
   else if(r.Status==='Completed')footer=`<div class="card-footer"><button class="breopen" onclick="reopenReq('${r.Row_ID}')">↩ Reopen</button></div>`;
@@ -535,9 +545,11 @@ function card(r,status){
       <div class="card-header-left">
         <span class="card-id-pill">${r.Request_ID}</span>
         <span class="card-patient-name">${r.Patient_Name}${inst}</span>
+        ${urgentMark}
       </div>
       <div class="card-header-right">
         <span class="sbadge ${bc[status]}">${lbl[status]}</span>
+        ${urgentBtn}
         <button class="bedit" onclick="openEdit('${r.Row_ID}')">✏️ Edit</button>
         ${adminBtns}
       </div>
@@ -693,6 +705,16 @@ async function saveRequest(){
   finally{isSaving=false;setBtn(btn,'Save Request',false);}
 }
 
+// URGENT TOGGLE
+async function toggleUrgent(rowId,isCurrentlyUrgent){
+  const newVal=isCurrentlyUrgent?'No':'Yes';
+  try{
+    await api({action:'updateRequest',Row_ID:rowId,Status:allRequests.find(r=>r.Row_ID==rowId)?.Status||'Pending',Urgent:newVal,UpdateUrgent:'true'});
+    showToast(newVal==='Yes'?'🚨 Marked as Urgent':'⚑ Urgent removed');
+    await loadAll();
+  }catch(e){alert('Error updating urgent status.');}
+}
+
 // DELETE REQUEST (Admin only)
 async function deleteReq(rowId,requestId){
   if(!confirm(`Delete request ${requestId}?\n\nThis cannot be undone.`))return;
@@ -791,6 +813,8 @@ function setBtn(btn,text,disabled){btn.disabled=disabled;btn.innerHTML=disabled?
 function show(id){document.getElementById(id).style.display='block';}
 function hide(id){document.getElementById(id).style.display='none';}
 function arr(x){return Array.isArray(x)?x:[];}
+
+
 </script>
 </body>
 </html>
