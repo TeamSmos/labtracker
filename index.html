@@ -45,7 +45,23 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .ctab:hover{color:var(--primary);}
 .sort-sel{padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;color:var(--text);background:#fff;outline:none;cursor:pointer;white-space:nowrap;}
 .sort-sel:focus{border-color:var(--primary);}
-.burgent{background:#fff;color:#7B1FA2;border:1px solid #7B1FA2;padding:4px 10px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;}
+.list-table{width:100%;border-collapse:collapse;font-size:13px;}
+.list-table thead th{background:#1565C0;color:#fff;padding:8px 10px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;cursor:pointer;user-select:none;}
+.list-table thead th:hover{background:#0D47A1;}
+.list-table thead th .sort-icon{margin-left:4px;opacity:.6;}
+.list-table tbody tr{border-bottom:1px solid rgba(0,0,0,.08);cursor:default;}
+.list-table tbody tr:hover{filter:brightness(.95);}
+.list-table td{padding:6px 10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px;}
+.list-table td:first-child{font-weight:700;font-size:12px;}
+.row-overtat{background:#FFCDD2;color:#B71C1C;}
+.row-approaching{background:#FFE0B2;color:#E65100;}
+.row-ontrack{background:#C8E6C9;color:#1B5E20;}
+.row-completed{background:#CFD8DC;color:#37474F;}
+.row-urgent{background:#CE93D8;color:#4A148C;}
+.list-wrap{overflow-x:auto;border-radius:var(--radius);box-shadow:0 2px 8px rgba(0,0,0,.08);}
+.list-sort-bar{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.list-count{font-size:13px;color:var(--muted);}
+
 .burgent:hover{background:#7B1FA2;color:#fff;}
 .burgent.active{background:#7B1FA2;color:#fff;}
 .urgent-badge{background:#7B1FA2;color:#fff;font-size:10px;padding:2px 6px;border-radius:10px;font-weight:700;margin-left:4px;}
@@ -188,6 +204,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
     <div class="tab active" onclick="switchTab('overtat')" id="tab-overtat">🔴 Over TAT <span class="tbadge red" id="b-overtat">0</span></div>
     <div class="tab" onclick="switchTab('pending')" id="tab-pending">🟡 Pending <span class="tbadge orange" id="b-pending">0</span></div>
     <div class="tab" onclick="switchTab('completed')" id="tab-completed">✅ Completed <span class="tbadge gray" id="b-completed">0</span></div>
+    <div class="tab-divider"></div>
+    <div class="tab" onclick="switchTab('list')" id="tab-list">📋 All List</div>
     <div class="tab-divider"></div>
     <div class="tab ctab" onclick="switchCountry('all')" id="ctab-all">🌐 All</div>
     <div class="tab ctab" onclick="switchCountry('Cambodia')" id="ctab-Cambodia">🇰🇭 Cambodia</div>
@@ -510,7 +528,110 @@ function renderTab(){
   });
   if(currentTab==='overtat')renderOverTAT(data);
   else if(currentTab==='pending')renderPending(data);
+  else if(currentTab==='list')renderList(data);
   else renderCompleted(data);
+}
+
+let listSortCol='Request_DateTime';
+let listSortDir=1;
+let listStatusSorted=false;
+
+function toggleSortStatus(){
+  if(listStatusSorted){
+    listSortCol='Request_DateTime';
+    listSortDir=1;
+    listStatusSorted=false;
+  } else {
+    listSortCol='_status';
+    listSortDir=1;
+    listStatusSorted=true;
+  }
+  renderTab();
+}
+
+function renderList(data){
+  const el=document.getElementById('tabContent');
+
+  // Sort
+  const sorted=[...data].sort((a,b)=>{
+    let va=a[listSortCol]||'';
+    let vb=b[listSortCol]||'';
+    // TAT status priority for default
+    if(listSortCol==='_status'){
+      const order={'over-tat':0,'urgent':1,'approaching':2,'on-track':3,'completed':4};
+      va=order[a.Urgent==='Yes'&&a.Status==='Pending'?'urgent':tatStatus(a)]??5;
+      vb=order[b.Urgent==='Yes'&&b.Status==='Pending'?'urgent':tatStatus(b)]??5;
+      return(va-vb)*listSortDir;
+    }
+    if(listSortCol==='Request_DateTime'||listSortCol==='Released_DateTime'){
+      va=new Date(va||0);vb=new Date(vb||0);
+      return(va-vb)*listSortDir;
+    }
+    return String(va).localeCompare(String(vb))*listSortDir;
+  });
+
+  function thClick(col){
+    if(listSortCol===col)listSortDir*=-1;
+    else{listSortCol=col;listSortDir=1;}
+    listStatusSorted=(listSortCol==='_status');
+    renderTab();
+  }
+  function icon(col){
+    if(listSortCol!==col)return'<span class="sort-icon">↕</span>';
+    return listSortDir===1?'<span class="sort-icon">↑</span>':'<span class="sort-icon">↓</span>';
+  }
+  function rowClass(r){
+    if(r.Urgent==='Yes'&&r.Status==='Pending')return'row-urgent';
+    const s=tatStatus(r);
+    if(s==='over-tat')return'row-overtat';
+    if(s==='approaching')return'row-approaching';
+    if(s==='on-track')return'row-ontrack';
+    return'row-completed';
+  }
+  function statusLabel(r){
+    if(r.Urgent==='Yes'&&r.Status==='Pending')return'🚨 URGENT';
+    const s=tatStatus(r);
+    if(s==='over-tat')return'🔴 OVER TAT';
+    if(s==='approaching')return'🟠 APPROACHING';
+    if(s==='on-track')return'🟢 ON TRACK';
+    return'✅ COMPLETED';
+  }
+
+  el.innerHTML=`
+  <div class="list-sort-bar">
+    <span class="list-count">${sorted.length} record(s)</span>
+    <button class="btn-sm" id="sortStatusBtn" style="background:${listStatusSorted?'#7B1FA2':'var(--blue-light)'};color:${listStatusSorted?'#fff':'var(--blue)'};border:none;transition:all .15s;" onclick="toggleSortStatus()">&#9654; Sort by Status${listStatusSorted?' ✓':''}</button>
+  </div>
+  <div class="list-wrap">
+    <table class="list-table">
+      <thead>
+        <tr>
+          <th onclick="thClick('Request_ID')">Request ID${icon('Request_ID')}</th>
+          <th onclick="thClick('Patient_Name')">Patient Name${icon('Patient_Name')}</th>
+          <th onclick="thClick('Test_Name')">Test Name${icon('Test_Name')}</th>
+          <th onclick="thClick('Partner')">Partner Lab${icon('Partner')}</th>
+          <th onclick="thClick('Country')">Country${icon('Country')}</th>
+          <th onclick="thClick('_status')">Status${icon('_status')}</th>
+          <th onclick="thClick('Request_DateTime')">Request Date${icon('Request_DateTime')}</th>
+          <th onclick="thClick('Released_By')">Released By${icon('Released_By')}</th>
+          <th onclick="thClick('Released_DateTime')">Released Date${icon('Released_DateTime')}</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${sorted.map(r=>`<tr class="${rowClass(r)}">
+          <td>${r.Request_ID||'-'}</td>
+          <td title="${r.Patient_Name||''}">${r.Patient_Name||'-'}</td>
+          <td title="${r.Test_Name||''}">${r.Test_Name||'-'}</td>
+          <td title="${lname(r.Partner)}">${lname(r.Partner)}</td>
+          <td>${r.Country||'-'}</td>
+          <td><strong>${statusLabel(r)}</strong></td>
+          <td>${fdt(r.Request_DateTime)}</td>
+          <td>${sname(r.Released_By)||'-'}</td>
+          <td>${r.Released_DateTime?fdt(r.Released_DateTime):'-'}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>`;
 }
 function updateBadges(){
   document.getElementById('b-overtat').textContent=allRequests.filter(r=>tatStatus(r)==='over-tat').length;
