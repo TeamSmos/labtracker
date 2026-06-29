@@ -241,7 +241,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
     <div class="mbody">
       <div class="sdiv">Request Info</div>
       <div class="frow">
-        <div class="fg"><label class="fl">Request ID <span class="req">*</span></label><input class="fi" id="f-rid" placeholder="e.g. 011656 (numbers only)"></div>
+        <div class="fg"><label class="fl">Request ID <span class="req">*</span></label><input class="fi" id="f-rid" placeholder="BTD-000001"></div>
         <div class="fg"><label class="fl">Date & Time</label><input class="fi" id="f-dt" readonly></div>
       </div>
       <div class="fg"><label class="fl">Patient Name <span class="req">*</span></label><input class="fi" id="f-patient" placeholder="Full name"></div>
@@ -865,7 +865,7 @@ async function saveRequest(){
   const partnerName=partnerOpt?partnerOpt.text.split(' — ')[0].trim():'';
   const createdBy=document.getElementById('f-createdby').value;
   if(!rid||!patient||!partner||!createdBy){alert('Please fill all required fields:\n• Request ID\n• Patient Name\n• Partner Laboratory\n• Created By');return;}
-  if(!/^\d+$/.test(rid)){alert('Request ID must be numbers only\nExample: 000001');return;}
+  if(!/^BTD-\d{6}$/.test(rid)){alert('Request ID must be in format BTD-000001');return;}
   const selected=Object.values(selTests);
   if(!selected.length){alert('Please select at least one test');return;}
   const inst=document.getElementById('f-inst').value.trim();
