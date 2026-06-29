@@ -214,7 +214,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
       <button class="bhdr" onclick="openChangePw()">🔑 Password</button>
       <div id="adminBtns" style="display:none;">
         <button class="bhdr" onclick="openUserMgmt()">👥 Users</button>
-        <button class="bhdr" id="historyBtn" onclick="switchTab('history')" style="position:relative;">
+        <button class="bhdr" id="historyBtn" onclick="openHistory()">
           🔔 History
         </button>
       </div>
@@ -349,6 +349,23 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
   </div>
 </div>
 
+<!-- HISTORY MODAL -->
+<div class="moverlay" id="historyModal">
+  <div class="modal modal-lg" style="max-width:800px;max-height:85vh;">
+    <div class="mhdr">
+      <div class="mtitle">🔔 Change History</div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <input class="fi" id="histSearch" placeholder="Search..." style="width:200px;padding:6px 10px;font-size:13px;" oninput="filterHistoryModal()">
+        <button class="btn-sm" style="background:var(--blue-light);color:var(--blue);border:none;" onclick="cachedHistory=null;openHistory()">🔄</button>
+        <button class="mclose" onclick="closeM('historyModal')">×</button>
+      </div>
+    </div>
+    <div class="mbody" style="padding:14px 18px;" id="historyContent">
+      <div class="loading">⏳ Loading...</div>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -372,7 +389,6 @@ function showApp(){
   hide('loginScreen');show('mainApp');
   document.getElementById('huser').textContent='👤 '+currentUser.Username+' ('+currentUser.Role+')';
   document.getElementById('adminBtns').style.display=(currentUser.Role==='Admin'||currentUser.Role==='Manager')?'inline-flex':'none';
-  document.getElementById('tab-history').style.display=(currentUser.Role==='Admin'||currentUser.Role==='Manager')?'flex':'none';
   document.getElementById('ctab-all')?.classList.add('active');
   loadAll();
   // Auto sign out after 3 hours
@@ -521,9 +537,8 @@ function lname(id){
 // TABS
 function switchTab(t){
   currentTab=t;
-  if(t!=='history')cachedHistory=null;
-  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
-  document.getElementById('tab-'+t)?.classList.add('active');
+  if(t!=='history')cachedHistory=null;  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  if(t!=='history')document.getElementById('tab-'+t)?.classList.add('active');
   document.querySelectorAll('.ctab').forEach(x=>x.classList.remove('active'));
   document.getElementById('ctab-'+currentCountry)?.classList.add('active');
   renderTab();
@@ -572,23 +587,28 @@ function renderTab(){
   if(currentTab==='overtat')renderOverTAT(data);
   else if(currentTab==='pending')renderPending(data);
   else if(currentTab==='list')renderList(data);
-  else if(currentTab==='history'){renderHistory();return;}
   else renderCompleted(data);
 }
 
 let cachedHistory=null;
-async function renderHistory(){
-  const el=document.getElementById('tabContent');
+async function openHistory(){
+  document.getElementById('historyModal').classList.add('open');
+  document.getElementById('histSearch').value='';
   if(!cachedHistory){
-    el.innerHTML='<div class="loading">⏳ Loading history...</div>';
+    document.getElementById('historyContent').innerHTML='<div class="loading">⏳ Loading...</div>';
     try{
       cachedHistory=arr(await api({action:'getHistory'}));
     }catch(e){
-      el.innerHTML='<div class="empty"><div class="eicon">⚠️</div><h3>Could not load history</h3></div>';
+      document.getElementById('historyContent').innerHTML='<div class="empty"><div class="eicon">⚠️</div><h3>Could not load history</h3></div>';
       return;
     }
   }
-  const q=document.getElementById('searchInput').value.toLowerCase();
+  renderHistoryModal('');
+}
+function filterHistoryModal(){
+  renderHistoryModal(document.getElementById('histSearch').value.toLowerCase());
+}
+function renderHistoryModal(q){
   const filtered=[...cachedHistory].filter(h=>!q||
     (h.Request_ID||'').toLowerCase().includes(q)||
     (h.Patient_Name||'').toLowerCase().includes(q)||
@@ -606,25 +626,23 @@ async function renderHistory(){
     if(a.includes('urgent'))return'hist-urgent';
     return'hist-user';
   }
+  const el=document.getElementById('historyContent');
   if(!filtered.length){
-    el.innerHTML='<div class="empty"><div class="eicon">📜</div><h3>No history found</h3></div>';
+    el.innerHTML='<div class="empty"><div class="eicon">📜</div><h3>No records found</h3></div>';
     return;
   }
   el.innerHTML=`
-  <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-    <span style="font-size:13px;color:var(--muted);">${filtered.length} record(s) — newest first</span>
-    <button class="btn-sm" style="background:var(--blue-light);color:var(--blue);border:none;" onclick="cachedHistory=null;renderHistory()">🔄 Reload</button>
-  </div>
+  <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">${filtered.length} record(s) — newest first</div>
   <div class="list-wrap">
     <table class="hist-table">
       <thead><tr><th>Time</th><th>Action</th><th>Request ID</th><th>Patient</th><th>Done By</th><th>Detail</th></tr></thead>
       <tbody>${filtered.map(h=>`<tr>
-        <td style="white-space:nowrap;">${fdt(h.Timestamp)}</td>
+        <td style="white-space:nowrap;font-size:12px;">${fdt(h.Timestamp)}</td>
         <td><span class="hist-action ${actionClass(h.Action)}">${h.Action||'-'}</span></td>
         <td><strong>${h.Request_ID||'-'}</strong></td>
         <td>${h.Patient_Name||'-'}</td>
         <td>${h.Done_By||'-'}</td>
-        <td style="color:var(--muted);">${h.Detail||'-'}</td>
+        <td style="color:var(--muted);font-size:12px;">${h.Detail||'-'}</td>
       </tr>`).join('')}</tbody>
     </table>
   </div>`;
