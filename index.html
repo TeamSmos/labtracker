@@ -519,17 +519,11 @@ function frem(r){
 function sname(id){const s=staffList.find(x=>x.Staff_ID==id);return s?s.Staff_Name:id||'-';}
 function lname(id){
   if(!id||id==='-'||id==='')return'-';
-  // Try exact Partner_Name match
   let l=partnerLabs.find(x=>String(x.Partner_Name)===String(id));
   if(l)return l.Partner_Name;
-  // Try Lab_ID match
   l=partnerLabs.find(x=>String(x.Lab_ID)===String(id));
   if(l)return l.Partner_Name;
-  // Try case-insensitive
   l=partnerLabs.find(x=>String(x.Partner_Name).toLowerCase()===String(id).toLowerCase());
-  if(l)return l.Partner_Name;
-  // Try partial match
-  l=partnerLabs.find(x=>String(id).toLowerCase().includes(String(x.Partner_Name).toLowerCase())||String(x.Partner_Name).toLowerCase().includes(String(id).toLowerCase()));
   if(l)return l.Partner_Name;
   return String(id);
 }
@@ -537,8 +531,9 @@ function lname(id){
 // TABS
 function switchTab(t){
   currentTab=t;
-  if(t!=='history')cachedHistory=null;  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
-  if(t!=='history')document.getElementById('tab-'+t)?.classList.add('active');
+  cachedHistory=null;
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  document.getElementById('tab-'+t)?.classList.add('active');
   document.querySelectorAll('.ctab').forEach(x=>x.classList.remove('active'));
   document.getElementById('ctab-'+currentCountry)?.classList.add('active');
   renderTab();
@@ -571,19 +566,18 @@ function sortRows(rows){
 }
 function renderTab(){
   updateBadges();
-  const q=document.getElementById('searchInput').value.toLowerCase();
-  let data=allRequests.filter(r=>{
-    const matchQ=!q||
-      (r.Request_ID||'').toLowerCase().includes(q)||
-      (r.Patient_Name||'').toLowerCase().includes(q)||
-      lname(r.Partner).toLowerCase().includes(q)||
-      (r.Remark||'').toLowerCase().includes(q)||
-      (r.Physician_Institution||'').toLowerCase().includes(q)||
-      (r.Test_Name||'').toLowerCase().includes(q)||
-      (r.Country||'').toLowerCase().includes(q);
-    const matchC=currentCountry==='all'||(r.Country||'').toLowerCase()===currentCountry.toLowerCase();
-    return matchQ&&matchC;
-  });
+  const q=(document.getElementById('searchInput').value||'').trim().toLowerCase();
+  let data=q?allRequests.filter(r=>
+    (r.Request_ID||'').toLowerCase().includes(q)||
+    (r.Patient_Name||'').toLowerCase().includes(q)||
+    lname(r.Partner).toLowerCase().includes(q)||
+    (r.Test_Name||'').toLowerCase().includes(q)||
+    (r.Country||'').toLowerCase().includes(q)||
+    (r.Remark||'').toLowerCase().includes(q)
+  ):allRequests;
+  if(currentCountry!=='all'){
+    data=data.filter(r=>(r.Country||'').toLowerCase()===currentCountry.toLowerCase());
+  }
   if(currentTab==='overtat')renderOverTAT(data);
   else if(currentTab==='pending')renderPending(data);
   else if(currentTab==='list')renderList(data);
