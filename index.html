@@ -227,7 +227,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
     <div class="tab" onclick="switchTab('completed')" id="tab-completed">✅ Completed <span class="tbadge gray" id="b-completed">0</span></div>
     <div class="tab-divider"></div>
     <div class="tab" onclick="switchTab('list')" id="tab-list">📋 All List</div>
-    <div class="tab" id="tab-history" onclick="switchTab('history')" style="display:none;">🔔 History</div>
     <div class="tab-divider"></div>
     <div class="tab ctab active" onclick="switchCountry('all')" id="ctab-all">🌐 All</div>
     <div class="tab ctab" onclick="switchCountry('Cambodia')" id="ctab-Cambodia">🇰🇭 Cambodia</div>
@@ -522,8 +521,9 @@ function lname(id){
 // TABS
 function switchTab(t){
   currentTab=t;
+  if(t!=='history')cachedHistory=null;
   document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
-  document.getElementById('tab-'+t).classList.add('active');
+  document.getElementById('tab-'+t)?.classList.add('active');
   document.querySelectorAll('.ctab').forEach(x=>x.classList.remove('active'));
   document.getElementById('ctab-'+currentCountry)?.classList.add('active');
   renderTab();
@@ -572,50 +572,62 @@ function renderTab(){
   if(currentTab==='overtat')renderOverTAT(data);
   else if(currentTab==='pending')renderPending(data);
   else if(currentTab==='list')renderList(data);
-  else if(currentTab==='history')renderHistory();
+  else if(currentTab==='history'){renderHistory();return;}
   else renderCompleted(data);
 }
 
+let cachedHistory=null;
 async function renderHistory(){
   const el=document.getElementById('tabContent');
-  el.innerHTML='<div class="loading">⏳ Loading history...</div>';
-  try{
-    const history=arr(await api({action:'getHistory'}));
-    const q=document.getElementById('searchInput').value.toLowerCase();
-    const filtered=history.filter(h=>!q||
-      (h.Request_ID||'').toLowerCase().includes(q)||
-      (h.Patient_Name||'').toLowerCase().includes(q)||
-      (h.Action||'').toLowerCase().includes(q)||
-      (h.Done_By||'').toLowerCase().includes(q)||
-      (h.Detail||'').toLowerCase().includes(q)
-    ).reverse();
-    function actionClass(a){
-      a=(a||'').toLowerCase();
-      if(a.includes('creat'))return'hist-created';
-      if(a.includes('complet'))return'hist-completed';
-      if(a.includes('edit'))return'hist-edited';
-      if(a.includes('delet'))return'hist-deleted';
-      if(a.includes('reopen'))return'hist-reopened';
-      if(a.includes('urgent'))return'hist-urgent';
-      return'hist-user';
+  if(!cachedHistory){
+    el.innerHTML='<div class="loading">⏳ Loading history...</div>';
+    try{
+      cachedHistory=arr(await api({action:'getHistory'}));
+    }catch(e){
+      el.innerHTML='<div class="empty"><div class="eicon">⚠️</div><h3>Could not load history</h3></div>';
+      return;
     }
-    if(!filtered.length){el.innerHTML='<div class="empty"><div class="eicon">📜</div><h3>No history yet</h3><p>Actions will be recorded here.</p></div>';return;}
-    el.innerHTML=`
-    <div style="margin-bottom:10px;font-size:13px;color:var(--muted);">${filtered.length} record(s) — newest first</div>
-    <div class="list-wrap">
-      <table class="hist-table">
-        <thead><tr><th>Time</th><th>Action</th><th>Request ID</th><th>Patient</th><th>Done By</th><th>Detail</th></tr></thead>
-        <tbody>${filtered.map(h=>`<tr>
-          <td style="white-space:nowrap;">${fdt(h.Timestamp)}</td>
-          <td><span class="hist-action ${actionClass(h.Action)}">${h.Action||'-'}</span></td>
-          <td><strong>${h.Request_ID||'-'}</strong></td>
-          <td>${h.Patient_Name||'-'}</td>
-          <td>${h.Done_By||'-'}</td>
-          <td style="color:var(--muted);">${h.Detail||'-'}</td>
-        </tr>`).join('')}</tbody>
-      </table>
-    </div>`;
-  }catch(e){el.innerHTML='<div class="empty"><div class="eicon">⚠️</div><h3>Could not load history</h3></div>';}
+  }
+  const q=document.getElementById('searchInput').value.toLowerCase();
+  const filtered=[...cachedHistory].filter(h=>!q||
+    (h.Request_ID||'').toLowerCase().includes(q)||
+    (h.Patient_Name||'').toLowerCase().includes(q)||
+    (h.Action||'').toLowerCase().includes(q)||
+    (h.Done_By||'').toLowerCase().includes(q)||
+    (h.Detail||'').toLowerCase().includes(q)
+  ).reverse();
+  function actionClass(a){
+    a=(a||'').toLowerCase();
+    if(a.includes('creat'))return'hist-created';
+    if(a.includes('complet'))return'hist-completed';
+    if(a.includes('edit'))return'hist-edited';
+    if(a.includes('delet'))return'hist-deleted';
+    if(a.includes('reopen'))return'hist-reopened';
+    if(a.includes('urgent'))return'hist-urgent';
+    return'hist-user';
+  }
+  if(!filtered.length){
+    el.innerHTML='<div class="empty"><div class="eicon">📜</div><h3>No history found</h3></div>';
+    return;
+  }
+  el.innerHTML=`
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+    <span style="font-size:13px;color:var(--muted);">${filtered.length} record(s) — newest first</span>
+    <button class="btn-sm" style="background:var(--blue-light);color:var(--blue);border:none;" onclick="cachedHistory=null;renderHistory()">🔄 Reload</button>
+  </div>
+  <div class="list-wrap">
+    <table class="hist-table">
+      <thead><tr><th>Time</th><th>Action</th><th>Request ID</th><th>Patient</th><th>Done By</th><th>Detail</th></tr></thead>
+      <tbody>${filtered.map(h=>`<tr>
+        <td style="white-space:nowrap;">${fdt(h.Timestamp)}</td>
+        <td><span class="hist-action ${actionClass(h.Action)}">${h.Action||'-'}</span></td>
+        <td><strong>${h.Request_ID||'-'}</strong></td>
+        <td>${h.Patient_Name||'-'}</td>
+        <td>${h.Done_By||'-'}</td>
+        <td style="color:var(--muted);">${h.Detail||'-'}</td>
+      </tr>`).join('')}</tbody>
+    </table>
+  </div>`;
 }
 
 let listSortCol='Request_DateTime';
