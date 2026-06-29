@@ -59,7 +59,19 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .row-ontrack{background:#C8E6C9;color:#1B5E20;}
 .row-completed{background:#CFD8DC;color:#37474F;}
 .row-urgent{background:#CE93D8;color:#4A148C;}
-.list-wrap{overflow-x:auto;border-radius:var(--radius);box-shadow:0 2px 8px rgba(0,0,0,.08);}
+.hist-table{width:100%;border-collapse:collapse;font-size:13px;}
+.hist-table thead th{background:#37474F;color:#fff;padding:8px 12px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;}
+.hist-table tbody tr{border-bottom:1px solid var(--border);}
+.hist-table tbody tr:hover{background:var(--bg);}
+.hist-table td{padding:7px 12px;font-size:13px;}
+.hist-action{padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;}
+.hist-created{background:#E8F5E9;color:#2E7D32;}
+.hist-completed{background:#E3F2FD;color:#1565C0;}
+.hist-edited{background:#FFF3E0;color:#E65100;}
+.hist-deleted{background:#FFEBEE;color:#C62828;}
+.hist-reopened{background:#F3E5F5;color:#6A1B9A;}
+.hist-urgent{background:#FCE4EC;color:#880E4F;}
+.hist-user{background:#E0F7FA;color:#006064;}
 .list-sort-bar{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
 .list-count{font-size:13px;color:var(--muted);}
 
@@ -200,7 +212,12 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
       <span class="huser" id="huser"></span>
       <button class="bhdr" onclick="staticLoaded=false;loadAll()">🔄 Refresh</button>
       <button class="bhdr" onclick="openChangePw()">🔑 Password</button>
-      <div id="adminBtns" style="display:none;"><button class="bhdr" onclick="openUserMgmt()">👥 Users</button></div>
+      <div id="adminBtns" style="display:none;">
+        <button class="bhdr" onclick="openUserMgmt()">👥 Users</button>
+        <button class="bhdr" id="historyBtn" onclick="switchTab('history')" style="position:relative;">
+          🔔 History
+        </button>
+      </div>
       <button class="bso" onclick="doLogout()">⏻ Sign Out</button>
     </div>
   </div>
@@ -210,6 +227,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
     <div class="tab" onclick="switchTab('completed')" id="tab-completed">✅ Completed <span class="tbadge gray" id="b-completed">0</span></div>
     <div class="tab-divider"></div>
     <div class="tab" onclick="switchTab('list')" id="tab-list">📋 All List</div>
+    <div class="tab" id="tab-history" onclick="switchTab('history')" style="display:none;">🔔 History</div>
     <div class="tab-divider"></div>
     <div class="tab ctab active" onclick="switchCountry('all')" id="ctab-all">🌐 All</div>
     <div class="tab ctab" onclick="switchCountry('Cambodia')" id="ctab-Cambodia">🇰🇭 Cambodia</div>
@@ -240,7 +258,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
     <div class="mbody">
       <div class="sdiv">Request Info</div>
       <div class="frow">
-        <div class="fg"><label class="fl">Request ID <span class="req">*</span></label><input class="fi" id="f-rid" placeholder="BTD-000001"></div>
+        <div class="fg"><label class="fl">Request ID <span class="req">*</span></label><input class="fi" id="f-rid" placeholder="e.g. 011656 (numbers only)"></div>
         <div class="fg"><label class="fl">Date & Time</label><input class="fi" id="f-dt" readonly></div>
       </div>
       <div class="fg"><label class="fl">Patient Name <span class="req">*</span></label><input class="fi" id="f-patient" placeholder="Full name"></div>
@@ -355,6 +373,7 @@ function showApp(){
   hide('loginScreen');show('mainApp');
   document.getElementById('huser').textContent='👤 '+currentUser.Username+' ('+currentUser.Role+')';
   document.getElementById('adminBtns').style.display=(currentUser.Role==='Admin'||currentUser.Role==='Manager')?'inline-flex':'none';
+  document.getElementById('tab-history').style.display=(currentUser.Role==='Admin'||currentUser.Role==='Manager')?'flex':'none';
   document.getElementById('ctab-all')?.classList.add('active');
   loadAll();
   // Auto sign out after 3 hours
@@ -553,7 +572,50 @@ function renderTab(){
   if(currentTab==='overtat')renderOverTAT(data);
   else if(currentTab==='pending')renderPending(data);
   else if(currentTab==='list')renderList(data);
+  else if(currentTab==='history')renderHistory();
   else renderCompleted(data);
+}
+
+async function renderHistory(){
+  const el=document.getElementById('tabContent');
+  el.innerHTML='<div class="loading">⏳ Loading history...</div>';
+  try{
+    const history=arr(await api({action:'getHistory'}));
+    const q=document.getElementById('searchInput').value.toLowerCase();
+    const filtered=history.filter(h=>!q||
+      (h.Request_ID||'').toLowerCase().includes(q)||
+      (h.Patient_Name||'').toLowerCase().includes(q)||
+      (h.Action||'').toLowerCase().includes(q)||
+      (h.Done_By||'').toLowerCase().includes(q)||
+      (h.Detail||'').toLowerCase().includes(q)
+    ).reverse();
+    function actionClass(a){
+      a=(a||'').toLowerCase();
+      if(a.includes('creat'))return'hist-created';
+      if(a.includes('complet'))return'hist-completed';
+      if(a.includes('edit'))return'hist-edited';
+      if(a.includes('delet'))return'hist-deleted';
+      if(a.includes('reopen'))return'hist-reopened';
+      if(a.includes('urgent'))return'hist-urgent';
+      return'hist-user';
+    }
+    if(!filtered.length){el.innerHTML='<div class="empty"><div class="eicon">📜</div><h3>No history yet</h3><p>Actions will be recorded here.</p></div>';return;}
+    el.innerHTML=`
+    <div style="margin-bottom:10px;font-size:13px;color:var(--muted);">${filtered.length} record(s) — newest first</div>
+    <div class="list-wrap">
+      <table class="hist-table">
+        <thead><tr><th>Time</th><th>Action</th><th>Request ID</th><th>Patient</th><th>Done By</th><th>Detail</th></tr></thead>
+        <tbody>${filtered.map(h=>`<tr>
+          <td style="white-space:nowrap;">${fdt(h.Timestamp)}</td>
+          <td><span class="hist-action ${actionClass(h.Action)}">${h.Action||'-'}</span></td>
+          <td><strong>${h.Request_ID||'-'}</strong></td>
+          <td>${h.Patient_Name||'-'}</td>
+          <td>${h.Done_By||'-'}</td>
+          <td style="color:var(--muted);">${h.Detail||'-'}</td>
+        </tr>`).join('')}</tbody>
+      </table>
+    </div>`;
+  }catch(e){el.innerHTML='<div class="empty"><div class="eicon">⚠️</div><h3>Could not load history</h3></div>';}
 }
 
 let listSortCol='Request_DateTime';
@@ -867,7 +929,7 @@ async function saveRequest(){
   const partnerName=partnerOpt?partnerOpt.text.split(' — ')[0].trim():'';
   const createdBy=document.getElementById('f-createdby').value;
   if(!rid||!patient||!partner||!createdBy){alert('Please fill all required fields:\n• Request ID\n• Patient Name\n• Partner Laboratory\n• Created By');return;}
-  if(!/^BTD-\d{6}$/.test(rid)){alert('Request ID must be in format BTD-000001');return;}
+  if(!/^\d+$/.test(rid)){alert('Request ID must be numbers only\nExample: 000001');return;}
   const selected=Object.values(selTests);
   if(!selected.length){alert('Please select at least one test');return;}
   const inst=document.getElementById('f-inst').value.trim();
@@ -880,7 +942,7 @@ async function saveRequest(){
     const t=selected[0];
     try{
       const res=await api({
-        action:'editRequest',Row_ID:editingRowId,
+        action:'editRequest',Row_ID:editingRowId,EditedBy:currentUser?.Username||'',
         Request_ID:rid,
         Patient_Name:patient,Physician_Institution:inst,
         Partner:partner,Partner_Name:partnerName,
@@ -924,7 +986,7 @@ async function saveRequest(){
 async function toggleUrgent(rowId,isCurrentlyUrgent){
   const newVal=isCurrentlyUrgent?'No':'Yes';
   try{
-    await api({action:'updateRequest',Row_ID:rowId,Status:allRequests.find(r=>r.Row_ID==rowId)?.Status||'Pending',Urgent:newVal,UpdateUrgent:'true'});
+    await api({action:'updateRequest',Row_ID:rowId,Status:allRequests.find(r=>r.Row_ID==rowId)?.Status||'Pending',Urgent:newVal,UpdateUrgent:'true',DoneBy:currentUser?.Username||''});
     showToast(newVal==='Yes'?'🚨 Marked as Urgent':'⚑ Urgent removed');
     await loadAll();
   }catch(e){alert('Error updating urgent status.');}
@@ -934,7 +996,7 @@ async function toggleUrgent(rowId,isCurrentlyUrgent){
 async function deleteReq(rowId,requestId){
   if(!confirm(`Delete request ${requestId}?\n\nThis cannot be undone.`))return;
   try{
-    const res=await api({action:'deleteRequest',Row_ID:rowId});
+    const res=await api({action:'deleteRequest',Row_ID:rowId,DeletedBy:currentUser?.Username||''});
     if(res.error){alert('Error: '+res.error);return;}
     showToast(`🗑️ Request ${requestId} deleted`);
     await loadAll(true);
@@ -949,14 +1011,14 @@ async function confirmComplete(){
   if(!rb){alert('Please select who is releasing this result');return;}
   setBtn(btn,'Saving...',true);
   try{
-    await api({action:'updateRequest',Row_ID:completingRowId,Status:'Completed',Released_By:rb,ClearRemark:'true'});
+    await api({action:'updateRequest',Row_ID:completingRowId,Status:'Completed',Released_By:rb,ClearRemark:'true',DoneBy:currentUser?.Username||''});
     closeM('completeModal');showToast('✅ Marked as Completed');await loadAll(true);
   }catch(e){alert('Error. Please try again.');}
   finally{setBtn(btn,'Confirm',false);}
 }
 async function reopenReq(rowId){
   if(!confirm('Reopen this request?'))return;
-  try{await api({action:'updateRequest',Row_ID:rowId,Status:'Pending',Released_By:''});showToast('↩ Request reopened');await loadAll(true);}
+  try{await api({action:'updateRequest',Row_ID:rowId,Status:'Pending',Released_By:'',DoneBy:currentUser?.Username||''});showToast('↩ Request reopened');await loadAll(true);}
   catch(e){alert('Error reopening.');}
 }
 
@@ -1009,7 +1071,7 @@ async function doAddUser(){
   if(p.length<4){showErr('addUserErr','Password must be at least 4 characters');return;}
   setBtn(btn,'Adding...',true);
   try{
-    const res=await api({action:'addUser',Username:u,Password:p,Role:r});
+    const res=await api({action:'addUser',Username:u,Password:p,Role:r,AddedBy:currentUser?.Username||''});
     if(res.error){showErr('addUserErr',res.error);return;}
     closeM('addUserModal');showToast('✅ User added successfully');
     usersList=arr(await api({action:'getUsers'}));renderUsers();
@@ -1020,7 +1082,7 @@ async function delUser(id,username,role){
   if(currentUser.Role==='Manager'&&role==='Admin'){alert('Managers cannot delete Admin accounts.');return;}
   if(!confirm(`Delete user "${username}"?\nThis cannot be undone.`))return;
   try{
-    await api({action:'deleteUser',User_ID:id});showToast('🗑️ User deleted');
+    await api({action:'deleteUser',User_ID:id,DeletedBy:currentUser?.Username||''});showToast('🗑️ User deleted');
     usersList=arr(await api({action:'getUsers'}));renderUsers();
   }catch(e){alert('Error deleting user.');}
 }
