@@ -367,12 +367,8 @@ function showApp(){
 }
 
 async function api(params){
-  const ctrl=new AbortController();
-  const timer=setTimeout(()=>ctrl.abort(),15000);
-  try{
-    const res=await fetch(SCRIPT_URL+'?'+new URLSearchParams(params),{signal:ctrl.signal});
-    clearTimeout(timer);return await res.json();
-  }catch(e){clearTimeout(timer);throw e;}
+  const res=await fetch(SCRIPT_URL+'?'+new URLSearchParams(params));
+  return await res.json();
 }
 
 async function doLogin(){
@@ -401,23 +397,22 @@ async function loadAll(requestsOnly=false){
   document.getElementById('tabContent').innerHTML='<div class="loading">⏳ Loading...</div>';
   try{
     if(!staticLoaded||!requestsOnly){
-      // Load everything first time or when forced
-      const [req,stf,labs,tests,users]=await Promise.all([
-        api({action:'getRequests'}),api({action:'getStaff'}),
-        api({action:'getPartnerLabs'}),api({action:'getTestMaster'}),api({action:'getUsers'})
-      ]);
-      allRequests=arr(req);
-      staffList=arr(stf).filter(s=>s.Active==='Yes'||s.Active===true);
-      partnerLabs=arr(labs);testMaster=arr(tests);usersList=arr(users);
+      // Single API call loads everything at once — much faster!
+      const all=await api({action:'getAllData'});
+      allRequests=arr(all.requests);
+      staffList=arr(all.staff).filter(s=>s.Active==='Yes'||s.Active===true);
+      partnerLabs=arr(all.partnerLabs);
+      testMaster=arr(all.testMaster);
+      usersList=arr(all.users);
       staticLoaded=true;
     } else {
-      // Only reload requests (fast - 1 call instead of 5)
-      const req=await api({action:'getRequests'});
-      allRequests=arr(req);
+      allRequests=arr(await api({action:'getRequests'}));
     }
-    fillDropdowns();renderTab();
+    fillDropdowns();
+    renderTab();
   }catch(e){
-    document.getElementById('tabContent').innerHTML=`<div class="empty"><div class="eicon">⚠️</div><h3>Connection Error</h3><p>Could not load data. <button onclick="loadAll()" style="color:var(--blue);background:none;border:none;cursor:pointer;font-size:14px;text-decoration:underline;">Try again</button></p></div>`;
+    console.error('Load error:',e);
+    document.getElementById('tabContent').innerHTML=`<div class="empty"><div class="eicon">⚠️</div><h3>Connection Error</h3><p style="margin-bottom:10px;">Could not connect to Google Sheet.</p><button onclick="staticLoaded=false;loadAll()" style="background:var(--primary);color:#fff;border:none;padding:8px 18px;border-radius:8px;cursor:pointer;font-size:14px;">🔄 Try Again</button></div>`;
   }
 }
 
