@@ -197,7 +197,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
     <div class="logo">🔬 Team Smos <span>Lab Tracker</span></div>
     <div class="header-right">
       <span class="huser" id="huser"></span>
-      <button class="bhdr" onclick="staticLoaded=false;loadAll()">🔄 Refresh</button>
+      <button class="bhdr" onclick="forceRefresh()">🔄 Refresh</button>
       <button class="bhdr" onclick="openChangePw()">🔑 Password</button>
       <div id="adminBtns" style="display:none;">
         <button class="bhdr" onclick="openUserMgmt()">👥 Users</button>
@@ -359,6 +359,22 @@ function dueOf(r){return r._due||(r._due=calcDue(r.Request_DateTime,r.TAT_Value,
 function searchOf(r){return r._search||(r._search=[r.Request_ID,r.Patient_Name,lname(r.Partner),r.Test_Name,r.Country,r.Remark].map(x=>String(x||'')).join(' ').toLowerCase());}
 let _rt=null;
 function debouncedRender(){clearTimeout(_rt);_rt=setTimeout(renderTab,200);}
+// Save current data to localStorage so next app open paints instantly
+// (the '_'-prefixed cached fields are stripped so they don't go stale)
+function saveSnapshot(){
+  try{
+    localStorage.setItem('labSnapshot',JSON.stringify(
+      {requests:allRequests,staff:staffList,partnerLabs:partnerLabs,testMaster:testMaster,users:usersList},
+      (k,v)=>(k&&k[0]==='_')?undefined:v
+    ));
+  }catch(e){}
+}
+// Manual Refresh: bypass server cache and show the loading indicator
+function forceRefresh(){staticLoaded=false;loadAll(false,false,true);}
+function newUuid(){
+  if(window.crypto&&crypto.randomUUID)return crypto.randomUUID();
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c==='x'?r:(r&0x3|0x8)).toString(16);});
+}
 
 window.onload=function(){
   const u=localStorage.getItem('labUser');
@@ -376,7 +392,23 @@ function showApp(){
   document.getElementById('huser').textContent='👤 '+currentUser.Username+' ('+currentUser.Role+')';
   document.getElementById('adminBtns').style.display=(currentUser.Role==='Admin'||currentUser.Role==='Manager')?'inline-flex':'none';
   document.getElementById('ctab-all')?.classList.add('active');
-  loadAll();
+  // Instant paint from last session's snapshot, then silent background refresh
+  let painted=false;
+  const snap=localStorage.getItem('labSnapshot');
+  if(snap){
+    try{
+      const d=JSON.parse(snap);
+      allRequests=arr(d.requests);
+      staffList=arr(d.staff);
+      partnerLabs=arr(d.partnerLabs);
+      testMaster=arr(d.testMaster);
+      usersList=arr(d.users);
+      staticLoaded=true;
+      buildLookups();fillDropdowns();renderTab();
+      painted=true;
+    }catch(e){}
+  }
+  loadAll(false,painted);
   // Auto sign out after 3 hours
   clearTimeout(window._autoLogout);
   window._autoLogout=setTimeout(()=>{
@@ -412,12 +444,12 @@ function doLogout(){
 // Cache static data (staff, labs, tests, users rarely change)
 let staticLoaded=false;
 
-async function loadAll(requestsOnly=false,silent=false){
+async function loadAll(requestsOnly=false,silent=false,fresh=false){
   if(!silent)document.getElementById('tabContent').innerHTML='<div class="loading">⏳ Loading...</div>';
   try{
     if(!staticLoaded||!requestsOnly){
       // Single API call loads everything at once — much faster!
-      const all=await api({action:'getAllData'});
+      const all=await api(fresh?{action:'getAllData',fresh:'1'}:{action:'getAllData'});
       allRequests=arr(all.requests);
       staffList=arr(all.staff).filter(s=>s.Active==='Yes'||s.Active===true);
       partnerLabs=arr(all.partnerLabs);
@@ -428,11 +460,12 @@ async function loadAll(requestsOnly=false,silent=false){
       allRequests=arr(await api({action:'getRequests'}));
     }
     buildLookups();
+    saveSnapshot();
     fillDropdowns();
     renderTab();
   }catch(e){
     console.error('Load error:',e);
-    document.getElementById('tabContent').innerHTML=`<div class="empty"><div class="eicon">⚠️</div><h3>Connection Error</h3><p style="margin-bottom:10px;">Could not connect to Google Sheet.</p><button onclick="staticLoaded=false;loadAll()" style="background:var(--primary);color:#fff;border:none;padding:8px 18px;border-radius:8px;cursor:pointer;font-size:14px;">🔄 Try Again</button></div>`;
+    document.getElementById('tabContent').innerHTML=`<div class="empty"><div class="eicon">⚠️</div><h3>Connection Error</h3><p style="margin-bottom:10px;">Could not connect to Google Sheet.</p><button onclick="forceRefresh()" style="background:var(--primary);color:#fff;border:none;padding:8px 18px;border-radius:8px;cursor:pointer;font-size:14px;">🔄 Try Again</button></div>`;
   }
 }
 
@@ -885,6 +918,15 @@ async function saveRequest(){
   if(editingRowId){
     isSaving=true;setBtn(btn,'Updating...',true);
     const t=selected[0];
+    // Optimistic: update the screen NOW, save to the server in the background
+    const rec=allRequests.find(x=>x.Row_ID==editingRowId);
+    const backup=rec?{...rec}:null;
+    if(rec){
+      Object.assign(rec,{Request_ID:rid,Patient_Name:patient,Physician_Institution:inst,Partner:partnerName,Country:country,Created_By:createdBy,Test_ID:t.Test_ID,Test_Name:t.Test_Name,TAT_Value:t.TAT_Value,TAT_Unit:t.TAT_Unit,Category:t.Category||'',Specimen:specimen,Remark:remark});
+      delete rec._due;delete rec._search;
+    }
+    closeM('reqModal');showToast('✅ Request updated successfully');
+    renderTab();
     try{
       const res=await api({
         action:'editRequest',Row_ID:editingRowId,EditedBy:currentUser?.Username||'',
@@ -897,16 +939,15 @@ async function saveRequest(){
         Category:t.Category||'',
         Specimen:specimen,Remark:remark
       });
-      if(res.error){alert('Error: '+res.error);return;}
-      const rec=allRequests.find(x=>x.Row_ID==editingRowId);
-      if(rec){
-        Object.assign(rec,{Request_ID:rid,Patient_Name:patient,Physician_Institution:inst,Partner:partnerName,Country:country,Created_By:createdBy,Test_ID:t.Test_ID,Test_Name:t.Test_Name,TAT_Value:t.TAT_Value,TAT_Unit:t.TAT_Unit,Category:t.Category||'',Specimen:specimen,Remark:remark});
-        delete rec._due;delete rec._search;
+      if(res.error){
+        if(rec&&backup)Object.assign(rec,backup);
+        renderTab();alert('Error: '+res.error);return;
       }
-      closeM('reqModal');showToast('✅ Request updated successfully');
-      renderTab();
       loadAll(true,true);
-    }catch(e){alert('Network error. Please try again.');}
+    }catch(e){
+      if(rec&&backup){Object.assign(rec,backup);renderTab();}
+      alert('Network error. Please try again.');
+    }
     finally{isSaving=false;setBtn(btn,'Update Request',false);}
     return;
   }
@@ -915,21 +956,43 @@ async function saveRequest(){
   isSaving=true;
   setBtn(btn,'Saving...',true);
   closeM('reqModal');
+  // Optimistic: add the card(s) to the screen NOW with a browser-generated Row_ID
+  // (the server saves the same Row_ID, so the card's buttons keep working after sync)
+  const newRecs=selected.map(t=>({
+    Row_ID:newUuid(),
+    Request_ID:rid,Request_DateTime:new Date().toISOString(),
+    Patient_Name:patient,Physician_Institution:inst,
+    Partner:partnerName,Created_By:createdBy,
+    Test_ID:t.Test_ID,Test_Name:t.Test_Name,
+    TAT_Value:t.TAT_Value,TAT_Unit:t.TAT_Unit,
+    Category:t.Category||'',Country:country,
+    Status:'Pending',Released_By:'',Released_DateTime:'',
+    Specimen:specimen,Remark:remark,Urgent:''
+  }));
+  newRecs.forEach(r=>allRequests.push(r));
+  renderTab();
   showToast(`⏳ Saving ${selected.length} test(s)...`);
   try{
-    await Promise.all(selected.map(t=>api({
-      action:'addRequest',
+    await Promise.all(newRecs.map((r,i)=>api({
+      action:'addRequest',Row_ID:r.Row_ID,
       Request_ID:rid,Patient_Name:patient,
       Physician_Institution:inst,
       Partner:partner,Partner_Name:partnerName,
       Country:country,Created_By:createdBy,
-      Test_ID:t.Test_ID,Test_Name:t.Test_Name,
-      TAT_Value:t.TAT_Value,TAT_Unit:t.TAT_Unit,
-      Category:t.Category||'',Specimen:specimen,Remark:remark
+      Test_ID:selected[i].Test_ID,Test_Name:selected[i].Test_Name,
+      TAT_Value:selected[i].TAT_Value,TAT_Unit:selected[i].TAT_Unit,
+      Category:selected[i].Category||'',Specimen:specimen,Remark:remark
     })));
     showToast(`✅ Saved ${selected.length} test(s) successfully`);
-    await loadAll(true,true);
-  }catch(e){showToast('❌ Error saving. Please try again.');}
+    loadAll(true,true);
+  }catch(e){
+    // Rollback: remove the optimistic cards and resync
+    const ids=new Set(newRecs.map(r=>r.Row_ID));
+    allRequests=allRequests.filter(r=>!ids.has(r.Row_ID));
+    renderTab();
+    showToast('❌ Error saving. Please try again.');
+    loadAll(true,true);
+  }
   finally{isSaving=false;setBtn(btn,'Save Request',false);}
 }
 
@@ -951,14 +1014,21 @@ async function toggleUrgent(rowId,isCurrentlyUrgent){
 // DELETE REQUEST (Admin only)
 async function deleteReq(rowId,requestId){
   if(!confirm(`Delete request ${requestId}?\n\nThis cannot be undone.`))return;
+  const idx=allRequests.findIndex(r=>r.Row_ID==rowId);
+  const backup=idx>=0?allRequests[idx]:null;
+  if(idx>=0){allRequests.splice(idx,1);renderTab();}
+  showToast(`🗑️ Request ${requestId} deleted`);
   try{
     const res=await api({action:'deleteRequest',Row_ID:rowId,DeletedBy:currentUser?.Username||''});
-    if(res.error){alert('Error: '+res.error);return;}
-    allRequests=allRequests.filter(r=>r.Row_ID!=rowId);
-    showToast(`🗑️ Request ${requestId} deleted`);
-    renderTab();
+    if(res.error){
+      if(backup)allRequests.splice(idx,0,backup);
+      renderTab();alert('Error: '+res.error);return;
+    }
     loadAll(true,true);
-  }catch(e){alert('Error deleting request.');}
+  }catch(e){
+    if(backup){allRequests.splice(idx,0,backup);renderTab();}
+    alert('Error deleting request.');
+  }
 }
 
 // COMPLETE
@@ -967,19 +1037,32 @@ async function confirmComplete(){
   const btn=document.getElementById('confirmBtn');if(btn.disabled)return;
   const rb=document.getElementById('releasedBy').value;
   if(!rb){alert('Please select who is releasing this result');return;}
-  setBtn(btn,'Saving...',true);
+  const rowId=completingRowId;
+  const rec=allRequests.find(r=>r.Row_ID==rowId);
+  const backup=rec?{Status:rec.Status,Released_By:rec.Released_By,Released_DateTime:rec.Released_DateTime,Remark:rec.Remark}:null;
+  if(rec){rec.Status='Completed';rec.Released_By=rb;rec.Released_DateTime=new Date().toISOString();rec.Remark='';}
+  closeM('completeModal');showToast('✅ Marked as Completed');renderTab();
   try{
-    await api({action:'updateRequest',Row_ID:completingRowId,Status:'Completed',Released_By:rb,ClearRemark:'true',DoneBy:currentUser?.Username||''});
-    const rec=allRequests.find(r=>r.Row_ID==completingRowId);
-    if(rec){rec.Status='Completed';rec.Released_By=rb;rec.Released_DateTime=new Date().toISOString();rec.Remark='';}
-    closeM('completeModal');showToast('✅ Marked as Completed');renderTab();loadAll(true,true);
-  }catch(e){alert('Error. Please try again.');}
-  finally{setBtn(btn,'Confirm',false);}
+    await api({action:'updateRequest',Row_ID:rowId,Status:'Completed',Released_By:rb,ClearRemark:'true',DoneBy:currentUser?.Username||''});
+    loadAll(true,true);
+  }catch(e){
+    if(rec&&backup){Object.assign(rec,backup);renderTab();}
+    alert('Error. Please try again.');
+  }
 }
 async function reopenReq(rowId){
   if(!confirm('Reopen this request?'))return;
-  try{await api({action:'updateRequest',Row_ID:rowId,Status:'Pending',Released_By:'',DoneBy:currentUser?.Username||''});const rec=allRequests.find(r=>r.Row_ID==rowId);if(rec){rec.Status='Pending';rec.Released_By='';rec.Released_DateTime='';}showToast('↩ Request reopened');renderTab();loadAll(true,true);}
-  catch(e){alert('Error reopening.');}
+  const rec=allRequests.find(r=>r.Row_ID==rowId);
+  const backup=rec?{Status:rec.Status,Released_By:rec.Released_By,Released_DateTime:rec.Released_DateTime}:null;
+  if(rec){rec.Status='Pending';rec.Released_By='';rec.Released_DateTime='';}
+  showToast('↩ Request reopened');renderTab();
+  try{
+    await api({action:'updateRequest',Row_ID:rowId,Status:'Pending',Released_By:'',DoneBy:currentUser?.Username||''});
+    loadAll(true,true);
+  }catch(e){
+    if(rec&&backup){Object.assign(rec,backup);renderTab();}
+    alert('Error reopening.');
+  }
 }
 
 // CHANGE PASSWORD
