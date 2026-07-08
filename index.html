@@ -220,7 +220,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
   <div class="content">
     <div class="toolbar">
       <button class="bnew" onclick="openNew()">+ New Request</button>
-      <div class="search-bar"><span>🔍</span><input type="text" placeholder="Search ID, Patient, Partner, Test, Country, Remark..." id="searchInput" oninput="renderTab()"></div>
+      <div class="search-bar"><span>🔍</span><input type="text" placeholder="Search ID, Patient, Partner, Test, Country, Remark..." id="searchInput" oninput="debouncedRender()"></div>
       <select class="sort-sel" id="sortSel" onchange="renderTab()">
         <option value="default">Sort: Default</option>
         <option value="date_asc">Date ↑ Oldest</option>
@@ -341,6 +341,25 @@ let allRequests=[],staffList=[],partnerLabs=[],testMaster=[],usersList=[];
 let currentTab='overtat',currentCountry='all',currentUser=null,editingRowId=null,completingRowId=null,selTests={};
 let isSaving=false;
 
+// ===== Performance helpers: O(1) lookup maps + cached computed values =====
+let staffMap=new Map(),labByName=new Map(),labById=new Map(),labByLower=new Map();
+function buildLookups(){
+  staffMap=new Map(staffList.map(s=>[String(s.Staff_ID),s.Staff_Name]));
+  labByName=new Map();labById=new Map();labByLower=new Map();
+  partnerLabs.forEach(l=>{
+    labByName.set(String(l.Partner_Name),l);
+    labById.set(String(l.Lab_ID),l);
+    labByLower.set(String(l.Partner_Name).toLowerCase(),l);
+  });
+}
+function labOf(id){return labByName.get(String(id))||labById.get(String(id));}
+// Cache the parsed due date on each record (computed once, reused by every sort/render)
+function dueOf(r){return r._due||(r._due=calcDue(r.Request_DateTime,r.TAT_Value,r.TAT_Unit));}
+// Cache a single lowercase search string per record (search = 1 includes() per row)
+function searchOf(r){return r._search||(r._search=[r.Request_ID,r.Patient_Name,lname(r.Partner),r.Test_Name,r.Country,r.Remark].map(x=>String(x||'')).join(' ').toLowerCase());}
+let _rt=null;
+function debouncedRender(){clearTimeout(_rt);_rt=setTimeout(renderTab,200);}
+
 window.onload=function(){
   const u=localStorage.getItem('labUser');
   if(u){currentUser=JSON.parse(u);showApp();}else showLogin();
@@ -393,8 +412,8 @@ function doLogout(){
 // Cache static data (staff, labs, tests, users rarely change)
 let staticLoaded=false;
 
-async function loadAll(requestsOnly=false){
-  document.getElementById('tabContent').innerHTML='<div class="loading">⏳ Loading...</div>';
+async function loadAll(requestsOnly=false,silent=false){
+  if(!silent)document.getElementById('tabContent').innerHTML='<div class="loading">⏳ Loading...</div>';
   try{
     if(!staticLoaded||!requestsOnly){
       // Single API call loads everything at once — much faster!
@@ -408,6 +427,7 @@ async function loadAll(requestsOnly=false){
     } else {
       allRequests=arr(await api({action:'getRequests'}));
     }
+    buildLookups();
     fillDropdowns();
     renderTab();
   }catch(e){
@@ -417,16 +437,15 @@ async function loadAll(requestsOnly=false){
 }
 
 function fillDropdowns(){
-  const ps=document.getElementById('f-partner');
-  ps.innerHTML='<option value="">Select lab...</option>';
-  [...partnerLabs].sort((a,b)=>a.Country==='Cambodia'?-1:b.Country==='Cambodia'?1:0)
-    .forEach(l=>{ps.innerHTML+=`<option value="${l.Partner_Name}" data-country="${l.Country}" data-labid="${l.Lab_ID}">${l.Partner_Name} — ${l.Country}</option>`;});
-  const cs=document.getElementById('f-createdby');
-  cs.innerHTML='<option value="">Select staff...</option>';
-  staffList.forEach(s=>{cs.innerHTML+=`<option value="${s.Staff_ID}">${s.Staff_Name}</option>`;});
-  const rs=document.getElementById('releasedBy');
-  rs.innerHTML='<option value="">Select staff...</option>';
-  staffList.forEach(s=>{rs.innerHTML+=`<option value="${s.Staff_ID}">${s.Staff_Name}</option>`;});
+  const ps=document.getElementById('f-partner'),cs=document.getElementById('f-createdby'),rs=document.getElementById('releasedBy');
+  const pv=ps.value,cv=cs.value,rv=rs.value;
+  ps.innerHTML='<option value="">Select lab...</option>'+[...partnerLabs]
+    .sort((a,b)=>a.Country==='Cambodia'?-1:b.Country==='Cambodia'?1:0)
+    .map(l=>`<option value="${l.Partner_Name}" data-country="${l.Country}" data-labid="${l.Lab_ID}">${l.Partner_Name} — ${l.Country}</option>`).join('');
+  const staffOpts='<option value="">Select staff...</option>'+staffList.map(s=>`<option value="${s.Staff_ID}">${s.Staff_Name}</option>`).join('');
+  cs.innerHTML=staffOpts;
+  rs.innerHTML=staffOpts;
+  ps.value=pv;cs.value=cv;rs.value=rv;
 }
 function updateCountry(){
   const sel=document.getElementById('f-partner');
@@ -466,7 +485,7 @@ document.addEventListener('click',e=>{if(!e.target.closest('.tswrap')&&!e.target
 function calcDue(dt,val,unit){const d=new Date(dt);const v=parseFloat(val);if(unit==='Hours')d.setTime(d.getTime()+v*3600000);else d.setDate(d.getDate()+v);return d;}
 function tatStatus(r){
   if(r.Status==='Completed')return'completed';
-  const due=calcDue(r.Request_DateTime,r.TAT_Value,r.TAT_Unit);const now=new Date();
+  const due=dueOf(r);const now=new Date();
   if(now>due)return'over-tat';
   if((due-now)/864e5<=2)return'approaching';
   return'on-track';
@@ -474,20 +493,15 @@ function tatStatus(r){
 function fdt(dt){if(!dt)return'-';const d=new Date(dt);if(isNaN(d))return String(dt);return d.toLocaleDateString('en-GB')+' '+d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:true});}
 function frem(r){
   if(r.Status==='Completed')return'Completed';
-  const diff=calcDue(r.Request_DateTime,r.TAT_Value,r.TAT_Unit)-new Date();
+  const diff=dueOf(r)-new Date();
   if(diff<0){const h=Math.abs(Math.floor(diff/36e5));const d=Math.floor(h/24);return d>0?`Overdue ${d}d ${h%24}h`:`Overdue ${h}h`;}
   const h=Math.floor(diff/36e5);const d=Math.floor(h/24);return d>0?`${d}d ${h%24}h left`:`${h}h left`;
 }
-function sname(id){const s=staffList.find(x=>x.Staff_ID==id);return s?s.Staff_Name:id||'-';}
+function sname(id){if(id===undefined||id===null||id==='')return'-';return staffMap.get(String(id))||String(id);}
 function lname(id){
   if(!id||id==='-'||id==='')return'-';
-  let l=partnerLabs.find(x=>String(x.Partner_Name)===String(id));
-  if(l)return l.Partner_Name;
-  l=partnerLabs.find(x=>String(x.Lab_ID)===String(id));
-  if(l)return l.Partner_Name;
-  l=partnerLabs.find(x=>String(x.Partner_Name).toLowerCase()===String(id).toLowerCase());
-  if(l)return l.Partner_Name;
-  return String(id);
+  const l=labByName.get(String(id))||labById.get(String(id))||labByLower.get(String(id).toLowerCase());
+  return l?l.Partner_Name:String(id);
 }
 
 // TABS
@@ -512,7 +526,7 @@ function sortRows(rows){
   function applySort(arr){
     if(s==='date_asc')return arr.sort((a,b)=>new Date(a.Request_DateTime)-new Date(b.Request_DateTime));
     if(s==='date_desc')return arr.sort((a,b)=>new Date(b.Request_DateTime)-new Date(a.Request_DateTime));
-    if(s==='tat_asc')return arr.sort((a,b)=>calcDue(a.Request_DateTime,a.TAT_Value,a.TAT_Unit)-calcDue(b.Request_DateTime,b.TAT_Value,b.TAT_Unit));
+    if(s==='tat_asc')return arr.sort((a,b)=>dueOf(a)-dueOf(b));
     if(s==='patient_az')return arr.sort((a,b)=>(a.Patient_Name||'').localeCompare(b.Patient_Name||''));
     if(s==='partner_az')return arr.sort((a,b)=>lname(a.Partner).localeCompare(lname(b.Partner)));
     // Default: Approaching first, then On Track, sorted by due date ascending
@@ -520,7 +534,7 @@ function sortRows(rows){
       const sa=tatStatus(a);const sb=tatStatus(b);
       if(sa==='approaching'&&sb!=='approaching')return-1;
       if(sa!=='approaching'&&sb==='approaching')return 1;
-      return calcDue(a.Request_DateTime,a.TAT_Value,a.TAT_Unit)-calcDue(b.Request_DateTime,b.TAT_Value,b.TAT_Unit);
+      return dueOf(a)-dueOf(b);
     });
   }
   return[...applySort(urgent),...applySort(normal)];
@@ -528,14 +542,7 @@ function sortRows(rows){
 function renderTab(){
   updateBadges();
   const q=(document.getElementById('searchInput').value||'').trim().toLowerCase();
-  let data=q?allRequests.filter(r=>
-    (r.Request_ID||'').toLowerCase().includes(q)||
-    (r.Patient_Name||'').toLowerCase().includes(q)||
-    lname(r.Partner).toLowerCase().includes(q)||
-    (r.Test_Name||'').toLowerCase().includes(q)||
-    (r.Country||'').toLowerCase().includes(q)||
-    (r.Remark||'').toLowerCase().includes(q)
-  ):allRequests;
+  let data=q?allRequests.filter(r=>searchOf(r).includes(q)):allRequests;
   if(currentCountry!=='all'){
     data=data.filter(r=>(r.Country||'').toLowerCase()===currentCountry.toLowerCase());
   }
@@ -571,6 +578,16 @@ function toggleSortStatus(){
   renderTab();
 }
 
+function thClick(col){
+  if(listSortCol===col)listSortDir*=-1;
+  else{listSortCol=col;listSortDir=1;}
+  listStatusSorted=(listSortCol==='_status');
+  renderTab();
+}
+function icon(col){
+  if(listSortCol!==col)return'<span class="sort-icon">↕</span>';
+  return listSortDir===1?'<span class="sort-icon">↑</span>':'<span class="sort-icon">↓</span>';
+}
 function renderList(data){
   const el=document.getElementById('tabContent');
   const s=document.getElementById('sortSel')?.value||'default';
@@ -584,7 +601,7 @@ function renderList(data){
   if(!listStatusSorted){
     if(s==='date_asc')sorted.sort((a,b)=>new Date(a.Request_DateTime)-new Date(b.Request_DateTime));
     else if(s==='date_desc')sorted.sort((a,b)=>new Date(b.Request_DateTime)-new Date(a.Request_DateTime));
-    else if(s==='tat_asc')sorted.sort((a,b)=>calcDue(a.Request_DateTime,a.TAT_Value,a.TAT_Unit)-calcDue(b.Request_DateTime,b.TAT_Value,b.TAT_Unit));
+    else if(s==='tat_asc')sorted.sort((a,b)=>dueOf(a)-dueOf(b));
     else if(s==='patient_az')sorted.sort((a,b)=>(a.Patient_Name||'').localeCompare(b.Patient_Name||''));
     else if(s==='partner_az')sorted.sort((a,b)=>lname(a.Partner).localeCompare(lname(b.Partner)));
     else sorted.sort((a,b)=>new Date(a.Request_DateTime)-new Date(b.Request_DateTime));
@@ -610,16 +627,6 @@ function renderList(data){
     });
   }
 
-  function thClick(col){
-    if(listSortCol===col)listSortDir*=-1;
-    else{listSortCol=col;listSortDir=1;}
-    listStatusSorted=(listSortCol==='_status');
-    renderTab();
-  }
-  function icon(col){
-    if(listSortCol!==col)return'<span class="sort-icon">↕</span>';
-    return listSortDir===1?'<span class="sort-icon">↑</span>':'<span class="sort-icon">↓</span>';
-  }
   function rowClass(r){
     if(r.Urgent==='Yes'&&r.Status==='Pending')return'row-urgent';
     const s=tatStatus(r);
@@ -675,9 +682,16 @@ function renderList(data){
   </div>`;
 }
 function updateBadges(){
-  document.getElementById('b-overtat').textContent=allRequests.filter(r=>tatStatus(r)==='over-tat').length;
-  document.getElementById('b-pending').textContent=allRequests.filter(r=>r.Status==='Pending'&&tatStatus(r)!=='over-tat').length;
-  document.getElementById('b-completed').textContent=allRequests.filter(r=>r.Status==='Completed').length;
+  let over=0,pend=0,comp=0;
+  for(const r of allRequests){
+    const s=tatStatus(r);
+    if(s==='over-tat')over++;
+    else if(r.Status==='Completed')comp++;
+    else if(r.Status==='Pending')pend++;
+  }
+  document.getElementById('b-overtat').textContent=over;
+  document.getElementById('b-pending').textContent=pend;
+  document.getElementById('b-completed').textContent=comp;
 }
 function renderOverTAT(data){
   const rows=data.filter(r=>tatStatus(r)==='over-tat');
@@ -688,13 +702,13 @@ function renderOverTAT(data){
   // Cambodia
   const cam=sortRows(rows.filter(r=>{
     if(r.Urgent==='Yes'||r.Urgent===true)return false;
-    const l=partnerLabs.find(x=>String(x.Partner_Name)===String(r.Partner)||String(x.Lab_ID)===String(r.Partner));
+    const l=labOf(r.Partner);
     return l&&l.Country==='Cambodia';
   }));
   // Overseas
   const oth=sortRows(rows.filter(r=>{
     if(r.Urgent==='Yes'||r.Urgent===true)return false;
-    const l=partnerLabs.find(x=>String(x.Partner_Name)===String(r.Partner)||String(x.Lab_ID)===String(r.Partner));
+    const l=labOf(r.Partner);
     return!l||l.Country!=='Cambodia';
   }));
   let html='';
@@ -710,12 +724,12 @@ function renderPending(data){
   const urgent=sortRows(rows.filter(r=>r.Urgent==='Yes'||r.Urgent===true));
   const cam=sortRows(rows.filter(r=>{
     if(r.Urgent==='Yes'||r.Urgent===true)return false;
-    const l=partnerLabs.find(x=>String(x.Partner_Name)===String(r.Partner)||String(x.Lab_ID)===String(r.Partner));
+    const l=labOf(r.Partner);
     return l&&l.Country==='Cambodia';
   }));
   const oth=sortRows(rows.filter(r=>{
     if(r.Urgent==='Yes'||r.Urgent===true)return false;
-    const l=partnerLabs.find(x=>String(x.Partner_Name)===String(r.Partner)||String(x.Lab_ID)===String(r.Partner));
+    const l=labOf(r.Partner);
     return!l||l.Country!=='Cambodia';
   }));
   const el=document.getElementById('tabContent');
@@ -737,7 +751,7 @@ function card(r,status){
   const lbl={'over-tat':'OVER TAT','approaching':'APPROACHING','on-track':'ON TRACK','completed':'COMPLETED'};
   const bc={'over-tat':'over','approaching':'approach','on-track':'ontrack','completed':'done'};
   const vc={'over-tat':'red','approaching':'orange','on-track':'green','completed':''};
-  const due=calcDue(r.Request_DateTime,r.TAT_Value,r.TAT_Unit);
+  const due=dueOf(r);
   const canDelete=currentUser&&(currentUser.Role==='Admin'||currentUser.Role==='Manager');
   const adminBtns=canDelete?`<button class="bdel" onclick="deleteReq('${r.Row_ID}','${r.Request_ID}')">🗑️ Delete</button>`:'';
   const isUrgent=r.Urgent==='Yes'||r.Urgent===true;
@@ -884,8 +898,14 @@ async function saveRequest(){
         Specimen:specimen,Remark:remark
       });
       if(res.error){alert('Error: '+res.error);return;}
+      const rec=allRequests.find(x=>x.Row_ID==editingRowId);
+      if(rec){
+        Object.assign(rec,{Request_ID:rid,Patient_Name:patient,Physician_Institution:inst,Partner:partnerName,Country:country,Created_By:createdBy,Test_ID:t.Test_ID,Test_Name:t.Test_Name,TAT_Value:t.TAT_Value,TAT_Unit:t.TAT_Unit,Category:t.Category||'',Specimen:specimen,Remark:remark});
+        delete rec._due;delete rec._search;
+      }
       closeM('reqModal');showToast('✅ Request updated successfully');
-      await loadAll(true);
+      renderTab();
+      loadAll(true,true);
     }catch(e){alert('Network error. Please try again.');}
     finally{isSaving=false;setBtn(btn,'Update Request',false);}
     return;
@@ -908,7 +928,7 @@ async function saveRequest(){
       Category:t.Category||'',Specimen:specimen,Remark:remark
     })));
     showToast(`✅ Saved ${selected.length} test(s) successfully`);
-    await loadAll(true);
+    await loadAll(true,true);
   }catch(e){showToast('❌ Error saving. Please try again.');}
   finally{isSaving=false;setBtn(btn,'Save Request',false);}
 }
@@ -916,11 +936,16 @@ async function saveRequest(){
 // URGENT TOGGLE
 async function toggleUrgent(rowId,isCurrentlyUrgent){
   const newVal=isCurrentlyUrgent?'No':'Yes';
+  const rec=allRequests.find(r=>r.Row_ID==rowId);
+  if(rec){rec.Urgent=newVal;renderTab();}
+  showToast(newVal==='Yes'?'🚨 Marked as Urgent':'⚑ Urgent removed');
   try{
-    await api({action:'updateRequest',Row_ID:rowId,Status:allRequests.find(r=>r.Row_ID==rowId)?.Status||'Pending',Urgent:newVal,UpdateUrgent:'true',DoneBy:currentUser?.Username||''});
-    showToast(newVal==='Yes'?'🚨 Marked as Urgent':'⚑ Urgent removed');
-    await loadAll();
-  }catch(e){alert('Error updating urgent status.');}
+    await api({action:'updateRequest',Row_ID:rowId,Status:rec?.Status||'Pending',Urgent:newVal,UpdateUrgent:'true',DoneBy:currentUser?.Username||''});
+    loadAll(true,true);
+  }catch(e){
+    if(rec){rec.Urgent=isCurrentlyUrgent?'Yes':'No';renderTab();}
+    alert('Error updating urgent status.');
+  }
 }
 
 // DELETE REQUEST (Admin only)
@@ -929,8 +954,10 @@ async function deleteReq(rowId,requestId){
   try{
     const res=await api({action:'deleteRequest',Row_ID:rowId,DeletedBy:currentUser?.Username||''});
     if(res.error){alert('Error: '+res.error);return;}
+    allRequests=allRequests.filter(r=>r.Row_ID!=rowId);
     showToast(`🗑️ Request ${requestId} deleted`);
-    await loadAll(true);
+    renderTab();
+    loadAll(true,true);
   }catch(e){alert('Error deleting request.');}
 }
 
@@ -943,13 +970,15 @@ async function confirmComplete(){
   setBtn(btn,'Saving...',true);
   try{
     await api({action:'updateRequest',Row_ID:completingRowId,Status:'Completed',Released_By:rb,ClearRemark:'true',DoneBy:currentUser?.Username||''});
-    closeM('completeModal');showToast('✅ Marked as Completed');await loadAll(true);
+    const rec=allRequests.find(r=>r.Row_ID==completingRowId);
+    if(rec){rec.Status='Completed';rec.Released_By=rb;rec.Released_DateTime=new Date().toISOString();rec.Remark='';}
+    closeM('completeModal');showToast('✅ Marked as Completed');renderTab();loadAll(true,true);
   }catch(e){alert('Error. Please try again.');}
   finally{setBtn(btn,'Confirm',false);}
 }
 async function reopenReq(rowId){
   if(!confirm('Reopen this request?'))return;
-  try{await api({action:'updateRequest',Row_ID:rowId,Status:'Pending',Released_By:'',DoneBy:currentUser?.Username||''});showToast('↩ Request reopened');await loadAll(true);}
+  try{await api({action:'updateRequest',Row_ID:rowId,Status:'Pending',Released_By:'',DoneBy:currentUser?.Username||''});const rec=allRequests.find(r=>r.Row_ID==rowId);if(rec){rec.Status='Pending';rec.Released_By='';rec.Released_DateTime='';}showToast('↩ Request reopened');renderTab();loadAll(true,true);}
   catch(e){alert('Error reopening.');}
 }
 
