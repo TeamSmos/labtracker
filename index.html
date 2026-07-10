@@ -197,6 +197,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
     <div class="logo">🔬 Team Smos <span>Lab Tracker</span></div>
     <div class="header-right">
       <span class="huser" id="huser"></span>
+      <button class="bhdr" onclick="openReport()">📊 Report</button>
       <button class="bhdr" onclick="forceRefresh()">🔄 Refresh</button>
       <button class="bhdr" onclick="openChangePw()">🔑 Password</button>
       <div id="adminBtns" style="display:none;">
@@ -288,6 +289,25 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
   </div>
 </div>
 
+<!-- REPORT MODAL -->
+<div class="moverlay" id="reportModal">
+  <div class="modal modal-lg">
+    <div class="mhdr"><div class="mtitle">📊 Test Report</div><button class="mclose" onclick="closeM('reportModal')">×</button></div>
+    <div class="mbody">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:14px;">
+        <div class="fg" style="margin:0;flex:1;min-width:150px;"><label class="fl">From (Request Date)</label><input class="fi" type="date" id="rep-from"></div>
+        <div class="fg" style="margin:0;flex:1;min-width:150px;"><label class="fl">To (Request Date)</label><input class="fi" type="date" id="rep-to"></div>
+        <button class="bp" style="height:40px;" onclick="runReport()">🔍 Filter</button>
+      </div>
+      <div id="reportResult"></div>
+    </div>
+    <div class="mfoot">
+      <button class="bs" onclick="closeM('reportModal')">Close</button>
+      <button class="bp" onclick="printReport()">🖨️ Print / Export PDF</button>
+    </div>
+  </div>
+</div>
+
 <!-- PASSWORD MODAL -->
 <div class="moverlay" id="pwModal">
   <div class="modal modal-sm">
@@ -371,6 +391,19 @@ function saveSnapshot(){
 }
 // Manual Refresh: bypass server cache and show the loading indicator
 function forceRefresh(){staticLoaded=false;loadAll(false,false,true);}
+// Progressive rendering: for very large lists (1000s of rows), render the first
+// chunk instantly and append the rest in small batches so the page never freezes.
+let _renderToken=0;
+function appendChunks(container,items,renderFn,start,chunk){
+  const token=_renderToken;
+  let i=start;
+  (function next(){
+    if(token!==_renderToken||!container||!container.isConnected||i>=items.length)return;
+    container.insertAdjacentHTML('beforeend',items.slice(i,i+chunk).map(renderFn).join(''));
+    i+=chunk;
+    setTimeout(next,0);
+  })();
+}
 function newUuid(){
   if(window.crypto&&crypto.randomUUID)return crypto.randomUUID();
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c==='x'?r:(r&0x3|0x8)).toString(16);});
@@ -573,6 +606,7 @@ function sortRows(rows){
   return[...applySort(urgent),...applySort(normal)];
 }
 function renderTab(){
+  _renderToken++;
   updateBadges();
   const q=(document.getElementById('searchInput').value||'').trim().toLowerCase();
   let data=q?allRequests.filter(r=>searchOf(r).includes(q)):allRequests;
@@ -677,6 +711,18 @@ function renderList(data){
     return'✅ COMPLETED';
   }
 
+  const CH=300;
+  const trHtml=r=>`<tr class="${rowClass(r)}">
+          <td>${r.Request_ID||'-'}</td>
+          <td>${r.Patient_Name||'-'}</td>
+          <td>${r.Test_Name||'-'}</td>
+          <td>${lname(r.Partner)}</td>
+          <td><strong>${statusLabel(r)}</strong></td>
+          <td>${fdt(r.Request_DateTime)}</td>
+          <td>${sname(r.Released_By)||'-'}</td>
+          <td>${r.Released_DateTime?fdt(r.Released_DateTime):'-'}</td>
+          <td style="color:var(--blue);font-weight:500;">${r.Status==='Completed'?'-':r.Remark||'-'}</td>
+        </tr>`;
   el.innerHTML=`
   <div class="list-sort-bar">
     <span class="list-count">${sorted.length} record(s)${hideCompleted?' (completed hidden)':''}</span>
@@ -699,20 +745,11 @@ function renderList(data){
         </tr>
       </thead>
       <tbody>
-        ${sorted.map(r=>`<tr class="${rowClass(r)}">
-          <td>${r.Request_ID||'-'}</td>
-          <td>${r.Patient_Name||'-'}</td>
-          <td>${r.Test_Name||'-'}</td>
-          <td>${lname(r.Partner)}</td>
-          <td><strong>${statusLabel(r)}</strong></td>
-          <td>${fdt(r.Request_DateTime)}</td>
-          <td>${sname(r.Released_By)||'-'}</td>
-          <td>${r.Released_DateTime?fdt(r.Released_DateTime):'-'}</td>
-          <td style="color:var(--blue);font-weight:500;">${r.Status==='Completed'?'-':r.Remark||'-'}</td>
-        </tr>`).join('')}
+        ${sorted.slice(0,CH).map(trHtml).join('')}
       </tbody>
     </table>
   </div>`;
+  if(sorted.length>CH)appendChunks(el.querySelector('.list-table tbody'),sorted,trHtml,CH,CH);
 }
 function updateBadges(){
   let over=0,pend=0,comp=0;
@@ -777,7 +814,9 @@ function renderCompleted(data){
   const rows=data.filter(r=>r.Status==='Completed').sort((a,b)=>new Date(b.Released_DateTime)-new Date(a.Released_DateTime));
   const el=document.getElementById('tabContent');
   if(!rows.length){el.innerHTML='<div class="empty"><div class="eicon">📋</div><h3>No completed requests</h3></div>';return;}
-  el.innerHTML=rows.map(r=>card(r,'completed')).join('');
+  const CH=200;
+  el.innerHTML=rows.slice(0,CH).map(r=>card(r,'completed')).join('');
+  if(rows.length>CH)appendChunks(el,rows,r=>card(r,'completed'),CH,CH);
 }
 
 function card(r,status){
@@ -1029,6 +1068,74 @@ async function deleteReq(rowId,requestId){
     if(backup){allRequests.splice(idx,0,backup);renderTab();}
     alert('Error deleting request.');
   }
+}
+
+// REPORT
+let lastReport=null;
+function openReport(){
+  const today=new Date();
+  const weekAgo=new Date();weekAgo.setDate(today.getDate()-6);
+  const dstr=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  document.getElementById('rep-from').value=dstr(weekAgo);
+  document.getElementById('rep-to').value=dstr(today);
+  document.getElementById('reportModal').classList.add('open');
+  runReport();
+}
+function runReport(){
+  const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const fv=document.getElementById('rep-from').value;
+  const tv=document.getElementById('rep-to').value;
+  const el=document.getElementById('reportResult');
+  if(!fv||!tv){el.innerHTML='<div class="empty"><h3>Please select both dates</h3></div>';lastReport=null;return;}
+  const from=new Date(fv+'T00:00:00');
+  const to=new Date(tv+'T23:59:59.999');
+  if(from>to){el.innerHTML='<div class="empty"><h3>"From" date must be before "To" date</h3></div>';lastReport=null;return;}
+  const counts=new Map();let total=0;
+  for(const r of allRequests){
+    const d=new Date(r.Request_DateTime);
+    if(isNaN(d)||d<from||d>to)continue;
+    const name=r.Test_Name||'(No test name)';
+    counts.set(name,(counts.get(name)||0)+1);total++;
+  }
+  const rows=[...counts.entries()].sort((a,b)=>b[1]-a[1]||String(a[0]).localeCompare(String(b[0])));
+  lastReport={from:fv,to:tv,rows:rows,total:total};
+  if(!rows.length){el.innerHTML='<div class="empty"><div class="eicon">📊</div><h3>No requests in this date range</h3></div>';return;}
+  el.innerHTML=`
+    <div class="list-wrap"><table class="list-table">
+      <thead><tr><th style="width:60px;">N°</th><th>Test Item</th><th style="width:90px;text-align:center;">Qty.</th></tr></thead>
+      <tbody>
+        ${rows.map((x,i)=>`<tr><td>${i+1}</td><td>${esc(x[0])}</td><td style="text-align:center;font-weight:600;">${x[1]}</td></tr>`).join('')}
+        <tr style="font-weight:700;background:var(--blue-light,#eef4fb);"><td></td><td>Total</td><td style="text-align:center;">${total}</td></tr>
+      </tbody>
+    </table></div>`;
+}
+function printReport(){
+  if(!lastReport||!lastReport.rows.length){alert('Please run a filter with results first.');return;}
+  const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const fd=s=>new Date(s+'T00:00:00').toLocaleDateString('en-GB',{day:'2-digit',month:'2-digit',year:'numeric'});
+  const {from,to,rows,total}=lastReport;
+  const w=window.open('','_blank');
+  if(!w){alert('Please allow pop-ups to print the report.');return;}
+  w.document.write(`<!DOCTYPE html><html><head><title>Test Report ${from} to ${to}</title>
+  <style>
+    body{font-family:'Segoe UI',Arial,sans-serif;padding:30px;color:#1a1a1a;}
+    h2{margin:0 0 4px;font-size:20px;}
+    .sub{color:#555;margin-bottom:18px;font-size:13px;}
+    table{border-collapse:collapse;width:100%;max-width:620px;}
+    th,td{border:1px solid #999;padding:8px 12px;font-size:14px;text-align:left;}
+    th{background:#eef4fb;}
+    td.qty,th.qty{text-align:center;width:80px;}
+    tr.total td{font-weight:700;background:#f5f5f5;}
+  </style></head><body>
+  <h2>🔬 Team Smos Lab Tracker — Test Report</h2>
+  <div class="sub">Request Date: ${fd(from)} → ${fd(to)} &nbsp;|&nbsp; Generated: ${new Date().toLocaleString('en-GB')}</div>
+  <table><thead><tr><th style="width:50px;">N°</th><th>Test Item</th><th class="qty">Qty.</th></tr></thead><tbody>
+  ${rows.map((x,i)=>`<tr><td>${i+1}</td><td>${esc(x[0])}</td><td class="qty">${x[1]}</td></tr>`).join('')}
+  <tr class="total"><td></td><td>Total</td><td class="qty">${total}</td></tr>
+  </tbody></table></body></html>`);
+  w.document.close();
+  w.focus();
+  setTimeout(()=>w.print(),300);
 }
 
 // COMPLETE
