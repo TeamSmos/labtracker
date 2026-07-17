@@ -197,6 +197,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
     <div class="logo">🔬 Team Smos <span>Lab Tracker</span></div>
     <div class="header-right">
       <span class="huser" id="huser"></span>
+      <button class="bhdr" onclick="openAccountant()">🧾 For Accountant</button>
       <button class="bhdr" onclick="openReport()">📊 Report</button>
       <button class="bhdr" onclick="forceRefresh()">🔄 Refresh</button>
       <button class="bhdr" onclick="openChangePw()">🔑 Password</button>
@@ -304,6 +305,26 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
     <div class="mfoot">
       <button class="bs" onclick="closeM('reportModal')">Close</button>
       <button class="bp" onclick="printReport()">🖨️ Print / Export PDF</button>
+    </div>
+  </div>
+</div>
+
+<!-- ACCOUNTANT MODAL -->
+<div class="moverlay" id="accountantModal">
+  <div class="modal modal-lg" style="max-width:920px;">
+    <div class="mhdr"><div class="mtitle">🧾 For Accountant</div><button class="mclose" onclick="closeM('accountantModal')">×</button></div>
+    <div class="mbody">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:14px;">
+        <div class="fg" style="margin:0;flex:1;min-width:140px;"><label class="fl">From (Request Date)</label><input class="fi" type="date" id="acc-from"></div>
+        <div class="fg" style="margin:0;flex:1;min-width:140px;"><label class="fl">To (Request Date)</label><input class="fi" type="date" id="acc-to"></div>
+        <div class="fg" style="margin:0;flex:1.3;min-width:180px;"><label class="fl">Partner Laboratory</label><select class="fs" id="acc-partner" onchange="runAccountant()"><option value="">All Partners</option></select></div>
+        <button class="bp" style="height:40px;" onclick="runAccountant()">🔍 Filter</button>
+      </div>
+      <div id="accountantResult"></div>
+    </div>
+    <div class="mfoot">
+      <button class="bs" onclick="closeM('accountantModal')">Close</button>
+      <button class="bp" onclick="printAccountant()">🖨️ Print / Export PDF</button>
     </div>
   </div>
 </div>
@@ -1132,6 +1153,87 @@ function printReport(){
   <table><thead><tr><th style="width:50px;">N°</th><th>Test Item</th><th class="qty">Qty.</th></tr></thead><tbody>
   ${rows.map((x,i)=>`<tr><td>${i+1}</td><td>${esc(x[0])}</td><td class="qty">${x[1]}</td></tr>`).join('')}
   <tr class="total"><td></td><td>Total</td><td class="qty">${total}</td></tr>
+  </tbody></table></body></html>`);
+  w.document.close();
+  w.focus();
+  setTimeout(()=>w.print(),300);
+}
+
+// FOR ACCOUNTANT
+let lastAccountant=null;
+function openAccountant(){
+  const today=new Date();
+  const weekAgo=new Date();weekAgo.setDate(today.getDate()-6);
+  const dstr=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  document.getElementById('acc-from').value=dstr(weekAgo);
+  document.getElementById('acc-to').value=dstr(today);
+  const ps=document.getElementById('acc-partner');
+  const cur=ps.value;
+  ps.innerHTML='<option value="">All Partners</option>'+[...partnerLabs]
+    .sort((a,b)=>String(a.Partner_Name).localeCompare(String(b.Partner_Name)))
+    .map(l=>`<option value="${l.Partner_Name}">${l.Partner_Name} — ${l.Country}</option>`).join('');
+  ps.value=cur;
+  document.getElementById('accountantModal').classList.add('open');
+  runAccountant();
+}
+function runAccountant(){
+  const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const fv=document.getElementById('acc-from').value;
+  const tv=document.getElementById('acc-to').value;
+  const pv=document.getElementById('acc-partner').value;
+  const el=document.getElementById('accountantResult');
+  if(!fv||!tv){el.innerHTML='<div class="empty"><h3>Please select both dates</h3></div>';lastAccountant=null;return;}
+  const from=new Date(fv+'T00:00:00');
+  const to=new Date(tv+'T23:59:59.999');
+  if(from>to){el.innerHTML='<div class="empty"><h3>"From" date must be before "To" date</h3></div>';lastAccountant=null;return;}
+  const rows=[];
+  for(const r of allRequests){
+    const d=new Date(r.Request_DateTime);
+    if(isNaN(d)||d<from||d>to)continue;
+    if(pv&&lname(r.Partner)!==pv)continue;
+    rows.push(r);
+  }
+  rows.sort((a,b)=>new Date(a.Request_DateTime)-new Date(b.Request_DateTime));
+  lastAccountant={from:fv,to:tv,partner:pv||'All Partners',rows:rows};
+  if(!rows.length){el.innerHTML='<div class="empty"><div class="eicon">🧾</div><h3>No requests in this date range</h3></div>';return;}
+  el.innerHTML=`
+    <div class="list-wrap"><table class="list-table">
+      <thead><tr><th style="width:50px;">N°</th><th>Request ID</th><th>Patient Name</th><th>Test Name</th><th>Partner</th><th>Status</th></tr></thead>
+      <tbody>
+        ${rows.map((r,i)=>{
+          const pn=esc(r.Patient_Name||'-')+(r.Physician_Institution?` <span style="font-size:11px;color:var(--muted);">(${esc(r.Physician_Institution)})</span>`:'');
+          return`<tr><td>${i+1}</td><td>${esc(r.Request_ID||'-')}</td><td>${pn}</td><td>${esc(r.Test_Name||'-')}</td><td>${esc(lname(r.Partner))}</td><td>${r.Status==='Completed'?'✅ Completed':'🟡 Pending'}</td></tr>`;
+        }).join('')}
+        <tr style="font-weight:700;background:var(--blue-light,#eef4fb);"><td></td><td>Total</td><td colspan="3"></td><td>${rows.length} request(s)</td></tr>
+      </tbody>
+    </table></div>`;
+}
+function printAccountant(){
+  if(!lastAccountant||!lastAccountant.rows.length){alert('Please run a filter with results first.');return;}
+  const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const fd=s=>new Date(s+'T00:00:00').toLocaleDateString('en-GB',{day:'2-digit',month:'2-digit',year:'numeric'});
+  const {from,to,partner,rows}=lastAccountant;
+  const w=window.open('','_blank');
+  if(!w){alert('Please allow pop-ups to print the report.');return;}
+  w.document.write(`<!DOCTYPE html><html><head><title>Accountant Report ${from} to ${to}</title>
+  <style>
+    body{font-family:'Segoe UI',Arial,sans-serif;padding:30px;color:#1a1a1a;}
+    h2{margin:0 0 4px;font-size:20px;}
+    .sub{color:#555;margin-bottom:18px;font-size:13px;}
+    table{border-collapse:collapse;width:100%;}
+    th,td{border:1px solid #999;padding:7px 10px;font-size:13px;text-align:left;}
+    th{background:#eef4fb;}
+    .inst{font-size:11px;color:#666;}
+    tr.total td{font-weight:700;background:#f5f5f5;}
+  </style></head><body>
+  <h2>🔬 Team Smos Lab Tracker — For Accountant</h2>
+  <div class="sub">Request Date: ${fd(from)} → ${fd(to)} &nbsp;|&nbsp; Partner: ${esc(partner)} &nbsp;|&nbsp; Generated: ${new Date().toLocaleString('en-GB')}</div>
+  <table><thead><tr><th style="width:40px;">N°</th><th>Request ID</th><th>Patient Name</th><th>Test Name</th><th>Partner</th><th>Status</th></tr></thead><tbody>
+  ${rows.map((r,i)=>{
+    const pn=esc(r.Patient_Name||'-')+(r.Physician_Institution?` <span class="inst">(${esc(r.Physician_Institution)})</span>`:'');
+    return`<tr><td>${i+1}</td><td>${esc(r.Request_ID||'-')}</td><td>${pn}</td><td>${esc(r.Test_Name||'-')}</td><td>${esc(lname(r.Partner))}</td><td>${r.Status==='Completed'?'Completed':'Pending'}</td></tr>`;
+  }).join('')}
+  <tr class="total"><td></td><td>Total</td><td colspan="3"></td><td>${rows.length} request(s)</td></tr>
   </tbody></table></body></html>`);
   w.document.close();
   w.focus();
