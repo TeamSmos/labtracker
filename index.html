@@ -169,6 +169,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .toast.show{display:block;animation:fup .3s ease;}
 @keyframes fup{from{opacity:0;transform:translateX(-50%) translateY(8px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
 @media(max-width:600px){.frow{grid-template-columns:1fr;}.card-grid{grid-template-columns:1fr 1fr;}.huser{display:none;}}
+#accountantResult .list-wrap{max-height:555px;overflow:auto;border:1px solid var(--border);border-radius:8px;}
+#accountantResult .list-table thead th{position:sticky;top:0;z-index:2;}
 </style>
 </head>
 <body>
@@ -311,7 +313,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 
 <!-- ACCOUNTANT MODAL -->
 <div class="moverlay" id="accountantModal">
-  <div class="modal modal-lg" style="max-width:920px;">
+  <div class="modal modal-lg" style="max-width:1200px;width:96vw;">
     <div class="mhdr"><div class="mtitle">🧾 For Accountant</div><button class="mclose" onclick="closeM('accountantModal')">×</button></div>
     <div class="mbody">
       <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:14px;">
