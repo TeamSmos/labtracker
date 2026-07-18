@@ -1200,13 +1200,13 @@ function runAccountant(){
   if(!rows.length){el.innerHTML='<div class="empty"><div class="eicon">🧾</div><h3>No requests in this date range</h3></div>';return;}
   el.innerHTML=`
     <div class="list-wrap"><table class="list-table">
-      <thead><tr><th style="width:50px;">N°</th><th>Request ID</th><th>Patient Name</th><th>Test Name</th><th>Partner</th><th>Status</th></tr></thead>
+      <thead><tr><th style="width:50px;">N°</th><th>Request ID</th><th>Request Date</th><th>Patient Name</th><th>Test Name</th><th>Partner</th><th>Status</th></tr></thead>
       <tbody>
         ${rows.map((r,i)=>{
           const pn=esc(r.Patient_Name||'-')+(r.Physician_Institution?` <span style="font-size:11px;color:var(--muted);">(${esc(r.Physician_Institution)})</span>`:'');
-          return`<tr><td>${i+1}</td><td>${esc(r.Request_ID||'-')}</td><td>${pn}</td><td>${esc(r.Test_Name||'-')}</td><td>${esc(lname(r.Partner))}</td><td>${r.Status==='Completed'?'✅ Completed':'🟡 Pending'}</td></tr>`;
+          return`<tr><td>${i+1}</td><td>${esc(r.Request_ID||'-')}</td><td>${fdt(r.Request_DateTime)}</td><td>${pn}</td><td>${esc(r.Test_Name||'-')}</td><td>${esc(lname(r.Partner))}</td><td>${r.Status==='Completed'?'✅ Completed':'🟡 Pending'}</td></tr>`;
         }).join('')}
-        <tr style="font-weight:700;background:var(--blue-light,#eef4fb);"><td></td><td>Total</td><td colspan="3"></td><td>${rows.length} request(s)</td></tr>
+        <tr style="font-weight:700;background:var(--blue-light,#eef4fb);"><td></td><td>Total</td><td colspan="4"></td><td>${rows.length} request(s)</td></tr>
       </tbody>
     </table></div>`;
 }
@@ -1230,12 +1230,12 @@ function printAccountant(){
   </style></head><body>
   <h2>🔬 Team Smos Lab Tracker — For Accountant</h2>
   <div class="sub">Request Date: ${fd(from)} → ${fd(to)} &nbsp;|&nbsp; Partner: ${esc(partner)} &nbsp;|&nbsp; Generated: ${new Date().toLocaleString('en-GB')}</div>
-  <table><thead><tr><th style="width:40px;">N°</th><th>Request ID</th><th>Patient Name</th><th>Test Name</th><th>Partner</th><th>Status</th></tr></thead><tbody>
+  <table><thead><tr><th style="width:40px;">N°</th><th>Request ID</th><th>Request Date</th><th>Patient Name</th><th>Test Name</th><th>Partner</th><th>Status</th></tr></thead><tbody>
   ${rows.map((r,i)=>{
     const pn=esc(r.Patient_Name||'-')+(r.Physician_Institution?` <span class="inst">(${esc(r.Physician_Institution)})</span>`:'');
-    return`<tr><td>${i+1}</td><td>${esc(r.Request_ID||'-')}</td><td>${pn}</td><td>${esc(r.Test_Name||'-')}</td><td>${esc(lname(r.Partner))}</td><td>${r.Status==='Completed'?'Completed':'Pending'}</td></tr>`;
+    return`<tr><td>${i+1}</td><td>${esc(r.Request_ID||'-')}</td><td>${fdt(r.Request_DateTime)}</td><td>${pn}</td><td>${esc(r.Test_Name||'-')}</td><td>${esc(lname(r.Partner))}</td><td>${r.Status==='Completed'?'Completed':'Pending'}</td></tr>`;
   }).join('')}
-  <tr class="total"><td></td><td>Total</td><td colspan="3"></td><td>${rows.length} request(s)</td></tr>
+  <tr class="total"><td></td><td>Total</td><td colspan="4"></td><td>${rows.length} request(s)</td></tr>
   </tbody></table></body></html>`);
   w.document.close();
   w.focus();
